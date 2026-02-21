@@ -84,14 +84,77 @@ export default function GoalsPage() {
 
   return (
     <div className="space-y-6 md:space-y-8 pb-4 animate-fade-in-up">
-      <section>
-        <h2 className="text-2xl md:text-3xl font-bold text-secondary tracking-tight flex items-center gap-2">
-          <Target className="w-8 h-8 text-primary" />
-          Meus Objetivos
-        </h2>
-        <p className="text-muted-foreground mt-1 text-sm md:text-base font-medium">
-          Gerencie suas metas de viagem e defina qual é a sua prioridade.
-        </p>
+      <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold text-secondary tracking-tight flex items-center gap-2">
+            <Target className="w-8 h-8 text-primary" />
+            Meus Objetivos
+          </h2>
+          <p className="text-muted-foreground mt-1 text-sm md:text-base font-medium">
+            Gerencie suas metas de viagem e defina qual é a sua prioridade.
+          </p>
+        </div>
+
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogTrigger asChild>
+            <Button className="w-full sm:w-auto font-semibold shadow-sm">
+              <Plus className="w-5 h-5 mr-2" />
+              Criar Novo Objetivo
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Qual é o seu próximo destino?</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-5 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="destination">Nome do Destino</Label>
+                <Input
+                  id="destination"
+                  placeholder="Ex: Paris, França"
+                  value={newGoal.title}
+                  onChange={(e) =>
+                    setNewGoal({ ...newGoal, title: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="target">Meta de Milhas</Label>
+                <Input
+                  id="target"
+                  type="number"
+                  placeholder="Ex: 150000"
+                  value={newGoal.target}
+                  onChange={(e) =>
+                    setNewGoal({ ...newGoal, target: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="image">URL da Imagem de Fundo (Opcional)</Label>
+                <Input
+                  id="image"
+                  placeholder="https://exemplo.com/imagem.jpg"
+                  value={newGoal.image}
+                  onChange={(e) =>
+                    setNewGoal({ ...newGoal, image: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleSaveGoal}
+                disabled={!newGoal.title || !newGoal.target}
+              >
+                Salvar Objetivo
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -177,77 +240,6 @@ export default function GoalsPage() {
             </Card>
           )
         })}
-
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger asChild>
-            <Card
-              className="min-h-[350px] border-2 border-dashed border-muted flex flex-col items-center justify-center bg-muted/20 cursor-pointer transition-all duration-300 hover:border-primary/50 hover:bg-primary/5 hover:scale-[1.02] hover:shadow-md animate-fade-in-up group"
-              style={{ animationDelay: `${goals.length * 100}ms` }}
-            >
-              <div className="bg-background p-4 rounded-full shadow-sm mb-4 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-muted-foreground">
-                <Plus className="w-8 h-8" />
-              </div>
-              <h3 className="font-bold text-lg text-secondary group-hover:text-primary transition-colors">
-                Criar Novo Objetivo
-              </h3>
-              <p className="text-muted-foreground text-sm mt-1">
-                Planeje sua próxima viagem
-              </p>
-            </Card>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Qual é o seu próximo destino?</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-5 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="destination">Nome do Destino</Label>
-                <Input
-                  id="destination"
-                  placeholder="Ex: Paris, França"
-                  value={newGoal.title}
-                  onChange={(e) =>
-                    setNewGoal({ ...newGoal, title: e.target.value })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="target">Meta de Milhas</Label>
-                <Input
-                  id="target"
-                  type="number"
-                  placeholder="Ex: 150000"
-                  value={newGoal.target}
-                  onChange={(e) =>
-                    setNewGoal({ ...newGoal, target: e.target.value })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem de Fundo (Opcional)</Label>
-                <Input
-                  id="image"
-                  placeholder="https://exemplo.com/imagem.jpg"
-                  value={newGoal.image}
-                  onChange={(e) =>
-                    setNewGoal({ ...newGoal, image: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-            <DialogFooter className="gap-2 sm:gap-0">
-              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleSaveGoal}
-                disabled={!newGoal.title || !newGoal.target}
-              >
-                Salvar Objetivo
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   )

@@ -34322,105 +34322,22 @@ function GoalsPage() {
 	const isExternalUrl = (url) => url.startsWith("http://") || url.startsWith("https://");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "space-y-6 md:space-y-8 pb-4 animate-fade-in-up",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
-			className: "text-2xl md:text-3xl font-bold text-secondary tracking-tight flex items-center gap-2",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Target, { className: "w-8 h-8 text-primary" }), "Meus Objetivos"]
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-			className: "text-muted-foreground mt-1 text-sm md:text-base font-medium",
-			children: "Gerencie suas metas de viagem e defina qual é a sua prioridade."
-		})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
-			children: [goals.map((goal, index$1) => {
-				const percentage = goal.target > 0 ? Math.min(goal.current / goal.target * 100, 100) : 0;
-				return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-					className: cn("overflow-hidden flex flex-col transition-all duration-300 shadow-sm hover:shadow-md animate-fade-in-up", goal.active ? "border-primary ring-1 ring-primary/20" : "border-muted"),
-					style: { animationDelay: `${index$1 * 100}ms` },
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "h-36 relative w-full overflow-hidden bg-muted",
-							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-									src: isExternalUrl(goal.image) ? goal.image : `https://img.usecurling.com/p/600/300?q=${encodeURIComponent(goal.image)}&dpr=2`,
-									alt: goal.title,
-									className: "w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" }),
-								goal.active && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "absolute top-3 right-3 bg-primary text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleCheck, { className: "w-3.5 h-3.5" }), " Principal"]
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									className: "absolute bottom-3 left-3 right-3",
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
-										className: "text-white font-bold text-lg leading-tight flex items-start gap-1.5 drop-shadow-md",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, { className: "w-4 h-4 mt-1 shrink-0 text-primary" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											className: "line-clamp-2",
-											children: goal.title
-										})]
-									})
-								})
-							]
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							className: "pt-5 flex-1 space-y-4",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "space-y-2",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										className: "flex justify-between items-end text-sm",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											className: "font-semibold text-secondary",
-											children: "Progresso"
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-											className: "font-bold text-primary",
-											children: [percentage.toFixed(1), "%"]
-										})]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Progress, {
-										value: percentage,
-										className: "h-2.5"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										className: "flex justify-between text-xs font-medium text-muted-foreground pt-1",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [new Intl.NumberFormat("pt-BR").format(goal.current), " mi"] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [new Intl.NumberFormat("pt-BR").format(goal.target), " mi"] })]
-									})
-								]
-							})
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardFooter, {
-							className: "pt-0 pb-5 px-5",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-								variant: goal.active ? "secondary" : "outline",
-								className: cn("w-full font-semibold", goal.active ? "bg-secondary/10 text-secondary hover:bg-secondary/20" : ""),
-								disabled: goal.active,
-								onClick: () => handleSetActive(goal.id),
-								children: [goal.active ? "Meta Ativa" : "Tornar Meta Principal", !goal.active && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaneTakeoff, { className: "w-4 h-4 ml-2" })]
-							})
-						})
-					]
-				}, goal.id);
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Dialog, {
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+			className: "flex flex-col sm:flex-row sm:items-center justify-between gap-4",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+				className: "text-2xl md:text-3xl font-bold text-secondary tracking-tight flex items-center gap-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Target, { className: "w-8 h-8 text-primary" }), "Meus Objetivos"]
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+				className: "text-muted-foreground mt-1 text-sm md:text-base font-medium",
+				children: "Gerencie suas metas de viagem e defina qual é a sua prioridade."
+			})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Dialog, {
 				open: isModalOpen,
 				onOpenChange: setIsModalOpen,
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogTrigger, {
 					asChild: true,
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						className: "min-h-[350px] border-2 border-dashed border-muted flex flex-col items-center justify-center bg-muted/20 cursor-pointer transition-all duration-300 hover:border-primary/50 hover:bg-primary/5 hover:scale-[1.02] hover:shadow-md animate-fade-in-up group",
-						style: { animationDelay: `${goals.length * 100}ms` },
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "bg-background p-4 rounded-full shadow-sm mb-4 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-muted-foreground",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { className: "w-8 h-8" })
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-								className: "font-bold text-lg text-secondary group-hover:text-primary transition-colors",
-								children: "Criar Novo Objetivo"
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								className: "text-muted-foreground text-sm mt-1",
-								children: "Planeje sua próxima viagem"
-							})
-						]
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+						className: "w-full sm:w-auto font-semibold shadow-sm",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { className: "w-5 h-5 mr-2" }), "Criar Novo Objetivo"]
 					})
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogContent, {
 					className: "sm:max-w-[425px]",
@@ -34492,6 +34409,78 @@ function GoalsPage() {
 					]
 				})]
 			})]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+			children: goals.map((goal, index$1) => {
+				const percentage = goal.target > 0 ? Math.min(goal.current / goal.target * 100, 100) : 0;
+				return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+					className: cn("overflow-hidden flex flex-col transition-all duration-300 shadow-sm hover:shadow-md animate-fade-in-up", goal.active ? "border-primary ring-1 ring-primary/20" : "border-muted"),
+					style: { animationDelay: `${index$1 * 100}ms` },
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "h-36 relative w-full overflow-hidden bg-muted",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+									src: isExternalUrl(goal.image) ? goal.image : `https://img.usecurling.com/p/600/300?q=${encodeURIComponent(goal.image)}&dpr=2`,
+									alt: goal.title,
+									className: "w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" }),
+								goal.active && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "absolute top-3 right-3 bg-primary text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleCheck, { className: "w-3.5 h-3.5" }), " Principal"]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "absolute bottom-3 left-3 right-3",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
+										className: "text-white font-bold text-lg leading-tight flex items-start gap-1.5 drop-shadow-md",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, { className: "w-4 h-4 mt-1 shrink-0 text-primary" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "line-clamp-2",
+											children: goal.title
+										})]
+									})
+								})
+							]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+							className: "pt-5 flex-1 space-y-4",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-2",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex justify-between items-end text-sm",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "font-semibold text-secondary",
+											children: "Progresso"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+											className: "font-bold text-primary",
+											children: [percentage.toFixed(1), "%"]
+										})]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Progress, {
+										value: percentage,
+										className: "h-2.5"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex justify-between text-xs font-medium text-muted-foreground pt-1",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [new Intl.NumberFormat("pt-BR").format(goal.current), " mi"] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [new Intl.NumberFormat("pt-BR").format(goal.target), " mi"] })]
+									})
+								]
+							})
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardFooter, {
+							className: "pt-0 pb-5 px-5",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+								variant: goal.active ? "secondary" : "outline",
+								className: cn("w-full font-semibold", goal.active ? "bg-secondary/10 text-secondary hover:bg-secondary/20" : ""),
+								disabled: goal.active,
+								onClick: () => handleSetActive(goal.id),
+								children: [goal.active ? "Meta Ativa" : "Tornar Meta Principal", !goal.active && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaneTakeoff, { className: "w-4 h-4 ml-2" })]
+							})
+						})
+					]
+				}, goal.id);
+			})
 		})]
 	});
 }
@@ -35780,4 +35769,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-ChpPfGNV.js.map
+//# sourceMappingURL=index-fGUK7Fp9.js.map
