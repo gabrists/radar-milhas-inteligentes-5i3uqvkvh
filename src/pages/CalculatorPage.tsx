@@ -12,16 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
-import {
-  Sparkles,
-  PlaneTakeoff,
-  Loader2,
-  Megaphone,
-  ArrowRightLeft,
-  Calculator,
-  Lightbulb,
-  ArrowRight,
-} from 'lucide-react'
+import { Sparkles, PlaneTakeoff, Loader2, Calculator } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
@@ -46,7 +37,6 @@ export default function CalculatorPage() {
   const [isSaving, setIsSaving] = useState(false)
 
   const [goal, setGoal] = useState<TravelGoal | null>(null)
-  const [topPromos, setTopPromos] = useState<any[]>([])
 
   const [productName, setProductName] = useState('')
   const [productValue, setProductValue] = useState<string>('5000')
@@ -57,19 +47,12 @@ export default function CalculatorPage() {
     async function fetchData() {
       if (!user) return
       try {
-        const [goalsRes, promosRes] = await Promise.all([
-          supabase
-            .from('travel_goals')
-            .select('*')
-            .eq('user_id', user.id)
-            .eq('is_active', true)
-            .maybeSingle(),
-          supabase
-            .from('active_promotions')
-            .select('*')
-            .order('bonus_percentage', { ascending: false })
-            .limit(2),
-        ])
+        const goalsRes = await supabase
+          .from('travel_goals')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .maybeSingle()
 
         if (goalsRes.data) {
           setGoal(goalsRes.data)
@@ -82,8 +65,6 @@ export default function CalculatorPage() {
             .maybeSingle()
           if (fallback.data) setGoal(fallback.data)
         }
-
-        if (promosRes.data) setTopPromos(promosRes.data)
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
@@ -207,10 +188,6 @@ export default function CalculatorPage() {
           <Skeleton className="h-5 w-48" />
         </div>
         <div className="flex flex-col gap-6 md:gap-8">
-          <div className="flex flex-col gap-6">
-            <Skeleton className="h-[160px] w-full rounded-xl" />
-            <Skeleton className="h-[140px] w-full rounded-xl" />
-          </div>
           <div>
             <Skeleton className="h-[460px] w-full rounded-xl" />
           </div>
@@ -237,83 +214,9 @@ export default function CalculatorPage() {
 
       <div className="flex flex-col gap-6 md:gap-8">
         <div
-          className="flex flex-col gap-6 animate-fade-in-up"
-          style={{ animationDelay: '100ms' }}
-        >
-          {goal && topPromos.length > 0 && (
-            <div className="space-y-3.5">
-              <h3 className="font-bold text-secondary text-[15px] flex items-center gap-2">
-                <div className="bg-primary/10 p-1.5 rounded-md text-primary">
-                  <Megaphone className="w-4 h-4" />
-                </div>
-                Acelere sua viagem para {goal.destination_name}
-              </h3>
-              <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x">
-                {topPromos.map((promo) => (
-                  <Card
-                    key={promo.id}
-                    className="flex-1 min-w-[260px] md:min-w-[280px] shrink-0 snap-start shadow-sm border-muted transition-all hover:shadow-md hover:border-primary/30"
-                  >
-                    <CardContent className="p-4 flex flex-col gap-3.5">
-                      <div className="flex justify-between items-start">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-bold border border-primary/10">
-                          🔥 {promo.bonus_percentage}% Bônus
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm font-semibold text-secondary bg-muted/40 p-2.5 rounded-lg border border-muted/50">
-                        <span className="truncate flex-1 text-center">
-                          {promo.origin}
-                        </span>
-                        <ArrowRightLeft className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                        <span className="truncate flex-1 text-center">
-                          {promo.destination}
-                        </span>
-                      </div>
-                      <Button
-                        onClick={() => applyPromo(promo.bonus_percentage)}
-                        size="sm"
-                        className="w-full text-xs font-bold shadow-sm h-9"
-                      >
-                        <Calculator className="w-4 h-4 mr-1.5" />
-                        Aplicar na Calculadora
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <Card className="bg-primary/5 border-primary/10 shadow-sm transition-all duration-300 hover:bg-primary/10 shrink-0">
-            <CardContent className="p-5 flex gap-4 items-start">
-              <div className="bg-primary/10 p-2.5 rounded-full text-primary shrink-0 mt-0.5">
-                <Lightbulb className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-secondary text-sm mb-1.5">
-                  Dica do Radar
-                </h4>
-                <p className="text-secondary/80 text-sm leading-relaxed font-medium">
-                  Use esta ferramenta para simular compras online antes de
-                  fazê-las, permitindo que você avalie se uma compra bonificada
-                  vale a pena.
-                </p>
-                <button
-                  onClick={() => navigate('/promocoes')}
-                  className="mt-3 text-primary text-sm font-bold flex items-center gap-1.5 hover:text-primary/80 transition-colors group"
-                >
-                  Explorar promoções{' '}
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div
           ref={calculatorRef}
           className="animate-fade-in-up"
-          style={{ animationDelay: '200ms' }}
+          style={{ animationDelay: '100ms' }}
         >
           <Card className="shadow-elevation border-muted h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/20 scroll-mt-24">
             <CardHeader className="pb-5 border-b border-muted">

@@ -19293,20 +19293,6 @@ var LayoutDashboard = createLucideIcon("layout-dashboard", [
 		key: "ldoo1y"
 	}]
 ]);
-var Lightbulb = createLucideIcon("lightbulb", [
-	["path", {
-		d: "M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5",
-		key: "1gvzjb"
-	}],
-	["path", {
-		d: "M9 18h6",
-		key: "x1upvd"
-	}],
-	["path", {
-		d: "M10 22h4",
-		key: "ceow96"
-	}]
-]);
 var Link$1 = createLucideIcon("link", [["path", {
 	d: "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71",
 	key: "1cjeqo"
@@ -19341,20 +19327,6 @@ var MapPin = createLucideIcon("map-pin", [["path", {
 	r: "3",
 	key: "ilqhr7"
 }]]);
-var Megaphone = createLucideIcon("megaphone", [
-	["path", {
-		d: "M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z",
-		key: "q8bfy3"
-	}],
-	["path", {
-		d: "M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14",
-		key: "1853fq"
-	}],
-	["path", {
-		d: "M8 6v8",
-		key: "15ugcq"
-	}]
-]);
 var Minus = createLucideIcon("minus", [["path", {
 	d: "M5 12h14",
 	key: "1ays0h"
@@ -39888,7 +39860,6 @@ function CalculatorPage() {
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [isSaving, setIsSaving] = (0, import_react.useState)(false);
 	const [goal, setGoal] = (0, import_react.useState)(null);
-	const [topPromos, setTopPromos] = (0, import_react.useState)([]);
 	const [productName, setProductName] = (0, import_react.useState)("");
 	const [productValue, setProductValue] = (0, import_react.useState)("5000");
 	const [pointsPerReal, setPointsPerReal] = (0, import_react.useState)("10");
@@ -39897,13 +39868,12 @@ function CalculatorPage() {
 		async function fetchData() {
 			if (!user) return;
 			try {
-				const [goalsRes, promosRes] = await Promise.all([supabase.from("travel_goals").select("*").eq("user_id", user.id).eq("is_active", true).maybeSingle(), supabase.from("active_promotions").select("*").order("bonus_percentage", { ascending: false }).limit(2)]);
+				const goalsRes = await supabase.from("travel_goals").select("*").eq("user_id", user.id).eq("is_active", true).maybeSingle();
 				if (goalsRes.data) setGoal(goalsRes.data);
 				else {
 					const fallback = await supabase.from("travel_goals").select("*").eq("user_id", user.id).limit(1).maybeSingle();
 					if (fallback.data) setGoal(fallback.data);
 				}
-				if (promosRes.data) setTopPromos(promosRes.data);
 			} catch (error) {
 				console.error("Error fetching data:", error);
 			} finally {
@@ -40005,12 +39975,9 @@ function CalculatorPage() {
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			className: "space-y-2",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 w-64" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-5 w-48" })]
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: "flex flex-col gap-6 md:gap-8",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "flex flex-col gap-6",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[160px] w-full rounded-xl" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[140px] w-full rounded-xl" })]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[460px] w-full rounded-xl" }) })]
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[460px] w-full rounded-xl" }) })
 		})]
 	});
 	const isHighValue = parseFloat(percentageOfGoal) >= 10;
@@ -40026,97 +39993,12 @@ function CalculatorPage() {
 				className: "text-muted-foreground mt-1 text-sm md:text-base font-medium",
 				children: "Simule quantas milhas a sua próxima compra pode render e projete na sua meta."
 			})]
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: "flex flex-col gap-6 md:gap-8",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "flex flex-col gap-6 animate-fade-in-up",
-				style: { animationDelay: "100ms" },
-				children: [goal && topPromos.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "space-y-3.5",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
-						className: "font-bold text-secondary text-[15px] flex items-center gap-2",
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "bg-primary/10 p-1.5 rounded-md text-primary",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Megaphone, { className: "w-4 h-4" })
-							}),
-							"Acelere sua viagem para ",
-							goal.destination_name
-						]
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x",
-						children: topPromos.map((promo) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
-							className: "flex-1 min-w-[260px] md:min-w-[280px] shrink-0 snap-start shadow-sm border-muted transition-all hover:shadow-md hover:border-primary/30",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-								className: "p-4 flex flex-col gap-3.5",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										className: "flex justify-between items-start",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-											className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-bold border border-primary/10",
-											children: [
-												"🔥 ",
-												promo.bonus_percentage,
-												"% Bônus"
-											]
-										})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										className: "flex items-center gap-2 text-sm font-semibold text-secondary bg-muted/40 p-2.5 rounded-lg border border-muted/50",
-										children: [
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												className: "truncate flex-1 text-center",
-												children: promo.origin
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowRightLeft, { className: "w-3.5 h-3.5 text-muted-foreground shrink-0" }),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												className: "truncate flex-1 text-center",
-												children: promo.destination
-											})
-										]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-										onClick: () => applyPromo(promo.bonus_percentage),
-										size: "sm",
-										className: "w-full text-xs font-bold shadow-sm h-9",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calculator, { className: "w-4 h-4 mr-1.5" }), "Aplicar na Calculadora"]
-									})
-								]
-							})
-						}, promo.id))
-					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
-					className: "bg-primary/5 border-primary/10 shadow-sm transition-all duration-300 hover:bg-primary/10 shrink-0",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-						className: "p-5 flex gap-4 items-start",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: "bg-primary/10 p-2.5 rounded-full text-primary shrink-0 mt-0.5",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Lightbulb, { className: "w-5 h-5" })
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
-								className: "font-bold text-secondary text-sm mb-1.5",
-								children: "Dica do Radar"
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								className: "text-secondary/80 text-sm leading-relaxed font-medium",
-								children: "Use esta ferramenta para simular compras online antes de fazê-las, permitindo que você avalie se uma compra bonificada vale a pena."
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-								onClick: () => navigate("/promocoes"),
-								className: "mt-3 text-primary text-sm font-bold flex items-center gap-1.5 hover:text-primary/80 transition-colors group",
-								children: [
-									"Explorar promoções",
-									" ",
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowRight, { className: "w-4 h-4 transition-transform group-hover:translate-x-1" })
-								]
-							})
-						] })]
-					})
-				})]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				ref: calculatorRef,
 				className: "animate-fade-in-up",
-				style: { animationDelay: "200ms" },
+				style: { animationDelay: "100ms" },
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
 					className: "shadow-elevation border-muted h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/20 scroll-mt-24",
 					children: [
@@ -40277,7 +40159,7 @@ function CalculatorPage() {
 						})
 					]
 				})
-			})]
+			})
 		})]
 	});
 }
@@ -45335,4 +45217,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-CK5gahX-.js.map
+//# sourceMappingURL=index-Cf7y7ddp.js.map
