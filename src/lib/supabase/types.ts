@@ -96,6 +96,51 @@ export type Database = {
         }
         Relationships: []
       }
+      transactions: {
+        Row: {
+          bonus_percentage: number | null
+          cost: number | null
+          created_at: string
+          description: string | null
+          destination_program: string | null
+          id: string
+          origin_program: string | null
+          points_amount: number
+          total_received: number | null
+          transaction_date: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          bonus_percentage?: number | null
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          destination_program?: string | null
+          id?: string
+          origin_program?: string | null
+          points_amount: number
+          total_received?: number | null
+          transaction_date?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          bonus_percentage?: number | null
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          destination_program?: string | null
+          id?: string
+          origin_program?: string | null
+          points_amount?: number
+          total_received?: number | null
+          transaction_date?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       travel_goals: {
         Row: {
           current_miles: number
@@ -283,6 +328,10 @@ export const Constants = {
 // Table: profiles
 //   FOREIGN KEY profiles_id_fkey: FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE
 //   PRIMARY KEY profiles_pkey: PRIMARY KEY (id)
+// Table: transactions
+//   PRIMARY KEY transactions_pkey: PRIMARY KEY (id)
+//   CHECK transactions_type_check: CHECK ((type = ANY (ARRAY['Acúmulo'::text, 'Transferência'::text, 'Compra'::text, 'Resgate'::text])))
+//   FOREIGN KEY transactions_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
 // Table: travel_goals
 //   PRIMARY KEY travel_goals_pkey: PRIMARY KEY (id)
 //   FOREIGN KEY travel_goals_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
@@ -306,6 +355,10 @@ export const Constants = {
 //     USING: (auth.uid() = id)
 //   Policy "Users can view own profile." (SELECT, PERMISSIVE) roles={public}
 //     USING: (auth.uid() = id)
+// Table: transactions
+//   Policy "Users can manage own transactions" (ALL, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = user_id)
+//     WITH CHECK: (auth.uid() = user_id)
 // Table: travel_goals
 //   Policy "Users can delete own travel goals." (DELETE, PERMISSIVE) roles={public}
 //     USING: (auth.uid() = user_id)

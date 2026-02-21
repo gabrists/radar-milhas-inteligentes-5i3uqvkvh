@@ -39183,7 +39183,6 @@ function Index() {
 	const { toast: toast$2 } = useToast();
 	const navigate = useNavigate();
 	const [loading, setLoading] = (0, import_react.useState)(true);
-	const [profile, setProfile] = (0, import_react.useState)(null);
 	const [promo, setPromo] = (0, import_react.useState)(null);
 	const [goal, setGoal] = (0, import_react.useState)(null);
 	const [balances, setBalances] = (0, import_react.useState)({});
@@ -39197,13 +39196,11 @@ function Index() {
 		async function fetchData() {
 			if (!user) return;
 			try {
-				const [profileRes, promoRes, goalRes, balancesRes] = await Promise.all([
-					supabase.from("profiles").select("full_name").eq("id", user.id).single(),
+				const [promoRes, goalRes, balancesRes] = await Promise.all([
 					supabase.from("active_promotions").select("*").order("bonus_percentage", { ascending: false }).limit(1).maybeSingle(),
 					supabase.from("travel_goals").select("*").eq("user_id", user.id).eq("is_active", true).maybeSingle(),
 					supabase.from("loyalty_balances").select("*").eq("user_id", user.id)
 				]);
-				if (profileRes.data) setProfile(profileRes.data);
 				if (promoRes.data) setPromo(promoRes.data);
 				if (goalRes.data) setGoal(goalRes.data);
 				else {
@@ -39286,16 +39283,8 @@ function Index() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "space-y-10 md:space-y-12 pb-8",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-				className: "animate-fade-in-up",
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h1", {
-					className: "text-xl md:text-2xl font-bold text-secondary tracking-tight",
-					children: ["Olá, ", profile?.full_name?.split(" ")[0] || "Viajante"]
-				})
-			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 				className: "animate-fade-in-up",
-				style: { animationDelay: "50ms" },
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
@@ -39347,7 +39336,7 @@ function Index() {
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 				className: "grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 animate-fade-in-up",
-				style: { animationDelay: "100ms" },
+				style: { animationDelay: "50ms" },
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "lg:col-span-2 flex flex-col h-full",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
@@ -44696,4 +44685,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-sVGVDdVf.js.map
+//# sourceMappingURL=index-DDpcvL7L.js.map

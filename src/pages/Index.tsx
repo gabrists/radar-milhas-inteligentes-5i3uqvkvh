@@ -56,7 +56,6 @@ export default function Index() {
   const navigate = useNavigate()
 
   const [loading, setLoading] = useState(true)
-  const [profile, setProfile] = useState<any>(null)
   const [promo, setPromo] = useState<any>(null)
   const [goal, setGoal] = useState<TravelGoal | null>(null)
   const [balances, setBalances] = useState<Record<string, number>>({})
@@ -73,12 +72,7 @@ export default function Index() {
     async function fetchData() {
       if (!user) return
       try {
-        const [profileRes, promoRes, goalRes, balancesRes] = await Promise.all([
-          supabase
-            .from('profiles')
-            .select('full_name')
-            .eq('id', user.id)
-            .single(),
+        const [promoRes, goalRes, balancesRes] = await Promise.all([
           supabase
             .from('active_promotions')
             .select('*')
@@ -94,7 +88,6 @@ export default function Index() {
           supabase.from('loyalty_balances').select('*').eq('user_id', user.id),
         ])
 
-        if (profileRes.data) setProfile(profileRes.data)
         if (promoRes.data) setPromo(promoRes.data)
 
         if (goalRes.data) {
@@ -205,15 +198,6 @@ export default function Index() {
   return (
     <div className="space-y-10 md:space-y-12 pb-8">
       <section className="animate-fade-in-up">
-        <h1 className="text-xl md:text-2xl font-bold text-secondary tracking-tight">
-          Olá, {profile?.full_name?.split(' ')[0] || 'Viajante'}
-        </h1>
-      </section>
-
-      <section
-        className="animate-fade-in-up"
-        style={{ animationDelay: '50ms' }}
-      >
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
           <h2 className="text-xl font-bold text-secondary flex items-center gap-2">
             <Wallet className="w-5 h-5 text-primary" /> Minha Carteira
@@ -278,7 +262,7 @@ export default function Index() {
 
       <section
         className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 animate-fade-in-up"
-        style={{ animationDelay: '100ms' }}
+        style={{ animationDelay: '50ms' }}
       >
         <div className="lg:col-span-2 flex flex-col h-full">
           <h2 className="text-xl font-bold text-secondary mb-4 flex items-center gap-2">
