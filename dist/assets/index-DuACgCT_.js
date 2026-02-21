@@ -18989,6 +18989,10 @@ var Lightbulb = createLucideIcon("lightbulb", [
 		key: "ceow96"
 	}]
 ]);
+var LoaderCircle = createLucideIcon("loader-circle", [["path", {
+	d: "M21 12a9 9 0 1 1-6.219-8.56",
+	key: "13zald"
+}]]);
 var LogOut = createLucideIcon("log-out", [
 	["path", {
 		d: "m16 17 5-5-5-5",
@@ -24461,6 +24465,40 @@ function Skeleton({ className, ...props }) {
 		...props
 	});
 }
+var buttonVariants = cva("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0", {
+	variants: {
+		variant: {
+			default: "bg-primary text-primary-foreground hover:bg-primary/90",
+			destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+			outline: "border border-input bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
+			secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+			ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
+			link: "text-foreground underline-offset-4 hover:underline"
+		},
+		size: {
+			default: "h-10 px-4 py-2",
+			sm: "h-9 rounded-md px-3",
+			lg: "h-11 rounded-md px-8",
+			icon: "h-10 w-10"
+		}
+	},
+	defaultVariants: {
+		variant: "default",
+		size: "default"
+	}
+});
+var Button = import_react.forwardRef(({ className, variant, size: size$3, asChild = false, ...props }, ref) => {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot : "button", {
+		className: cn(buttonVariants({
+			variant,
+			size: size$3,
+			className
+		})),
+		ref,
+		...props
+	});
+});
+Button.displayName = "Button";
 var __assign = function() {
 	__assign = Object.assign || function __assign$1(t) {
 		for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -32188,7 +32226,9 @@ const AuthProvider = ({ children }) => {
 };
 function Index() {
 	const { user } = useAuth();
+	const { toast: toast$2 } = useToast();
 	const [loading, setLoading] = (0, import_react.useState)(true);
+	const [isSaving, setIsSaving] = (0, import_react.useState)(false);
 	const [profile, setProfile] = (0, import_react.useState)(null);
 	const [goal, setGoal] = (0, import_react.useState)(null);
 	const [productName, setProductName] = (0, import_react.useState)("");
@@ -32244,6 +32284,34 @@ function Index() {
 		}, incrementTime);
 		return () => clearInterval(timer);
 	}, [generatedMiles]);
+	const handleSaveMiles = async () => {
+		if (!user || !goal) return;
+		setIsSaving(true);
+		try {
+			const newTotalMiles = currentMiles + generatedMiles;
+			const { error } = await supabase.from("travel_goals").update({ current_miles: newTotalMiles }).eq("id", goal.id);
+			if (error) throw error;
+			setGoal((prev) => prev ? {
+				...prev,
+				current_miles: newTotalMiles
+			} : null);
+			toast$2({
+				title: "Sucesso!",
+				description: "Milhas adicionadas com sucesso! Estás mais perto do teu destino!"
+			});
+			setProductName("");
+			setProductValue("");
+		} catch (error) {
+			console.error("Error saving miles:", error);
+			toast$2({
+				title: "Erro ao salvar",
+				description: "Ocorreu um erro ao tentar adicionar as milhas. Tente novamente.",
+				variant: "destructive"
+			});
+		} finally {
+			setIsSaving(false);
+		}
+	};
 	if (loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "space-y-6 md:space-y-8 pb-4",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -32261,6 +32329,7 @@ function Index() {
 		})]
 	});
 	const isHighValue = parseFloat(percentageOfGoal) >= 10;
+	const isFormValid = numericValue > 0 && numericMultiplier > 0;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "space-y-6 md:space-y-8 pb-4",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
@@ -32507,6 +32576,15 @@ function Index() {
 												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "0%" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "150%" })]
 											})
 										]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "pt-2",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+											onClick: handleSaveMiles,
+											disabled: isSaving || !isFormValid || !goal,
+											className: "w-full h-12 text-base font-bold shadow-md hover:shadow-lg transition-all",
+											children: isSaving ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-5 h-5 mr-2 animate-spin" }), "A guardar..."] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaneTakeoff, { className: "w-5 h-5 mr-2" }), "Adicionar à minha Meta"] })
+										})
 									})
 								]
 							})
@@ -32579,40 +32657,6 @@ var NotFound = () => {
 	});
 };
 var NotFound_default = NotFound;
-var buttonVariants = cva("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0", {
-	variants: {
-		variant: {
-			default: "bg-primary text-primary-foreground hover:bg-primary/90",
-			destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-			outline: "border border-input bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
-			secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-			ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
-			link: "text-foreground underline-offset-4 hover:underline"
-		},
-		size: {
-			default: "h-10 px-4 py-2",
-			sm: "h-9 rounded-md px-3",
-			lg: "h-11 rounded-md px-8",
-			icon: "h-10 w-10"
-		}
-	},
-	defaultVariants: {
-		variant: "default",
-		size: "default"
-	}
-});
-var Button = import_react.forwardRef(({ className, variant, size: size$3, asChild = false, ...props }, ref) => {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot : "button", {
-		className: cn(buttonVariants({
-			variant,
-			size: size$3,
-			className
-		})),
-		ref,
-		...props
-	});
-});
-Button.displayName = "Button";
 var MOBILE_BREAKPOINT = 768;
 function useIsMobile() {
 	const [isMobile, setIsMobile] = import_react.useState(void 0);
@@ -34762,4 +34806,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-BWOkDGhW.js.map
+//# sourceMappingURL=index-DuACgCT_.js.map

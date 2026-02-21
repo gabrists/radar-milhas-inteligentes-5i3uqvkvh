@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
 import {
   Target,
   Sparkles,
@@ -18,16 +19,19 @@ import {
   Lightbulb,
   ArrowRight,
   PlaneTakeoff,
+  Loader2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
+import { useToast } from '@/hooks/use-toast'
 
 interface Profile {
   full_name: string
 }
 
 interface TravelGoal {
+  id: string
   destination_name: string
   target_miles: number
   current_miles: number
@@ -35,7 +39,11 @@ interface TravelGoal {
 
 export default function Index() {
   const { user } = useAuth()
+  const { toast } = useToast()
+
   const [loading, setLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+
   const [profile, setProfile] = useState<Profile | null>(null)
   const [goal, setGoal] = useState<TravelGoal | null>(null)
 
@@ -117,6 +125,45 @@ export default function Index() {
     return () => clearInterval(timer)
   }, [generatedMiles])
 
+  const handleSaveMiles = async () => {
+    if (!user || !goal) return
+
+    setIsSaving(true)
+    try {
+      const newTotalMiles = currentMiles + generatedMiles
+
+      const { error } = await supabase
+        .from('travel_goals')
+        .update({ current_miles: newTotalMiles })
+        .eq('id', goal.id)
+
+      if (error) throw error
+
+      setGoal((prev) =>
+        prev ? { ...prev, current_miles: newTotalMiles } : null,
+      )
+
+      toast({
+        title: 'Sucesso!',
+        description:
+          'Milhas adicionadas com sucesso! Estás mais perto do teu destino!',
+      })
+
+      setProductName('')
+      setProductValue('')
+    } catch (error) {
+      console.error('Error saving miles:', error)
+      toast({
+        title: 'Erro ao salvar',
+        description:
+          'Ocorreu um erro ao tentar adicionar as milhas. Tente novamente.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="space-y-6 md:space-y-8 pb-4">
@@ -138,6 +185,7 @@ export default function Index() {
   }
 
   const isHighValue = parseFloat(percentageOfGoal) >= 10
+  const isFormValid = numericValue > 0 && numericMultiplier > 0
 
   return (
     <div className="space-y-6 md:space-y-8 pb-4">
@@ -361,6 +409,26 @@ export default function Index() {
                     <span>0%</span>
                     <span>150%</span>
                   </div>
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    onClick={handleSaveMiles}
+                    disabled={isSaving || !isFormValid || !goal}
+                    className="w-full h-12 text-base font-bold shadow-md hover:shadow-lg transition-all"
+                  >
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />A
+                        guardar...
+                      </>
+                    ) : (
+                      <>
+                        <PlaneTakeoff className="w-5 h-5 mr-2" />
+                        Adicionar à minha Meta
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
             </CardContent>
