@@ -6,6 +6,8 @@ import Index from './pages/Index'
 import HistoryPage from './pages/HistoryPage'
 import GoalsPage from './pages/GoalsPage'
 import SettingsPage from './pages/SettingsPage'
+import PromotionsPage from './pages/PromotionsPage'
+import AdminPromotionsPage from './pages/admin/AdminPromotionsPage'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 import AuthPage from './pages/AuthPage'
@@ -45,6 +47,8 @@ const AppRoutes = () => {
         <Route path="/" element={<Index />} />
         <Route path="/objetivos" element={<GoalsPage />} />
         <Route path="/historico" element={<HistoryPage />} />
+        <Route path="/promocoes" element={<PromotionsPage />} />
+        <Route path="/admin/promocoes" element={<AdminPromotionsPage />} />
         <Route path="/configuracoes" element={<SettingsPage />} />
       </Route>
       <Route path="*" element={<NotFound />} />

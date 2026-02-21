@@ -7,6 +7,8 @@ import {
   Settings,
   Bell,
   LogOut,
+  Tag,
+  ShieldAlert,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -66,6 +68,28 @@ export default function Layout() {
                 <Link to="/historico">
                   <History />
                   <span>Histórico</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={location.pathname === '/promocoes'}
+              >
+                <Link to="/promocoes">
+                  <Tag />
+                  <span>Promoções</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={location.pathname === '/admin/promocoes'}
+              >
+                <Link to="/admin/promocoes">
+                  <ShieldAlert />
+                  <span>Admin Promoções</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -146,11 +170,11 @@ export default function Layout() {
         </main>
 
         {/* Mobile Bottom Navigation */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t flex justify-around items-center h-16 z-50 px-2 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t flex justify-around items-center h-16 z-50 px-1 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)] overflow-x-auto">
           <Link
             to="/"
             className={cn(
-              'flex flex-col items-center justify-center w-full h-full space-y-1 text-[10px] font-medium transition-colors',
+              'flex flex-col items-center justify-center min-w-[64px] h-full space-y-1 text-[10px] font-medium transition-colors',
               location.pathname === '/'
                 ? 'text-primary'
                 : 'text-muted-foreground',
@@ -167,7 +191,7 @@ export default function Layout() {
           <Link
             to="/objetivos"
             className={cn(
-              'flex flex-col items-center justify-center w-full h-full space-y-1 text-[10px] font-medium transition-colors',
+              'flex flex-col items-center justify-center min-w-[64px] h-full space-y-1 text-[10px] font-medium transition-colors',
               location.pathname === '/objetivos'
                 ? 'text-primary'
                 : 'text-muted-foreground',
@@ -182,9 +206,26 @@ export default function Layout() {
             <span>Objetivos</span>
           </Link>
           <Link
+            to="/promocoes"
+            className={cn(
+              'flex flex-col items-center justify-center min-w-[64px] h-full space-y-1 text-[10px] font-medium transition-colors',
+              location.pathname === '/promocoes'
+                ? 'text-primary'
+                : 'text-muted-foreground',
+            )}
+          >
+            <Tag
+              className={cn(
+                'h-5 w-5',
+                location.pathname === '/promocoes' && 'fill-primary/20',
+              )}
+            />
+            <span>Promoções</span>
+          </Link>
+          <Link
             to="/historico"
             className={cn(
-              'flex flex-col items-center justify-center w-full h-full space-y-1 text-[10px] font-medium transition-colors',
+              'flex flex-col items-center justify-center min-w-[64px] h-full space-y-1 text-[10px] font-medium transition-colors',
               location.pathname === '/historico'
                 ? 'text-primary'
                 : 'text-muted-foreground',
@@ -201,7 +242,7 @@ export default function Layout() {
           <Link
             to="/configuracoes"
             className={cn(
-              'flex flex-col items-center justify-center w-full h-full space-y-1 text-[10px] font-medium transition-colors',
+              'flex flex-col items-center justify-center min-w-[64px] h-full space-y-1 text-[10px] font-medium transition-colors',
               location.pathname === '/configuracoes'
                 ? 'text-primary'
                 : 'text-muted-foreground',

@@ -15,6 +15,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      active_promotions: {
+        Row: {
+          bonus_percentage: number
+          created_at: string
+          destination: string
+          id: string
+          link: string
+          origin: string
+          title: string
+        }
+        Insert: {
+          bonus_percentage: number
+          created_at?: string
+          destination: string
+          id?: string
+          link: string
+          origin: string
+          title: string
+        }
+        Update: {
+          bonus_percentage?: number
+          created_at?: string
+          destination?: string
+          id?: string
+          link?: string
+          origin?: string
+          title?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           full_name: string
@@ -41,6 +71,8 @@ export type Database = {
           current_miles: number
           destination_name: string
           id: string
+          image_url: string | null
+          is_active: boolean | null
           target_date: string | null
           target_miles: number
           user_id: string
@@ -49,6 +81,8 @@ export type Database = {
           current_miles?: number
           destination_name: string
           id?: string
+          image_url?: string | null
+          is_active?: boolean | null
           target_date?: string | null
           target_miles: number
           user_id: string
@@ -57,6 +91,8 @@ export type Database = {
           current_miles?: number
           destination_name?: string
           id?: string
+          image_url?: string | null
+          is_active?: boolean | null
           target_date?: string | null
           target_miles?: number
           user_id?: string
@@ -207,6 +243,8 @@ export const Constants = {
 // indexes and materialized views not present in the type definitions above.
 
 // --- CONSTRAINTS ---
+// Table: active_promotions
+//   PRIMARY KEY active_promotions_pkey: PRIMARY KEY (id)
 // Table: profiles
 //   FOREIGN KEY profiles_id_fkey: FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE
 //   PRIMARY KEY profiles_pkey: PRIMARY KEY (id)
@@ -215,6 +253,9 @@ export const Constants = {
 //   FOREIGN KEY travel_goals_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
 
 // --- ROW LEVEL SECURITY POLICIES ---
+// Table: active_promotions
+//   Policy "Anyone can view active promotions" (SELECT, PERMISSIVE) roles={public}
+//     USING: true
 // Table: profiles
 //   Policy "Users can update own profile." (UPDATE, PERMISSIVE) roles={public}
 //     USING: (auth.uid() = id)
