@@ -159,13 +159,11 @@ export default function Index() {
           .update({ balance: val, updated_at: new Date().toISOString() })
           .eq('id', existing.id)
       } else {
-        await supabase
-          .from('loyalty_balances')
-          .insert({
-            user_id: user.id,
-            program_name: selectedProgram,
-            balance: val,
-          })
+        await supabase.from('loyalty_balances').insert({
+          user_id: user.id,
+          program_name: selectedProgram,
+          balance: val,
+        })
       }
 
       setBalances((prev) => ({ ...prev, [selectedProgram]: val }))
