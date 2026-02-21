@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Link, useNavigate } from 'react-router-dom'
+import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -15,20 +15,17 @@ import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Wallet,
-  AlertTriangle,
-  TrendingUp,
-  ArrowRight,
   MapPin,
   Target,
   Loader2,
   Edit2,
   Sparkles,
   Percent,
+  ArrowRight,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
 import { useToast } from '@/hooks/use-toast'
-import { cn } from '@/lib/utils'
 
 interface TravelGoal {
   id: string
@@ -49,6 +46,7 @@ const programsList = [
 export default function Index() {
   const { user } = useAuth()
   const { toast } = useToast()
+  const navigate = useNavigate()
 
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<any>(null)
@@ -122,8 +120,6 @@ export default function Index() {
     (acc, curr) => acc + curr,
     0,
   )
-  const estimatedValue = (totalBalance / 1000) * 20
-
   const goalTotal = goal?.target_miles || 100000
   const currentMiles = goal?.current_miles || totalBalance
   const currentPercentage = goalTotal > 0 ? (currentMiles / goalTotal) * 100 : 0
@@ -185,21 +181,18 @@ export default function Index() {
     return (
       <div className="space-y-10 md:space-y-12 pb-8">
         <Skeleton className="h-8 w-48 rounded-md" />
-        <Skeleton className="h-[280px] w-full rounded-3xl" />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Skeleton className="h-[360px] w-full rounded-2xl lg:col-span-2" />
-          <Skeleton className="h-[360px] w-full rounded-2xl lg:col-span-1" />
-        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {[...Array(5)].map((_, i) => (
             <Skeleton key={i} className="h-24 w-full rounded-xl" />
           ))}
         </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Skeleton className="h-[360px] w-full rounded-2xl lg:col-span-2" />
+          <Skeleton className="h-[360px] w-full rounded-2xl lg:col-span-1" />
+        </div>
       </div>
     )
   }
-
-  const hasExpiringMiles = true // Mocked for demonstration
 
   return (
     <div className="space-y-10 md:space-y-12 pb-8">
@@ -209,68 +202,65 @@ export default function Index() {
         </h1>
       </section>
 
-      {hasExpiringMiles && (
-        <div
-          className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex items-center justify-between gap-4 animate-fade-in-up shadow-sm"
-          style={{ animationDelay: '50ms' }}
-        >
-          <div className="flex items-center gap-3">
-            <div className="bg-orange-100 p-2 rounded-full text-orange-600 shrink-0">
-              <AlertTriangle className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-orange-900 font-bold text-sm">
-                Atenção aos Vencimentos
-              </h3>
-              <p className="text-orange-800/90 text-sm font-medium">
-                Você tem 5.000 pontos Livelo expirando nos próximos 15 dias.
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="bg-white border-orange-200 text-orange-700 hover:bg-orange-50 hover:text-orange-800 shrink-0"
-          >
-            Ver detalhes
-          </Button>
-        </div>
-      )}
-
       <section
         className="animate-fade-in-up"
-        style={{ animationDelay: '100ms' }}
+        style={{ animationDelay: '50ms' }}
       >
-        <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-muted flex flex-col items-center justify-center text-center relative overflow-hidden group">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent opacity-50"></div>
+        <h2 className="text-xl font-bold text-secondary mb-4 flex items-center gap-2">
+          <Wallet className="w-5 h-5 text-primary" /> Minha Carteira
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {programsList.map((prog) => (
+            <Card
+              key={prog.name}
+              className="flex items-center p-4 gap-4 group hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 cursor-pointer rounded-2xl bg-white"
+              onClick={() =>
+                navigate(
+                  `/programa/${prog.name.toLowerCase().replace(/\s+/g, '')}`,
+                )
+              }
+            >
+              <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-muted/50 bg-muted/20 flex items-center justify-center">
+                <img
+                  src={`https://img.usecurling.com/i?q=${prog.name}&color=${prog.color}`}
+                  alt={prog.name}
+                  className="w-8 h-8 object-contain"
+                  onError={(e) => {
+                    // Fallback if image fails
+                    e.currentTarget.style.display = 'none'
+                    e.currentTarget.parentElement!.innerHTML = `<span class="font-bold text-lg text-muted-foreground">${prog.name.charAt(0)}</span>`
+                  }}
+                />
+              </div>
 
-          <div className="relative z-10 flex flex-col items-center">
-            <p className="text-xs md:text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground mb-4 md:mb-6 flex items-center gap-2">
-              <Wallet className="w-4 h-4 text-primary" /> Patrimônio em Milhas
-            </p>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-semibold text-muted-foreground truncate">
+                  {prog.name}
+                </h3>
+                <p className="text-xl font-bold text-secondary truncate mt-0.5">
+                  {new Intl.NumberFormat('pt-BR').format(
+                    balances[prog.name] || 0,
+                  )}
+                </p>
+              </div>
 
-            <h2 className="text-5xl md:text-7xl font-black text-secondary tracking-tighter transition-transform duration-300 group-hover:scale-105">
-              {new Intl.NumberFormat('pt-BR').format(totalBalance)}{' '}
-              <span className="text-2xl md:text-4xl text-muted-foreground font-semibold tracking-normal">
-                mi
-              </span>
-            </h2>
-
-            <div className="mt-6 md:mt-8 inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-5 py-2.5 rounded-full font-bold border border-emerald-100 shadow-sm transition-colors hover:bg-emerald-100 cursor-default">
-              <TrendingUp className="w-4 h-4 text-emerald-600" />
-              Valor Estimado: ~{' '}
-              {new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              }).format(estimatedValue)}
-            </div>
-          </div>
+              <div
+                className="w-8 h-8 rounded-full bg-muted/30 flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0 z-10"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleOpenModal(prog.name)
+                }}
+              >
+                <Edit2 className="w-4 h-4" />
+              </div>
+            </Card>
+          ))}
         </div>
       </section>
 
       <section
         className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 animate-fade-in-up"
-        style={{ animationDelay: '150ms' }}
+        style={{ animationDelay: '100ms' }}
       >
         <div className="lg:col-span-2 flex flex-col h-full">
           <h2 className="text-xl font-bold text-secondary mb-4 flex items-center gap-2">
@@ -278,7 +268,7 @@ export default function Index() {
           </h2>
           <Card
             className="flex-1 overflow-hidden border-none shadow-elevation relative group min-h-[320px] rounded-2xl cursor-pointer"
-            onClick={() => (window.location.href = '/objetivos')}
+            onClick={() => navigate('/objetivos')}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-secondary via-secondary/60 to-transparent z-10 transition-opacity duration-300 group-hover:opacity-90"></div>
             <img
@@ -370,52 +360,6 @@ export default function Index() {
               </Button>
             </CardContent>
           </Card>
-        </div>
-      </section>
-
-      <section
-        className="animate-fade-in-up"
-        style={{ animationDelay: '200ms' }}
-      >
-        <h2 className="text-xl font-bold text-secondary mb-4 flex items-center gap-2">
-          <Wallet className="w-5 h-5 text-primary" /> Minha Carteira
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {programsList.map((prog) => (
-            <Card
-              key={prog.name}
-              className="flex items-center p-4 gap-4 group hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 cursor-pointer rounded-2xl bg-white"
-              onClick={() => handleOpenModal(prog.name)}
-            >
-              <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-muted/50 bg-muted/20 flex items-center justify-center">
-                <img
-                  src={`https://img.usecurling.com/i?q=${prog.name}&color=${prog.color}`}
-                  alt={prog.name}
-                  className="w-8 h-8 object-contain"
-                  onError={(e) => {
-                    // Fallback if image fails
-                    e.currentTarget.style.display = 'none'
-                    e.currentTarget.parentElement!.innerHTML = `<span class="font-bold text-lg text-muted-foreground">${prog.name.charAt(0)}</span>`
-                  }}
-                />
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-muted-foreground truncate">
-                  {prog.name}
-                </h3>
-                <p className="text-xl font-bold text-secondary truncate mt-0.5">
-                  {new Intl.NumberFormat('pt-BR').format(
-                    balances[prog.name] || 0,
-                  )}
-                </p>
-              </div>
-
-              <div className="w-8 h-8 rounded-full bg-muted/30 flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0">
-                <Edit2 className="w-4 h-4" />
-              </div>
-            </Card>
-          ))}
         </div>
       </section>
 

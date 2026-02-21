@@ -19492,13 +19492,6 @@ var Trash2 = createLucideIcon("trash-2", [
 		key: "e791ji"
 	}]
 ]);
-var TrendingUp = createLucideIcon("trending-up", [["path", {
-	d: "M16 7h6v6",
-	key: "box55l"
-}], ["path", {
-	d: "m22 7-8.5 8.5-5-5L2 17",
-	key: "1t1m79"
-}]]);
 var TriangleAlert = createLucideIcon("triangle-alert", [
 	["path", {
 		d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
@@ -33426,6 +33419,7 @@ var programsList = [
 function Index() {
 	const { user } = useAuth();
 	const { toast: toast$2 } = useToast();
+	const navigate = useNavigate();
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [profile, setProfile] = (0, import_react.useState)(null);
 	const [promo, setPromo] = (0, import_react.useState)(null);
@@ -33467,7 +33461,6 @@ function Index() {
 		fetchData();
 	}, [user]);
 	const totalBalance = Object.values(balances).reduce((acc, curr) => acc + curr, 0);
-	const estimatedValue = totalBalance / 1e3 * 20;
 	const goalTotal = goal?.target_miles || 1e5;
 	const currentMiles = goal?.current_miles || totalBalance;
 	const currentPercentage = goalTotal > 0 ? currentMiles / goalTotal * 100 : 0;
@@ -33516,14 +33509,13 @@ function Index() {
 		className: "space-y-10 md:space-y-12 pb-8",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-48 rounded-md" }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[280px] w-full rounded-3xl" }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "grid grid-cols-1 lg:grid-cols-3 gap-6",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[360px] w-full rounded-2xl lg:col-span-2" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[360px] w-full rounded-2xl lg:col-span-1" })]
-			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4",
 				children: [...Array(5)].map((_$1, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-24 w-full rounded-xl" }, i))
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "grid grid-cols-1 lg:grid-cols-3 gap-6",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[360px] w-full rounded-2xl lg:col-span-2" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[360px] w-full rounded-2xl lg:col-span-1" })]
 			})
 		]
 	});
@@ -33537,70 +33529,55 @@ function Index() {
 					children: ["Olá, ", profile?.full_name?.split(" ")[0] || "Viajante"]
 				})
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "bg-orange-50 border border-orange-200 rounded-xl p-4 flex items-center justify-between gap-4 animate-fade-in-up shadow-sm",
-				style: { animationDelay: "50ms" },
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex items-center gap-3",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "bg-orange-100 p-2 rounded-full text-orange-600 shrink-0",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TriangleAlert, { className: "w-5 h-5" })
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-						className: "text-orange-900 font-bold text-sm",
-						children: "Atenção aos Vencimentos"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						className: "text-orange-800/90 text-sm font-medium",
-						children: "Você tem 5.000 pontos Livelo expirando nos próximos 15 dias."
-					})] })]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-					variant: "outline",
-					size: "sm",
-					className: "bg-white border-orange-200 text-orange-700 hover:bg-orange-50 hover:text-orange-800 shrink-0",
-					children: "Ver detalhes"
-				})]
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 				className: "animate-fade-in-up",
-				style: { animationDelay: "100ms" },
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-muted flex flex-col items-center justify-center text-center relative overflow-hidden group",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent opacity-50" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "relative z-10 flex flex-col items-center",
+				style: { animationDelay: "50ms" },
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+					className: "text-xl font-bold text-secondary mb-4 flex items-center gap-2",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Wallet, { className: "w-5 h-5 text-primary" }), " Minha Carteira"]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4",
+					children: programsList.map((prog) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+						className: "flex items-center p-4 gap-4 group hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 cursor-pointer rounded-2xl bg-white",
+						onClick: () => navigate(`/programa/${prog.name.toLowerCase().replace(/\s+/g, "")}`),
 						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-								className: "text-xs md:text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground mb-4 md:mb-6 flex items-center gap-2",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Wallet, { className: "w-4 h-4 text-primary" }), " Patrimônio em Milhas"]
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
-								className: "text-5xl md:text-7xl font-black text-secondary tracking-tighter transition-transform duration-300 group-hover:scale-105",
-								children: [
-									new Intl.NumberFormat("pt-BR").format(totalBalance),
-									" ",
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "text-2xl md:text-4xl text-muted-foreground font-semibold tracking-normal",
-										children: "mi"
-									})
-								]
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "w-12 h-12 rounded-full overflow-hidden shrink-0 border border-muted/50 bg-muted/20 flex items-center justify-center",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+									src: `https://img.usecurling.com/i?q=${prog.name}&color=${prog.color}`,
+									alt: prog.name,
+									className: "w-8 h-8 object-contain",
+									onError: (e) => {
+										e.currentTarget.style.display = "none";
+										e.currentTarget.parentElement.innerHTML = `<span class="font-bold text-lg text-muted-foreground">${prog.name.charAt(0)}</span>`;
+									}
+								})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "mt-6 md:mt-8 inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-5 py-2.5 rounded-full font-bold border border-emerald-100 shadow-sm transition-colors hover:bg-emerald-100 cursor-default",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TrendingUp, { className: "w-4 h-4 text-emerald-600" }),
-									"Valor Estimado: ~",
-									" ",
-									new Intl.NumberFormat("pt-BR", {
-										style: "currency",
-										currency: "BRL"
-									}).format(estimatedValue)
-								]
+								className: "flex-1 min-w-0",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+									className: "text-sm font-semibold text-muted-foreground truncate",
+									children: prog.name
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-xl font-bold text-secondary truncate mt-0.5",
+									children: new Intl.NumberFormat("pt-BR").format(balances[prog.name] || 0)
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "w-8 h-8 rounded-full bg-muted/30 flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0 z-10",
+								onClick: (e) => {
+									e.stopPropagation();
+									handleOpenModal(prog.name);
+								},
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pen, { className: "w-4 h-4" })
 							})
 						]
-					})]
-				})
+					}, prog.name))
+				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 				className: "grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 animate-fade-in-up",
-				style: { animationDelay: "150ms" },
+				style: { animationDelay: "100ms" },
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "lg:col-span-2 flex flex-col h-full",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
@@ -33608,7 +33585,7 @@ function Index() {
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Target, { className: "w-5 h-5 text-primary" }), " Meta Principal"]
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
 						className: "flex-1 overflow-hidden border-none shadow-elevation relative group min-h-[320px] rounded-2xl cursor-pointer",
-						onClick: () => window.location.href = "/objetivos",
+						onClick: () => navigate("/objetivos"),
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-gradient-to-t from-secondary via-secondary/60 to-transparent z-10 transition-opacity duration-300 group-hover:opacity-90" }),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
@@ -33715,48 +33692,6 @@ function Index() {
 							})]
 						})]
 					})]
-				})]
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
-				className: "animate-fade-in-up",
-				style: { animationDelay: "200ms" },
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
-					className: "text-xl font-bold text-secondary mb-4 flex items-center gap-2",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Wallet, { className: "w-5 h-5 text-primary" }), " Minha Carteira"]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4",
-					children: programsList.map((prog) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						className: "flex items-center p-4 gap-4 group hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 cursor-pointer rounded-2xl bg-white",
-						onClick: () => handleOpenModal(prog.name),
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "w-12 h-12 rounded-full overflow-hidden shrink-0 border border-muted/50 bg-muted/20 flex items-center justify-center",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-									src: `https://img.usecurling.com/i?q=${prog.name}&color=${prog.color}`,
-									alt: prog.name,
-									className: "w-8 h-8 object-contain",
-									onError: (e) => {
-										e.currentTarget.style.display = "none";
-										e.currentTarget.parentElement.innerHTML = `<span class="font-bold text-lg text-muted-foreground">${prog.name.charAt(0)}</span>`;
-									}
-								})
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "flex-1 min-w-0",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-									className: "text-sm font-semibold text-muted-foreground truncate",
-									children: prog.name
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-									className: "text-xl font-bold text-secondary truncate mt-0.5",
-									children: new Intl.NumberFormat("pt-BR").format(balances[prog.name] || 0)
-								})]
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "w-8 h-8 rounded-full bg-muted/30 flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pen, { className: "w-4 h-4" })
-							})
-						]
-					}, prog.name))
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
@@ -40715,4 +40650,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-C30u7ZLj.js.map
+//# sourceMappingURL=index-IQ8mhO1C.js.map
