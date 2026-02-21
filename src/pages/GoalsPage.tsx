@@ -2,8 +2,19 @@ import { useState } from 'react'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { MapPin, Target, CheckCircle2, PlaneTakeoff } from 'lucide-react'
+import { MapPin, Target, CheckCircle2, PlaneTakeoff, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useToast } from '@/hooks/use-toast'
 
 const initialGoals = [
   {
@@ -34,10 +45,42 @@ const initialGoals = [
 
 export default function GoalsPage() {
   const [goals, setGoals] = useState(initialGoals)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [newGoal, setNewGoal] = useState({
+    title: '',
+    target: '',
+    image: '',
+  })
+  const { toast } = useToast()
 
   const handleSetActive = (id: number) => {
     setGoals(goals.map((g) => ({ ...g, active: g.id === id })))
   }
+
+  const handleSaveGoal = () => {
+    if (!newGoal.title || !newGoal.target) return
+
+    const newGoalObj = {
+      id: Date.now(),
+      title: newGoal.title,
+      current: 0,
+      target: parseInt(newGoal.target) || 0,
+      image: newGoal.image || newGoal.title,
+      active: goals.length === 0,
+    }
+
+    setGoals([...goals, newGoalObj])
+    setIsModalOpen(false)
+    setNewGoal({ title: '', target: '', image: '' })
+
+    toast({
+      title: 'Sucesso!',
+      description: 'Objetivo criado com sucesso!',
+    })
+  }
+
+  const isExternalUrl = (url: string) =>
+    url.startsWith('http://') || url.startsWith('https://')
 
   return (
     <div className="space-y-6 md:space-y-8 pb-4 animate-fade-in-up">
@@ -53,7 +96,10 @@ export default function GoalsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {goals.map((goal, index) => {
-          const percentage = Math.min((goal.current / goal.target) * 100, 100)
+          const percentage =
+            goal.target > 0
+              ? Math.min((goal.current / goal.target) * 100, 100)
+              : 0
 
           return (
             <Card
@@ -68,7 +114,11 @@ export default function GoalsPage() {
             >
               <div className="h-36 relative w-full overflow-hidden bg-muted">
                 <img
-                  src={`https://img.usecurling.com/p/600/300?q=${encodeURIComponent(goal.image)}&dpr=2`}
+                  src={
+                    isExternalUrl(goal.image)
+                      ? goal.image
+                      : `https://img.usecurling.com/p/600/300?q=${encodeURIComponent(goal.image)}&dpr=2`
+                  }
                   alt={goal.title}
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
@@ -127,6 +177,77 @@ export default function GoalsPage() {
             </Card>
           )
         })}
+
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogTrigger asChild>
+            <Card
+              className="min-h-[350px] border-2 border-dashed border-muted flex flex-col items-center justify-center bg-muted/20 cursor-pointer transition-all duration-300 hover:border-primary/50 hover:bg-primary/5 hover:scale-[1.02] hover:shadow-md animate-fade-in-up group"
+              style={{ animationDelay: `${goals.length * 100}ms` }}
+            >
+              <div className="bg-background p-4 rounded-full shadow-sm mb-4 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 text-muted-foreground">
+                <Plus className="w-8 h-8" />
+              </div>
+              <h3 className="font-bold text-lg text-secondary group-hover:text-primary transition-colors">
+                Criar Novo Objetivo
+              </h3>
+              <p className="text-muted-foreground text-sm mt-1">
+                Planeje sua próxima viagem
+              </p>
+            </Card>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Qual é o seu próximo destino?</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-5 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="destination">Nome do Destino</Label>
+                <Input
+                  id="destination"
+                  placeholder="Ex: Paris, França"
+                  value={newGoal.title}
+                  onChange={(e) =>
+                    setNewGoal({ ...newGoal, title: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="target">Meta de Milhas</Label>
+                <Input
+                  id="target"
+                  type="number"
+                  placeholder="Ex: 150000"
+                  value={newGoal.target}
+                  onChange={(e) =>
+                    setNewGoal({ ...newGoal, target: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="image">URL da Imagem de Fundo (Opcional)</Label>
+                <Input
+                  id="image"
+                  placeholder="https://exemplo.com/imagem.jpg"
+                  value={newGoal.image}
+                  onChange={(e) =>
+                    setNewGoal({ ...newGoal, image: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleSaveGoal}
+                disabled={!newGoal.title || !newGoal.target}
+              >
+                Salvar Objetivo
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )
