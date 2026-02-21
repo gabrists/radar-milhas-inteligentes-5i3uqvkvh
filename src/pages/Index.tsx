@@ -397,7 +397,7 @@ export default function Index() {
                 variant={promo ? 'default' : 'outline'}
               >
                 <Link to={promo ? `/promocoes/${promo.id}` : '/promocoes'}>
-                  {promo ? 'Ver Oferta' : 'Ver Promoções'}{' '}
+                  {promo ? 'Ver Promoção' : 'Ver Promoções'}{' '}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
@@ -472,7 +472,8 @@ export default function Index() {
                   </div>
                   <Button asChild size="sm" className="font-bold shadow-sm">
                     <a href={p.link} target="_blank" rel="noopener noreferrer">
-                      Ver Oferta <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
+                      Ver Promoção{' '}
+                      <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
                     </a>
                   </Button>
                 </div>
