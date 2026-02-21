@@ -9,6 +9,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Target,
   Sparkles,
@@ -19,16 +20,62 @@ import {
   PlaneTakeoff,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/hooks/use-auth'
+import { supabase } from '@/lib/supabase/client'
+
+interface Profile {
+  full_name: string
+}
+
+interface TravelGoal {
+  destination_name: string
+  target_miles: number
+  current_miles: number
+}
 
 export default function Index() {
+  const { user } = useAuth()
+  const [loading, setLoading] = useState(true)
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [goal, setGoal] = useState<TravelGoal | null>(null)
+
   const [productName, setProductName] = useState('')
   const [productValue, setProductValue] = useState<string>('5000')
   const [pointsPerReal, setPointsPerReal] = useState<string>('10')
   const [transferBonus, setTransferBonus] = useState<number[]>([100])
 
-  const goalTotal = 120000
-  const currentMiles = 45000
-  const currentPercentage = (currentMiles / goalTotal) * 100
+  useEffect(() => {
+    async function fetchData() {
+      if (!user) return
+      try {
+        const [profileRes, goalsRes] = await Promise.all([
+          supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('id', user.id)
+            .single(),
+          supabase
+            .from('travel_goals')
+            .select('*')
+            .eq('user_id', user.id)
+            .limit(1)
+            .maybeSingle(),
+        ])
+
+        if (profileRes.data) setProfile(profileRes.data)
+        if (goalsRes.data) setGoal(goalsRes.data)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [user])
+
+  const goalTotal = goal?.target_miles || 120000
+  const currentMiles = goal?.current_miles || 0
+  const currentPercentage = goalTotal > 0 ? (currentMiles / goalTotal) * 100 : 0
 
   const numericValue = parseFloat(productValue) || 0
   const numericMultiplier = parseFloat(pointsPerReal) || 0
@@ -41,7 +88,9 @@ export default function Index() {
   }, [numericValue, numericMultiplier, bonusPercentage])
 
   const percentageOfGoal = useMemo(() => {
-    return ((generatedMiles / goalTotal) * 100).toFixed(1)
+    return goalTotal > 0
+      ? ((generatedMiles / goalTotal) * 100).toFixed(1)
+      : '0.0'
   }, [generatedMiles, goalTotal])
 
   const [animatedMiles, setAnimatedMiles] = useState(0)
@@ -68,13 +117,33 @@ export default function Index() {
     return () => clearInterval(timer)
   }, [generatedMiles])
 
+  if (loading) {
+    return (
+      <div className="space-y-6 md:space-y-8 pb-4">
+        <div className="space-y-2">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-5 w-48" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            <Skeleton className="h-[300px] w-full rounded-xl" />
+            <Skeleton className="h-[140px] w-full rounded-xl" />
+          </div>
+          <div className="lg:col-span-7">
+            <Skeleton className="h-[460px] w-full rounded-xl" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const isHighValue = parseFloat(percentageOfGoal) >= 10
 
   return (
     <div className="space-y-6 md:space-y-8 pb-4">
       <section className="animate-fade-in-up">
         <h2 className="text-2xl md:text-3xl font-bold text-secondary tracking-tight">
-          Olá, Viajante! 👋
+          Olá, {profile?.full_name || 'Viajante'}! 👋
         </h2>
         <p className="text-muted-foreground mt-1 text-sm md:text-base font-medium">
           {new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full' }).format(
@@ -100,14 +169,14 @@ export default function Index() {
                   Meta Ativa
                 </span>
                 <span className="inline-flex items-center gap-1 text-xs font-medium bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-md shadow-sm border border-white/10">
-                  <MapPin className="w-3.5 h-3.5" /> EUA
+                  <MapPin className="w-3.5 h-3.5" /> Viagem
                 </span>
               </div>
               <CardTitle className="text-2xl font-bold leading-tight text-white drop-shadow-sm">
-                Viagem para Orlando
+                {goal?.destination_name || 'Nenhuma meta definida'}
               </CardTitle>
               <CardDescription className="text-primary-foreground/90 text-sm font-medium drop-shadow-sm">
-                Disney e Universal Studios
+                Acompanhe o seu progresso
               </CardDescription>
             </CardHeader>
 
@@ -134,11 +203,13 @@ export default function Index() {
               <div className="relative h-4 mt-6 bg-black/20 rounded-full overflow-hidden backdrop-blur-md border border-white/10 shadow-inner">
                 <div
                   className="absolute top-0 left-0 h-full bg-gradient-to-r from-accent to-orange-500 rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(245,158,11,0.5)]"
-                  style={{ width: `${currentPercentage}%` }}
+                  style={{ width: `${Math.min(currentPercentage, 100)}%` }}
                 ></div>
                 <PlaneTakeoff
                   className="absolute top-1/2 -translate-y-1/2 text-white drop-shadow-lg w-5 h-5 transition-all duration-1000 ease-out"
-                  style={{ left: `calc(${currentPercentage}% - 10px)` }}
+                  style={{
+                    left: `calc(${Math.min(currentPercentage, 100)}% - 10px)`,
+                  }}
                 />
               </div>
 
@@ -329,7 +400,7 @@ export default function Index() {
                     >
                       {percentageOfGoal}%
                     </strong>{' '}
-                    da sua passagem para Orlando!
+                    da sua passagem!
                   </p>
                 </div>
               </div>

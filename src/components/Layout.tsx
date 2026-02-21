@@ -6,6 +6,7 @@ import {
   History,
   Settings,
   Bell,
+  LogOut,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,9 +22,11 @@ import {
 } from '@/components/ui/sidebar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function Layout() {
   const location = useLocation()
+  const { signOut } = useAuth()
 
   return (
     <SidebarProvider>
@@ -80,19 +83,30 @@ export default function Layout() {
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter className="p-4 border-t border-border/50">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10 border border-primary/20">
-              <AvatarImage src="https://img.usecurling.com/ppl/thumbnail?gender=male&seed=1" />
-              <AvatarFallback>VT</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold text-secondary">
-                Viajante
-              </span>
-              <span className="text-xs text-muted-foreground font-medium">
-                Plano Premium
-              </span>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10 border border-primary/20">
+                <AvatarImage src="https://img.usecurling.com/ppl/thumbnail?gender=male&seed=1" />
+                <AvatarFallback>VT</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold text-secondary">
+                  Viajante
+                </span>
+                <span className="text-xs text-muted-foreground font-medium">
+                  Premium
+                </span>
+              </div>
             </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => signOut()}
+              className="text-muted-foreground hover:text-destructive shrink-0"
+              title="Sair"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </SidebarFooter>
       </Sidebar>
@@ -106,14 +120,24 @@ export default function Layout() {
               Painel de Milhas
             </h1>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative text-secondary hover:bg-muted/80 hover:text-primary transition-colors"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-2 right-2.5 h-2 w-2 rounded-full bg-destructive border border-card"></span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative text-secondary hover:bg-muted/80 hover:text-primary transition-colors"
+            >
+              <Bell className="h-5 w-5" />
+              <span className="absolute top-2 right-2.5 h-2 w-2 rounded-full bg-destructive border border-card"></span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => signOut()}
+              className="md:hidden text-muted-foreground hover:text-destructive"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </div>
         </header>
         <main className="flex-1 overflow-auto p-4 md:p-8 relative">
           <div className="mx-auto max-w-5xl">
