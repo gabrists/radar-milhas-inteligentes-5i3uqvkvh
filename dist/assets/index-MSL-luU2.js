@@ -39319,10 +39319,29 @@ function AddWalletModal({ isOpen, onClose, onSuccess }) {
 	const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
 	const [selectedContinent, setSelectedContinent] = (0, import_react.useState)("Todos");
 	const [isSaving, setIsSaving] = (0, import_react.useState)(false);
+	const [canScrollLeft, setCanScrollLeft] = (0, import_react.useState)(false);
+	const [canScrollRight, setCanScrollRight] = (0, import_react.useState)(true);
+	const scrollRef = (0, import_react.useRef)(null);
+	const checkScroll = () => {
+		if (scrollRef.current) {
+			const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+			setCanScrollLeft(scrollLeft > 0);
+			setCanScrollRight(Math.ceil(scrollLeft + clientWidth) < scrollWidth);
+		}
+	};
+	(0, import_react.useEffect)(() => {
+		if (isOpen) setTimeout(checkScroll, 100);
+		window.addEventListener("resize", checkScroll);
+		return () => window.removeEventListener("resize", checkScroll);
+	}, [isOpen]);
+	const scroll = (dir) => {
+		if (scrollRef.current) scrollRef.current.scrollBy({
+			left: dir === "left" ? -200 : 200,
+			behavior: "smooth"
+		});
+	};
 	const filteredPrograms = AIRLINE_PROGRAMS.filter((p) => {
-		const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.airline.toLowerCase().includes(searchQuery.toLowerCase());
-		const matchesContinent = selectedContinent === "Todos" || p.continent === selectedContinent;
-		return matchesSearch && matchesContinent;
+		return (p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.airline.toLowerCase().includes(searchQuery.toLowerCase())) && (selectedContinent === "Todos" || p.continent === selectedContinent);
 	});
 	const handleSelect = async (program) => {
 		if (!user) return;
@@ -39343,7 +39362,7 @@ function AddWalletModal({ isOpen, onClose, onSuccess }) {
 			});
 			onSuccess();
 			onClose();
-		} catch (err) {
+		} catch {
 			toast$2({
 				title: "Erro",
 				description: "Não foi possível adicionar o programa.",
@@ -39357,7 +39376,7 @@ function AddWalletModal({ isOpen, onClose, onSuccess }) {
 		open: isOpen,
 		onOpenChange: (o) => !o && onClose(),
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogContent, {
-			className: "sm:max-w-[520px] flex flex-col max-h-[85vh] sm:max-h-[600px] p-0 overflow-hidden gap-0 rounded-2xl border-none shadow-elevation",
+			className: "sm:max-w-[520px] flex flex-col h-[85vh] sm:h-[600px] p-0 overflow-hidden gap-0 rounded-2xl border-none shadow-elevation",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogHeader, {
 					className: "p-6 pb-4 text-left shrink-0",
@@ -39366,7 +39385,7 @@ function AddWalletModal({ isOpen, onClose, onSuccess }) {
 						children: "Adicionar Programa"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogDescription, {
 						className: "sr-only",
-						children: "Busque e selecione um programa de fidelidade para adicionar à sua carteira."
+						children: "Busque e selecione um programa de fidelidade."
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -39381,14 +39400,36 @@ function AddWalletModal({ isOpen, onClose, onSuccess }) {
 						})]
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "relative -mx-2 px-2",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: "flex flex-nowrap gap-2 overflow-x-auto pb-4 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
-							children: CONTINENTS.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-								onClick: () => setSelectedContinent(c),
-								className: cn("px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all border shrink-0", selectedContinent === c ? "bg-primary text-primary-foreground border-transparent shadow-sm" : "bg-background text-muted-foreground border-border/60 hover:bg-muted/50 hover:text-foreground"),
-								children: c
-							}, c))
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" })]
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: cn("absolute left-0 top-0 bottom-4 w-16 bg-gradient-to-r from-background to-transparent z-10 flex items-center pl-2 pointer-events-none transition-opacity duration-200", canScrollLeft ? "opacity-100" : "opacity-0"),
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									onClick: () => scroll("left"),
+									disabled: !canScrollLeft,
+									className: "w-8 h-8 rounded-full bg-background border shadow-sm flex items-center justify-center text-foreground hover:bg-muted pointer-events-auto transition-colors",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: "w-4 h-4" })
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								ref: scrollRef,
+								onScroll: checkScroll,
+								className: "flex flex-nowrap gap-2 overflow-x-auto pb-4 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+								children: CONTINENTS.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									onClick: () => setSelectedContinent(c),
+									className: cn("px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all border shrink-0", selectedContinent === c ? "bg-primary text-primary-foreground border-transparent shadow-sm" : "bg-background text-muted-foreground border-border/60 hover:bg-muted/50 hover:text-foreground"),
+									children: c
+								}, c))
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: cn("absolute right-0 top-0 bottom-4 w-16 bg-gradient-to-l from-background to-transparent z-10 flex items-center justify-end pr-2 pointer-events-none transition-opacity duration-200", canScrollRight ? "opacity-100" : "opacity-0"),
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									onClick: () => scroll("right"),
+									disabled: !canScrollRight,
+									className: "w-8 h-8 rounded-full bg-background border shadow-sm flex items-center justify-center text-foreground hover:bg-muted pointer-events-auto transition-colors",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronRight, { className: "w-4 h-4" })
+								})
+							})
+						]
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -44359,7 +44400,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				value,
 				getSnapshot
 			]);
-			useEffect$14(function() {
+			useEffect$15(function() {
 				checkIfSnapshotChanged(inst) && forceUpdate({ inst });
 				return subscribe$1(function() {
 					checkIfSnapshotChanged(inst) && forceUpdate({ inst });
@@ -44382,7 +44423,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 			return getSnapshot();
 		}
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-		var React$29 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$18 = React$29.useState, useEffect$14 = React$29.useEffect, useLayoutEffect$2 = React$29.useLayoutEffect, useDebugValue = React$29.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
+		var React$29 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$18 = React$29.useState, useEffect$15 = React$29.useEffect, useLayoutEffect$2 = React$29.useLayoutEffect, useDebugValue = React$29.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
 		exports.useSyncExternalStore = void 0 !== React$29.useSyncExternalStore ? React$29.useSyncExternalStore : shim;
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
 	})();
@@ -45282,4 +45323,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-CtwenrLM.js.map
+//# sourceMappingURL=index-MSL-luU2.js.map

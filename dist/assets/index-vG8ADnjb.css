@@ -1889,6 +1889,10 @@ section[aria-label='Notifications alt+T'] {
   height: 460px;
 }
 
+.h-\[85vh\]{
+  height: 85vh;
+}
+
 .h-\[var\(--radix-navigation-menu-viewport-height\)\]{
   height: var(--radix-navigation-menu-viewport-height);
 }
@@ -1936,10 +1940,6 @@ section[aria-label='Notifications alt+T'] {
 
 .max-h-\[60vh\]{
   max-height: 60vh;
-}
-
-.max-h-\[85vh\]{
-  max-height: 85vh;
 }
 
 .max-h-\[90vh\]{
@@ -2000,6 +2000,10 @@ section[aria-label='Notifications alt+T'] {
 
 .w-14{
   width: 3.5rem;
+}
+
+.w-16{
+  width: 4rem;
 }
 
 .w-2{
@@ -2369,6 +2373,10 @@ section[aria-label='Notifications alt+T'] {
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
+}
+
+.resize{
+  resize: both;
 }
 
 .snap-x{
@@ -3745,6 +3753,10 @@ section[aria-label='Notifications alt+T'] {
 
 .opacity-0{
   opacity: 0;
+}
+
+.opacity-100{
+  opacity: 1;
 }
 
 .opacity-50{
@@ -5577,8 +5589,8 @@ section[aria-label='Notifications alt+T'] {
     display: flex;
   }
 
-  .sm\:max-h-\[600px\]{
-    max-height: 600px;
+  .sm\:h-\[600px\]{
+    height: 600px;
   }
 
   .sm\:w-auto{

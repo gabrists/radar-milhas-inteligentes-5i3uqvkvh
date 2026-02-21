@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,13 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Search, Loader2, PlusCircle } from 'lucide-react'
+import {
+  Search,
+  Loader2,
+  PlusCircle,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth'
@@ -42,20 +48,48 @@ export function AddWalletModal({
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedContinent, setSelectedContinent] = useState('Todos')
   const [isSaving, setIsSaving] = useState(false)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const checkScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
+      setCanScrollLeft(scrollLeft > 0)
+      setCanScrollRight(Math.ceil(scrollLeft + clientWidth) < scrollWidth)
+    }
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(checkScroll, 100)
+    }
+    window.addEventListener('resize', checkScroll)
+    return () => window.removeEventListener('resize', checkScroll)
+  }, [isOpen])
+
+  const scroll = (dir: 'left' | 'right') => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({
+        left: dir === 'left' ? -200 : 200,
+        behavior: 'smooth',
+      })
+    }
+  }
 
   const filteredPrograms = AIRLINE_PROGRAMS.filter((p) => {
     const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.airline.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesContinent =
-      selectedContinent === 'Todos' || p.continent === selectedContinent
-    return matchesSearch && matchesContinent
+    return (
+      matchesSearch &&
+      (selectedContinent === 'Todos' || p.continent === selectedContinent)
+    )
   })
 
   const handleSelect = async (program: (typeof AIRLINE_PROGRAMS)[0]) => {
     if (!user) return
     setIsSaving(true)
-
     try {
       const { data: existing } = await supabase
         .from('loyalty_balances')
@@ -65,11 +99,9 @@ export function AddWalletModal({
         .maybeSingle()
 
       if (!existing) {
-        const { error } = await supabase.from('loyalty_balances').insert({
-          user_id: user.id,
-          program_name: program.name,
-          balance: 0,
-        })
+        const { error } = await supabase
+          .from('loyalty_balances')
+          .insert({ user_id: user.id, program_name: program.name, balance: 0 })
         if (error) throw error
       }
 
@@ -79,7 +111,7 @@ export function AddWalletModal({
       })
       onSuccess()
       onClose()
-    } catch (err) {
+    } catch {
       toast({
         title: 'Erro',
         description: 'Não foi possível adicionar o programa.',
@@ -92,14 +124,13 @@ export function AddWalletModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-[520px] flex flex-col max-h-[85vh] sm:max-h-[600px] p-0 overflow-hidden gap-0 rounded-2xl border-none shadow-elevation">
+      <DialogContent className="sm:max-w-[520px] flex flex-col h-[85vh] sm:h-[600px] p-0 overflow-hidden gap-0 rounded-2xl border-none shadow-elevation">
         <DialogHeader className="p-6 pb-4 text-left shrink-0">
           <DialogTitle className="text-lg font-semibold text-foreground">
             Adicionar Programa
           </DialogTitle>
           <DialogDescription className="sr-only">
-            Busque e selecione um programa de fidelidade para adicionar à sua
-            carteira.
+            Busque e selecione um programa de fidelidade.
           </DialogDescription>
         </DialogHeader>
 
@@ -115,7 +146,26 @@ export function AddWalletModal({
           </div>
 
           <div className="relative -mx-2 px-2">
-            <div className="flex flex-nowrap gap-2 overflow-x-auto pb-4 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div
+              className={cn(
+                'absolute left-0 top-0 bottom-4 w-16 bg-gradient-to-r from-background to-transparent z-10 flex items-center pl-2 pointer-events-none transition-opacity duration-200',
+                canScrollLeft ? 'opacity-100' : 'opacity-0',
+              )}
+            >
+              <button
+                onClick={() => scroll('left')}
+                disabled={!canScrollLeft}
+                className="w-8 h-8 rounded-full bg-background border shadow-sm flex items-center justify-center text-foreground hover:bg-muted pointer-events-auto transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div
+              ref={scrollRef}
+              onScroll={checkScroll}
+              className="flex flex-nowrap gap-2 overflow-x-auto pb-4 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            >
               {CONTINENTS.map((c) => (
                 <button
                   key={c}
@@ -131,7 +181,21 @@ export function AddWalletModal({
                 </button>
               ))}
             </div>
-            <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+
+            <div
+              className={cn(
+                'absolute right-0 top-0 bottom-4 w-16 bg-gradient-to-l from-background to-transparent z-10 flex items-center justify-end pr-2 pointer-events-none transition-opacity duration-200',
+                canScrollRight ? 'opacity-100' : 'opacity-0',
+              )}
+            >
+              <button
+                onClick={() => scroll('right')}
+                disabled={!canScrollRight}
+                className="w-8 h-8 rounded-full bg-background border shadow-sm flex items-center justify-center text-foreground hover:bg-muted pointer-events-auto transition-colors"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
 
