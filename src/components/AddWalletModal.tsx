@@ -1,5 +1,11 @@
 import { useState } from 'react'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Search, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -87,6 +93,14 @@ export function AddWalletModal({
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden gap-0 rounded-2xl">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Adicionar Novo Programa</DialogTitle>
+          <DialogDescription>
+            Busque e selecione um programa de fidelidade para adicionar à sua
+            carteira.
+          </DialogDescription>
+        </DialogHeader>
+
         <div className="p-4 border-b space-y-4 bg-muted/10">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />

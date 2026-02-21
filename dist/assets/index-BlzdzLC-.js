@@ -39358,55 +39358,62 @@ function AddWalletModal({ isOpen, onClose, onSuccess }) {
 		onOpenChange: (o) => !o && onClose(),
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogContent, {
 			className: "sm:max-w-[480px] p-0 overflow-hidden gap-0 rounded-2xl",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "p-4 border-b space-y-4 bg-muted/10",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "relative",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-						value: searchQuery,
-						onChange: (e) => setSearchQuery(e.target.value),
-						placeholder: "Buscar programa ou companhia...",
-						className: "pl-10 h-12 bg-background border-muted-foreground/20 rounded-xl text-base focus-visible:ring-primary/20"
-					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
-					children: CONTINENTS.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-						onClick: () => setSelectedContinent(c),
-						className: cn("px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors border", selectedContinent === c ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border hover:bg-muted"),
-						children: c
-					}, c))
-				})]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "overflow-y-auto max-h-[50vh] p-2 relative",
-				children: [isSaving && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-8 h-8 animate-spin text-primary" })
-				}), filteredPrograms.length > 0 ? filteredPrograms.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-					onClick: () => handleSelect(p),
-					disabled: isSaving,
-					className: "w-full flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors text-left disabled:opacity-50",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "w-12 h-12 rounded-full border border-muted-foreground/20 bg-background flex items-center justify-center shrink-0 overflow-hidden shadow-sm",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-							src: p.logoUrl,
-							alt: p.name,
-							className: "w-8 h-8 object-contain"
-						})
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex-1 min-w-0",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							className: "font-bold text-secondary truncate",
-							children: p.name
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							className: "text-sm font-medium text-muted-foreground truncate",
-							children: p.airline
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogHeader, {
+					className: "sr-only",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogTitle, { children: "Adicionar Novo Programa" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogDescription, { children: "Busque e selecione um programa de fidelidade para adicionar à sua carteira." })]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "p-4 border-b space-y-4 bg-muted/10",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "relative",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+							value: searchQuery,
+							onChange: (e) => setSearchQuery(e.target.value),
+							placeholder: "Buscar programa ou companhia...",
+							className: "pl-10 h-12 bg-background border-muted-foreground/20 rounded-xl text-base focus-visible:ring-primary/20"
 						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+						children: CONTINENTS.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							onClick: () => setSelectedContinent(c),
+							className: cn("px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors border", selectedContinent === c ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border hover:bg-muted"),
+							children: c
+						}, c))
 					})]
-				}, p.id)) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "p-8 text-center text-muted-foreground font-medium",
-					children: "Nenhum programa encontrado."
-				})]
-			})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "overflow-y-auto max-h-[50vh] p-2 relative",
+					children: [isSaving && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-8 h-8 animate-spin text-primary" })
+					}), filteredPrograms.length > 0 ? filteredPrograms.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						onClick: () => handleSelect(p),
+						disabled: isSaving,
+						className: "w-full flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors text-left disabled:opacity-50",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "w-12 h-12 rounded-full border border-muted-foreground/20 bg-background flex items-center justify-center shrink-0 overflow-hidden shadow-sm",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+								src: p.logoUrl,
+								alt: p.name,
+								className: "w-8 h-8 object-contain"
+							})
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex-1 min-w-0",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "font-bold text-secondary truncate",
+								children: p.name
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "text-sm font-medium text-muted-foreground truncate",
+								children: p.airline
+							})]
+						})]
+					}, p.id)) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "p-8 text-center text-muted-foreground font-medium",
+						children: "Nenhum programa encontrado."
+					})]
+				})
+			]
 		})
 	});
 }
@@ -45263,4 +45270,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-yzy1KWKW.js.map
+//# sourceMappingURL=index-BlzdzLC-.js.map

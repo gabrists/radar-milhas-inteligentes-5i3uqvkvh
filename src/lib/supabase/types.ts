@@ -322,7 +322,6 @@ export const Constants = {
 //   PRIMARY KEY active_promotions_pkey: PRIMARY KEY (id)
 // Table: loyalty_balances
 //   PRIMARY KEY loyalty_balances_pkey: PRIMARY KEY (id)
-//   CHECK loyalty_balances_program_name_check: CHECK ((program_name = ANY (ARRAY['Livelo'::text, 'Esfera'::text, 'Smiles'::text, 'Latam Pass'::text, 'TudoAzul'::text])))
 //   FOREIGN KEY loyalty_balances_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
 //   UNIQUE loyalty_balances_user_id_program_name_key: UNIQUE (user_id, program_name)
 // Table: profiles
