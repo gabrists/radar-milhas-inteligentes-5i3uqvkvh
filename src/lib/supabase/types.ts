@@ -276,3 +276,25 @@ export const Constants = {
 //     USING: (auth.uid() = user_id)
 //   Policy "Users can view own travel goals." (SELECT, PERMISSIVE) roles={public}
 //     USING: (auth.uid() = user_id)
+
+// --- DATABASE FUNCTIONS ---
+// FUNCTION handle_new_user()
+//   CREATE OR REPLACE FUNCTION public.handle_new_user()
+//    RETURNS trigger
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//   AS $function$
+//   BEGIN
+//     INSERT INTO public.profiles (id, full_name)
+//     VALUES (
+//       NEW.id,
+//       COALESCE(
+//         NEW.raw_user_meta_data->>'full_name',
+//         NEW.raw_user_meta_data->>'name',
+//         'Viajante'
+//       )
+//     );
+//     RETURN NEW;
+//   END;
+//   $function$
+//

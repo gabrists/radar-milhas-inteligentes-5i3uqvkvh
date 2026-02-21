@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import {
   AlertDialog,
   AlertDialogContent,
@@ -52,6 +53,8 @@ interface Promotion {
   destination: string
   bonus_percentage: number
   link: string
+  rules_summary?: string
+  valid_until?: string
 }
 
 export default function AdminPromotionsPage() {
@@ -68,6 +71,8 @@ export default function AdminPromotionsPage() {
     destination: '',
     bonus_percentage: '',
     link: '',
+    rules_summary: '',
+    valid_until: '',
   })
 
   const { toast } = useToast()
@@ -88,6 +93,13 @@ export default function AdminPromotionsPage() {
     setLoading(false)
   }
 
+  const formatDateForInput = (isoString?: string | null) => {
+    if (!isoString) return ''
+    const date = new Date(isoString)
+    const pad = (n: number) => n.toString().padStart(2, '0')
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`
+  }
+
   const openCreate = () => {
     setEditingId(null)
     setFormData({
@@ -96,6 +108,8 @@ export default function AdminPromotionsPage() {
       destination: '',
       bonus_percentage: '',
       link: '',
+      rules_summary: '',
+      valid_until: '',
     })
     setIsModalOpen(true)
   }
@@ -108,6 +122,8 @@ export default function AdminPromotionsPage() {
       destination: promo.destination,
       bonus_percentage: promo.bonus_percentage.toString(),
       link: promo.link,
+      rules_summary: promo.rules_summary || '',
+      valid_until: formatDateForInput(promo.valid_until),
     })
     setIsModalOpen(true)
   }
@@ -135,6 +151,10 @@ export default function AdminPromotionsPage() {
       destination: formData.destination,
       bonus_percentage: parseFloat(formData.bonus_percentage),
       link: formData.link,
+      rules_summary: formData.rules_summary || '',
+      valid_until: formData.valid_until
+        ? new Date(formData.valid_until).toISOString()
+        : null,
     }
 
     try {
@@ -294,7 +314,7 @@ export default function AdminPromotionsPage() {
       </Card>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingId ? 'Editar Promoção' : 'Nova Promoção'}
@@ -333,16 +353,31 @@ export default function AdminPromotionsPage() {
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Bônus (%)</Label>
-              <Input
-                type="number"
-                placeholder="Ex: 100"
-                value={formData.bonus_percentage}
-                onChange={(e) =>
-                  setFormData({ ...formData, bonus_percentage: e.target.value })
-                }
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Bônus (%)</Label>
+                <Input
+                  type="number"
+                  placeholder="Ex: 100"
+                  value={formData.bonus_percentage}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      bonus_percentage: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Data de Validade (Opcional)</Label>
+                <Input
+                  type="datetime-local"
+                  value={formData.valid_until}
+                  onChange={(e) =>
+                    setFormData({ ...formData, valid_until: e.target.value })
+                  }
+                />
+              </div>
             </div>
             <div className="space-y-2">
               <Label>Link Oficial</Label>
@@ -357,6 +392,17 @@ export default function AdminPromotionsPage() {
                   }
                 />
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Regras e Detalhes (Opcional)</Label>
+              <Textarea
+                placeholder="Descreva os detalhes e regulamentos importantes da promoção..."
+                value={formData.rules_summary}
+                onChange={(e) =>
+                  setFormData({ ...formData, rules_summary: e.target.value })
+                }
+                rows={4}
+              />
             </div>
           </div>
           <DialogFooter>

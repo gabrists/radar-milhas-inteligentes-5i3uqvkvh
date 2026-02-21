@@ -15985,6 +15985,11 @@ function useOutlet(context) {
 	let outlet = import_react.useContext(RouteContext).outlet;
 	return import_react.useMemo(() => outlet && /* @__PURE__ */ import_react.createElement(OutletContext.Provider, { value: context }, outlet), [outlet, context]);
 }
+function useParams() {
+	let { matches } = import_react.useContext(RouteContext);
+	let routeMatch = matches[matches.length - 1];
+	return routeMatch ? routeMatch.params : {};
+}
 function useResolvedPath(to, { relative } = {}) {
 	let { matches } = import_react.useContext(RouteContext);
 	let { pathname: locationPathname } = useLocation();
@@ -18913,6 +18918,13 @@ var createLucideIcon = (iconName, iconNode) => {
 	Component.displayName = toPascalCase(iconName);
 	return Component;
 };
+var ArrowLeft = createLucideIcon("arrow-left", [["path", {
+	d: "m12 19-7-7 7-7",
+	key: "1l729n"
+}], ["path", {
+	d: "M19 12H5",
+	key: "x3x0zl"
+}]]);
 var ArrowRightLeft = createLucideIcon("arrow-right-left", [
 	["path", {
 		d: "m16 3 4 4-4 4",
@@ -19013,6 +19025,28 @@ var ChevronUp = createLucideIcon("chevron-up", [["path", {
 	d: "m18 15-6-6-6 6",
 	key: "153udz"
 }]]);
+var CircleAlert = createLucideIcon("circle-alert", [
+	["circle", {
+		cx: "12",
+		cy: "12",
+		r: "10",
+		key: "1mglay"
+	}],
+	["line", {
+		x1: "12",
+		x2: "12",
+		y1: "8",
+		y2: "12",
+		key: "1pkeuh"
+	}],
+	["line", {
+		x1: "12",
+		x2: "12.01",
+		y1: "16",
+		y2: "16",
+		key: "4dfq90"
+	}]
+]);
 var CircleCheck = createLucideIcon("circle-check", [["circle", {
 	cx: "12",
 	cy: "12",
@@ -19027,6 +19061,15 @@ var Circle = createLucideIcon("circle", [["circle", {
 	cy: "12",
 	r: "10",
 	key: "1mglay"
+}]]);
+var Clock = createLucideIcon("clock", [["circle", {
+	cx: "12",
+	cy: "12",
+	r: "10",
+	key: "1mglay"
+}], ["path", {
+	d: "M12 6v6l4 2",
+	key: "mmk7yg"
 }]]);
 var CreditCard = createLucideIcon("credit-card", [["rect", {
 	width: "20",
@@ -19074,6 +19117,28 @@ var ExternalLink = createLucideIcon("external-link", [
 	["path", {
 		d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6",
 		key: "a6xqqp"
+	}]
+]);
+var FileText = createLucideIcon("file-text", [
+	["path", {
+		d: "M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z",
+		key: "1oefj6"
+	}],
+	["path", {
+		d: "M14 2v5a1 1 0 0 0 1 1h5",
+		key: "wfsgrz"
+	}],
+	["path", {
+		d: "M10 9H8",
+		key: "b1mrlr"
+	}],
+	["path", {
+		d: "M16 13H8",
+		key: "t4e002"
+	}],
+	["path", {
+		d: "M16 17H8",
+		key: "z1uh3a"
 	}]
 ]);
 var History = createLucideIcon("history", [
@@ -32583,6 +32648,8 @@ const AuthProvider = ({ children }) => {
 function Index() {
 	const { user } = useAuth();
 	const { toast: toast$2 } = useToast();
+	const location = useLocation();
+	const navigate = useNavigate();
 	const calculatorRef = (0, import_react.useRef)(null);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [isSaving, setIsSaving] = (0, import_react.useState)(false);
@@ -32675,17 +32742,33 @@ function Index() {
 			setIsSaving(false);
 		}
 	};
-	const applyPromo = (bonus) => {
+	const applyPromo = (0, import_react.useCallback)((bonus) => {
 		setTransferBonus([bonus]);
-		calculatorRef.current?.scrollIntoView({
-			behavior: "smooth",
-			block: "start"
-		});
+		setTimeout(() => {
+			calculatorRef.current?.scrollIntoView({
+				behavior: "smooth",
+				block: "start"
+			});
+		}, 100);
 		toast$2({
 			title: "Bônus Aplicado!",
 			description: `A calculadora foi ajustada para ${bonus}% de bônus automaticamente.`
 		});
-	};
+	}, [toast$2]);
+	(0, import_react.useEffect)(() => {
+		if (location.state?.applyBonus) {
+			applyPromo(location.state.applyBonus);
+			navigate(location.pathname, {
+				replace: true,
+				state: {}
+			});
+		}
+	}, [
+		location.state,
+		navigate,
+		location.pathname,
+		applyPromo
+	]);
 	if (loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "space-y-6 md:space-y-8 pb-4",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -37876,26 +37959,16 @@ function PromotionsPage() {
 								children: "Oportunidade de transferência"
 							})]
 						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardFooter, {
-							className: "pt-0 pb-5 px-6 gap-3 mt-auto",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardFooter, {
+							className: "pt-0 pb-5 px-6 mt-auto",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 								asChild: true,
-								variant: "outline",
-								className: "flex-1 text-xs font-semibold h-10 shadow-sm hover:bg-secondary/5",
+								className: "w-full text-xs font-semibold h-10 shadow-sm",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
-									to: "/",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calculator, { className: "w-4 h-4 mr-1.5" }), "Simular"]
+									to: `/promocoes/${promo.id}`,
+									children: ["Ver Detalhes ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowRight, { className: "w-4 h-4 ml-1.5" })]
 								})
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-								asChild: true,
-								className: "flex-1 text-xs font-semibold h-10 shadow-sm",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
-									href: promo.link,
-									target: "_blank",
-									rel: "noopener noreferrer",
-									children: ["Aproveitar ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ExternalLink, { className: "w-4 h-4 ml-1.5" })]
-								})
-							})]
+							})
 						})
 					]
 				}, promo.id))
@@ -37903,6 +37976,194 @@ function PromotionsPage() {
 		]
 	});
 }
+function PromotionDetailsPage() {
+	const { id } = useParams();
+	const navigate = useNavigate();
+	const [promo, setPromo] = (0, import_react.useState)(null);
+	const [loading, setLoading] = (0, import_react.useState)(true);
+	(0, import_react.useEffect)(() => {
+		async function fetchPromo() {
+			if (!id) return;
+			const { data, error } = await supabase.from("active_promotions").select("*").eq("id", id).single();
+			if (!error && data) setPromo(data);
+			setLoading(false);
+		}
+		fetchPromo();
+	}, [id]);
+	if (loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "space-y-6 md:space-y-8 pb-8 animate-fade-in-up",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 w-24 mb-2" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[250px] w-full rounded-2xl" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "grid grid-cols-1 lg:grid-cols-3 gap-6",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "lg:col-span-2",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[300px] w-full rounded-xl" })
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[150px] w-full rounded-xl" }) })]
+			})
+		]
+	});
+	if (!promo) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "text-center py-16 px-4 border border-dashed rounded-xl bg-muted/10 animate-fade-in-up",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleAlert, { className: "w-12 h-12 text-muted-foreground/50 mx-auto mb-4" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+				className: "text-xl font-bold text-secondary",
+				children: "Promoção não encontrada ou expirada"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+				className: "text-muted-foreground mt-2 mb-6",
+				children: "A promoção que você tentou acessar não está mais disponível."
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+				onClick: () => navigate("/promocoes"),
+				variant: "outline",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowLeft, { className: "w-4 h-4 mr-2" }), " Voltar para Promoções"]
+			})
+		]
+	});
+	let isExpiringSoon = false;
+	let validityText = "Validade não informada";
+	if (promo.valid_until) {
+		const validDate = new Date(promo.valid_until);
+		const now = /* @__PURE__ */ new Date();
+		const diffHours = (validDate.getTime() - now.getTime()) / (1e3 * 60 * 60);
+		isExpiringSoon = diffHours > 0 && diffHours <= 24;
+		if (diffHours < 0) validityText = "Promoção expirada";
+		else validityText = `Válido até ${validDate.toLocaleDateString("pt-BR")} às ${validDate.toLocaleTimeString("pt-BR", {
+			hour: "2-digit",
+			minute: "2-digit"
+		})}`;
+	}
+	const handleApplyCalculator = () => {
+		navigate("/", { state: { applyBonus: promo.bonus_percentage } });
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "space-y-6 md:space-y-8 pb-8 animate-fade-in-up",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+				variant: "ghost",
+				onClick: () => navigate("/promocoes"),
+				className: "pl-0 text-muted-foreground hover:text-secondary -ml-2 mb-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowLeft, { className: "w-4 h-4 mr-2" }), " Voltar"]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "bg-gradient-to-br from-primary/10 to-blue-600/5 rounded-2xl p-6 md:p-10 border border-primary/10 relative overflow-hidden",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute -right-12 -top-12 w-40 h-40 bg-primary/10 rounded-full blur-3xl" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "space-y-4 max-w-2xl",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/20 text-primary text-sm font-bold shadow-sm border border-primary/20",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "flex h-2 w-2 rounded-full bg-primary animate-pulse" }),
+									promo.bonus_percentage,
+									"% de Bônus"
+								]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
+								className: "text-3xl md:text-4xl font-extrabold text-secondary tracking-tight leading-tight",
+								children: promo.title
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex flex-wrap items-center gap-3 text-sm font-medium text-muted-foreground",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex items-center gap-1.5 bg-background/60 px-3 py-1.5 rounded-lg border border-muted backdrop-blur-sm",
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "font-bold text-secondary",
+											children: promo.origin
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowRight, { className: "w-4 h-4 text-primary" }),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "font-bold text-secondary",
+											children: promo.destination
+										})
+									]
+								}), promo.valid_until && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: cn("flex items-center gap-1.5 px-3 py-1.5 rounded-lg border backdrop-blur-sm", isExpiringSoon ? "bg-red-50 text-red-600 border-red-200" : "bg-background/60 text-secondary border-muted"),
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-4 h-4" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: cn("font-bold", isExpiringSoon && "animate-pulse"),
+										children: validityText
+									})]
+								})]
+							})
+						]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex flex-col sm:flex-row md:flex-col gap-3 shrink-0",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							size: "lg",
+							className: "w-full sm:w-auto font-bold shadow-md h-12",
+							asChild: true,
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+								href: promo.link,
+								target: "_blank",
+								rel: "noopener noreferrer",
+								children: ["Acessar Oferta Oficial ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ExternalLink, { className: "w-4 h-4 ml-2" })]
+							})
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+							size: "lg",
+							variant: "secondary",
+							className: "w-full sm:w-auto font-bold shadow-sm h-12",
+							onClick: handleApplyCalculator,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calculator, { className: "w-4 h-4 mr-2" }), "Aplicar na Calculadora"]
+						})]
+					})]
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "grid grid-cols-1 lg:grid-cols-3 gap-6",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "lg:col-span-2 space-y-6",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
+						className: "shadow-elevation border-muted",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+							className: "p-6 md:p-8",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+								className: "text-xl font-bold text-secondary mb-4 flex items-center gap-2",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FileText, { className: "w-5 h-5 text-primary" }), "Regras e Detalhes"]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "prose prose-sm md:prose-base max-w-none prose-p:text-muted-foreground prose-li:text-muted-foreground prose-headings:text-secondary",
+								children: promo.rules_summary ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "whitespace-pre-wrap leading-relaxed",
+									children: promo.rules_summary
+								}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "italic text-muted-foreground/70",
+									children: "Nenhum detalhe adicional informado. Consulte o site oficial para ler o regulamento completo."
+								})
+							})]
+						})
+					})
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "space-y-6",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
+						className: "shadow-sm border-muted bg-muted/20",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+							className: "p-6 space-y-4",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
+								className: "font-bold text-secondary flex items-center gap-2",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleAlert, { className: "w-4 h-4 text-primary" }), "Dica do Radar"]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "text-sm text-muted-foreground leading-relaxed",
+								children: "Antes de transferir seus pontos, verifique se você possui o cadastro ativo na promoção através do link oficial. A maioria dos programas exige o \"opt-in\" prévio."
+							})]
+						})
+					})
+				})]
+			})
+		]
+	});
+}
+var Textarea = import_react.forwardRef(({ className, ...props }, ref) => {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", {
+		className: cn("flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm", className),
+		ref,
+		...props
+	});
+});
+Textarea.displayName = "Textarea";
 function AdminPromotionsPage() {
 	const [promotions, setPromotions] = (0, import_react.useState)([]);
 	const [loading, setLoading] = (0, import_react.useState)(true);
@@ -37915,7 +38176,9 @@ function AdminPromotionsPage() {
 		origin: "",
 		destination: "",
 		bonus_percentage: "",
-		link: ""
+		link: "",
+		rules_summary: "",
+		valid_until: ""
 	});
 	const { toast: toast$2 } = useToast();
 	(0, import_react.useEffect)(() => {
@@ -37927,6 +38190,12 @@ function AdminPromotionsPage() {
 		if (!error && data) setPromotions(data);
 		setLoading(false);
 	};
+	const formatDateForInput = (isoString) => {
+		if (!isoString) return "";
+		const date = new Date(isoString);
+		const pad = (n) => n.toString().padStart(2, "0");
+		return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+	};
 	const openCreate = () => {
 		setEditingId(null);
 		setFormData({
@@ -37934,7 +38203,9 @@ function AdminPromotionsPage() {
 			origin: "",
 			destination: "",
 			bonus_percentage: "",
-			link: ""
+			link: "",
+			rules_summary: "",
+			valid_until: ""
 		});
 		setIsModalOpen(true);
 	};
@@ -37945,7 +38216,9 @@ function AdminPromotionsPage() {
 			origin: promo.origin,
 			destination: promo.destination,
 			bonus_percentage: promo.bonus_percentage.toString(),
-			link: promo.link
+			link: promo.link,
+			rules_summary: promo.rules_summary || "",
+			valid_until: formatDateForInput(promo.valid_until)
 		});
 		setIsModalOpen(true);
 	};
@@ -37964,7 +38237,9 @@ function AdminPromotionsPage() {
 			origin: formData.origin,
 			destination: formData.destination,
 			bonus_percentage: parseFloat(formData.bonus_percentage),
-			link: formData.link
+			link: formData.link,
+			rules_summary: formData.rules_summary || "",
+			valid_until: formData.valid_until ? new Date(formData.valid_until).toISOString() : null
 		};
 		try {
 			if (editingId) {
@@ -38105,7 +38380,7 @@ function AdminPromotionsPage() {
 				open: isModalOpen,
 				onOpenChange: setIsModalOpen,
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogContent, {
-					className: "sm:max-w-[425px]",
+					className: "sm:max-w-xl max-h-[90vh] overflow-y-auto",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogTitle, { children: editingId ? "Editar Promoção" : "Nova Promoção" }) }),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -38147,15 +38422,28 @@ function AdminPromotionsPage() {
 									})]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "space-y-2",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, { children: "Bônus (%)" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-										type: "number",
-										placeholder: "Ex: 100",
-										value: formData.bonus_percentage,
-										onChange: (e) => setFormData({
-											...formData,
-											bonus_percentage: e.target.value
-										})
+									className: "grid grid-cols-2 gap-4",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "space-y-2",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, { children: "Bônus (%)" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+											type: "number",
+											placeholder: "Ex: 100",
+											value: formData.bonus_percentage,
+											onChange: (e) => setFormData({
+												...formData,
+												bonus_percentage: e.target.value
+											})
+										})]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "space-y-2",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, { children: "Data de Validade (Opcional)" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+											type: "datetime-local",
+											value: formData.valid_until,
+											onChange: (e) => setFormData({
+												...formData,
+												valid_until: e.target.value
+											})
+										})]
 									})]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -38171,6 +38459,18 @@ function AdminPromotionsPage() {
 												link: e.target.value
 											})
 										})]
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "space-y-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, { children: "Regras e Detalhes (Opcional)" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Textarea, {
+										placeholder: "Descreva os detalhes e regulamentos importantes da promoção...",
+										value: formData.rules_summary,
+										onChange: (e) => setFormData({
+											...formData,
+											rules_summary: e.target.value
+										}),
+										rows: 4
 									})]
 								})
 							]
@@ -38706,7 +39006,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				var cachedValue = getSnapshot();
 				objectIs(value, cachedValue) || (console.error("The result of getSnapshot should be cached to avoid an infinite loop"), didWarnUncachedGetSnapshot = !0);
 			}
-			cachedValue = useState$10({ inst: {
+			cachedValue = useState$11({ inst: {
 				value,
 				getSnapshot
 			} });
@@ -38720,7 +39020,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				value,
 				getSnapshot
 			]);
-			useEffect$8(function() {
+			useEffect$9(function() {
 				checkIfSnapshotChanged(inst) && forceUpdate({ inst });
 				return subscribe$1(function() {
 					checkIfSnapshotChanged(inst) && forceUpdate({ inst });
@@ -38743,7 +39043,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 			return getSnapshot();
 		}
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-		var React$2 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$10 = React$2.useState, useEffect$8 = React$2.useEffect, useLayoutEffect$1 = React$2.useLayoutEffect, useDebugValue = React$2.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
+		var React$2 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$11 = React$2.useState, useEffect$9 = React$2.useEffect, useLayoutEffect$1 = React$2.useLayoutEffect, useDebugValue = React$2.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
 		exports.useSyncExternalStore = void 0 !== React$2.useSyncExternalStore ? React$2.useSyncExternalStore : shim;
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
 	})();
@@ -39820,6 +40120,10 @@ var AppRoutes = () => {
 					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PromotionsPage, {})
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+					path: "/promocoes/:id",
+					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PromotionDetailsPage, {})
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
 					path: "/admin/promocoes",
 					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminPromotionsPage, {})
 				}),
@@ -39849,4 +40153,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-BRLBorB5.js.map
+//# sourceMappingURL=index-DxcTEKrl.js.map

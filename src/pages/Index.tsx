@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   Card,
   CardContent,
@@ -43,6 +44,8 @@ interface TravelGoal {
 export default function Index() {
   const { user } = useAuth()
   const { toast } = useToast()
+  const location = useLocation()
+  const navigate = useNavigate()
 
   const calculatorRef = useRef<HTMLDivElement>(null)
 
@@ -176,17 +179,29 @@ export default function Index() {
     }
   }
 
-  const applyPromo = (bonus: number) => {
-    setTransferBonus([bonus])
-    calculatorRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    })
-    toast({
-      title: 'Bônus Aplicado!',
-      description: `A calculadora foi ajustada para ${bonus}% de bônus automaticamente.`,
-    })
-  }
+  const applyPromo = useCallback(
+    (bonus: number) => {
+      setTransferBonus([bonus])
+      setTimeout(() => {
+        calculatorRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        })
+      }, 100)
+      toast({
+        title: 'Bônus Aplicado!',
+        description: `A calculadora foi ajustada para ${bonus}% de bônus automaticamente.`,
+      })
+    },
+    [toast],
+  )
+
+  useEffect(() => {
+    if (location.state?.applyBonus) {
+      applyPromo(location.state.applyBonus)
+      navigate(location.pathname, { replace: true, state: {} })
+    }
+  }, [location.state, navigate, location.pathname, applyPromo])
 
   if (loading) {
     return (

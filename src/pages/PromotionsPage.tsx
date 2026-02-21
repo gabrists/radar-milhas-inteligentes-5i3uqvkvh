@@ -15,13 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Tag,
-  ArrowRightLeft,
-  Percent,
-  Calculator,
-  ExternalLink,
-} from 'lucide-react'
+import { Tag, ArrowRightLeft, Percent, ArrowRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { Link } from 'react-router-dom'
 
@@ -175,28 +169,14 @@ export default function PromotionsPage() {
                   Oportunidade de transferência
                 </CardDescription>
               </CardHeader>
-              <CardFooter className="pt-0 pb-5 px-6 gap-3 mt-auto">
+              <CardFooter className="pt-0 pb-5 px-6 mt-auto">
                 <Button
                   asChild
-                  variant="outline"
-                  className="flex-1 text-xs font-semibold h-10 shadow-sm hover:bg-secondary/5"
+                  className="w-full text-xs font-semibold h-10 shadow-sm"
                 >
-                  <Link to="/">
-                    <Calculator className="w-4 h-4 mr-1.5" />
-                    Simular
+                  <Link to={`/promocoes/${promo.id}`}>
+                    Ver Detalhes <ArrowRight className="w-4 h-4 ml-1.5" />
                   </Link>
-                </Button>
-                <Button
-                  asChild
-                  className="flex-1 text-xs font-semibold h-10 shadow-sm"
-                >
-                  <a
-                    href={promo.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Aproveitar <ExternalLink className="w-4 h-4 ml-1.5" />
-                  </a>
                 </Button>
               </CardFooter>
             </Card>
