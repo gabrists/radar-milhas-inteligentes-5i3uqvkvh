@@ -672,6 +672,10 @@ section[aria-label='Notifications alt+T'] {
   bottom: 0px;
 }
 
+.bottom-3{
+  bottom: 0.75rem;
+}
+
 .left-0{
   left: 0px;
 }
@@ -682,6 +686,10 @@ section[aria-label='Notifications alt+T'] {
 
 .left-2{
   left: 0.5rem;
+}
+
+.left-3{
+  left: 0.75rem;
 }
 
 .left-3\.5{
@@ -734,6 +742,10 @@ section[aria-label='Notifications alt+T'] {
 
 .top-2{
   top: 0.5rem;
+}
+
+.top-3{
+  top: 0.75rem;
 }
 
 .top-3\.5{
@@ -846,6 +858,10 @@ section[aria-label='Notifications alt+T'] {
   margin-left: 0.25rem;
 }
 
+.ml-2{
+  margin-left: 0.5rem;
+}
+
 .ml-auto{
   margin-left: auto;
 }
@@ -892,6 +908,13 @@ section[aria-label='Notifications alt+T'] {
 
 .mt-auto{
   margin-top: auto;
+}
+
+.line-clamp-2{
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .block{
@@ -964,6 +987,10 @@ section[aria-label='Notifications alt+T'] {
   height: 0.875rem;
 }
 
+.h-36{
+  height: 9rem;
+}
+
 .h-4{
   height: 1rem;
 }
@@ -1018,6 +1045,11 @@ section[aria-label='Notifications alt+T'] {
 
 .h-auto{
   height: auto;
+}
+
+.h-fit{
+  height: -moz-fit-content;
+  height: fit-content;
 }
 
 .h-full{
@@ -1154,6 +1186,10 @@ section[aria-label='Notifications alt+T'] {
 
 .w-\[1px\]{
   width: 1px;
+}
+
+.w-\[60px\]{
+  width: 60px;
 }
 
 .w-auto{
@@ -1477,6 +1513,12 @@ section[aria-label='Notifications alt+T'] {
   margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
+.space-y-0\.5 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.125rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.125rem * var(--tw-space-y-reverse));
+}
+
 .space-y-1 > :not([hidden]) ~ :not([hidden]){
   --tw-space-y-reverse: 0;
   margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
@@ -1499,6 +1541,12 @@ section[aria-label='Notifications alt+T'] {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.625rem * var(--tw-space-y-reverse));
+}
+
+.space-y-4 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
 
 .space-y-5 > :not([hidden]) ~ :not([hidden]){
@@ -1646,6 +1694,10 @@ section[aria-label='Notifications alt+T'] {
   border-color: var(--color-border);
 }
 
+.border-accent\/20{
+  border-color: hsl(var(--accent) / 0.2);
+}
+
 .border-border{
   border-color: hsl(var(--border));
 }
@@ -1727,6 +1779,10 @@ section[aria-label='Notifications alt+T'] {
   background-color: hsl(var(--accent));
 }
 
+.bg-accent\/10{
+  background-color: hsl(var(--accent) / 0.1);
+}
+
 .bg-background{
   background-color: hsl(var(--background));
 }
@@ -1797,6 +1853,10 @@ section[aria-label='Notifications alt+T'] {
   background-color: hsl(var(--secondary));
 }
 
+.bg-secondary\/10{
+  background-color: hsl(var(--secondary) / 0.1);
+}
+
 .bg-sidebar{
   background-color: hsl(var(--sidebar-background));
 }
@@ -1825,9 +1885,19 @@ section[aria-label='Notifications alt+T'] {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
 
+.bg-gradient-to-t{
+  background-image: linear-gradient(to top, var(--tw-gradient-stops));
+}
+
 .from-accent{
   --tw-gradient-from: hsl(var(--accent)) var(--tw-gradient-from-position);
   --tw-gradient-to: hsl(var(--accent) / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-black\/80{
+  --tw-gradient-from: rgb(0 0 0 / 0.8) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(0 0 0 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -1835,6 +1905,11 @@ section[aria-label='Notifications alt+T'] {
   --tw-gradient-from: hsl(var(--primary)) var(--tw-gradient-from-position);
   --tw-gradient-to: hsl(var(--primary) / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.via-black\/20{
+  --tw-gradient-to: rgb(0 0 0 / 0)  var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), rgb(0 0 0 / 0.2) var(--tw-gradient-via-position), var(--tw-gradient-to);
 }
 
 .to-blue-600{
@@ -1847,6 +1922,10 @@ section[aria-label='Notifications alt+T'] {
 
 .to-orange-500{
   --tw-gradient-to: #f97316 var(--tw-gradient-to-position);
+}
+
+.to-transparent{
+  --tw-gradient-to: transparent var(--tw-gradient-to-position);
 }
 
 .bg-cover{
@@ -1868,6 +1947,11 @@ section[aria-label='Notifications alt+T'] {
 
 .fill-primary\/20{
   fill: hsl(var(--primary) / 0.2);
+}
+
+.object-cover{
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .p-0{
@@ -1939,6 +2023,11 @@ section[aria-label='Notifications alt+T'] {
 .px-5{
   padding-left: 1.25rem;
   padding-right: 1.25rem;
+}
+
+.px-6{
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 .px-8{
@@ -2055,12 +2144,20 @@ section[aria-label='Notifications alt+T'] {
   padding-right: 0.625rem;
 }
 
+.pr-6{
+  padding-right: 1.5rem;
+}
+
 .pr-8{
   padding-right: 2rem;
 }
 
 .pt-0{
   padding-top: 0px;
+}
+
+.pt-1{
+  padding-top: 0.25rem;
 }
 
 .pt-2{
@@ -2439,6 +2536,12 @@ section[aria-label='Notifications alt+T'] {
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
+.ring-1{
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
 .ring-2{
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
@@ -2447,6 +2550,10 @@ section[aria-label='Notifications alt+T'] {
 
 .ring-primary\/10{
   --tw-ring-color: hsl(var(--primary) / 0.1);
+}
+
+.ring-primary\/20{
+  --tw-ring-color: hsl(var(--primary) / 0.2);
 }
 
 .ring-ring{
@@ -2758,6 +2865,12 @@ section[aria-label='Notifications alt+T'] {
   border-bottom-right-radius: calc(var(--radius) - 2px);
 }
 
+.hover\:scale-105:hover{
+  --tw-scale-x: 1.05;
+  --tw-scale-y: 1.05;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .hover\:border-primary\/20:hover{
   border-color: hsl(var(--primary) / 0.2);
 }
@@ -2776,6 +2889,10 @@ section[aria-label='Notifications alt+T'] {
 
 .hover\:bg-muted:hover{
   background-color: hsl(var(--muted));
+}
+
+.hover\:bg-muted\/20:hover{
+  background-color: hsl(var(--muted) / 0.2);
 }
 
 .hover\:bg-muted\/50:hover{
@@ -2800,6 +2917,10 @@ section[aria-label='Notifications alt+T'] {
 
 .hover\:bg-secondary:hover{
   background-color: hsl(var(--secondary));
+}
+
+.hover\:bg-secondary\/20:hover{
+  background-color: hsl(var(--secondary) / 0.2);
 }
 
 .hover\:bg-secondary\/80:hover{
@@ -2860,6 +2981,12 @@ section[aria-label='Notifications alt+T'] {
 .hover\:shadow-lg:hover{
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.hover\:shadow-md:hover{
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -3812,6 +3939,10 @@ section[aria-label='Notifications alt+T'] {
     max-width: 420px;
   }
 
+  .md\:grid-cols-2{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .md\:flex-row{
     flex-direction: row;
   }
@@ -3913,6 +4044,14 @@ section[aria-label='Notifications alt+T'] {
 
   .lg\:grid-cols-12{
     grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .lg\:grid-cols-2{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lg\:grid-cols-3{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

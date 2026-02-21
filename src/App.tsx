@@ -3,6 +3,9 @@ import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import Index from './pages/Index'
+import HistoryPage from './pages/HistoryPage'
+import GoalsPage from './pages/GoalsPage'
+import SettingsPage from './pages/SettingsPage'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 import AuthPage from './pages/AuthPage'
@@ -40,9 +43,9 @@ const AppRoutes = () => {
         }
       >
         <Route path="/" element={<Index />} />
-        <Route path="/objetivos" element={<Index />} />
-        <Route path="/historico" element={<Index />} />
-        <Route path="/configuracoes" element={<Index />} />
+        <Route path="/objetivos" element={<GoalsPage />} />
+        <Route path="/historico" element={<HistoryPage />} />
+        <Route path="/configuracoes" element={<SettingsPage />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

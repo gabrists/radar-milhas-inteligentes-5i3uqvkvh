@@ -18045,7 +18045,7 @@ function handleAndDispatchCustomEvent$1(name, handler, detail, { discrete }) {
 	if (discrete) dispatchDiscreteCustomEvent(target, event);
 	else target.dispatchEvent(event);
 }
-var Root$7 = DismissableLayer;
+var Root$9 = DismissableLayer;
 var Branch = DismissableLayerBranch;
 var useLayoutEffect2 = globalThis?.document ? import_react.useLayoutEffect : () => {};
 var import_react_dom$4 = /* @__PURE__ */ __toESM(require_react_dom(), 1);
@@ -18236,7 +18236,7 @@ var VisuallyHidden = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 VisuallyHidden.displayName = NAME$3;
-var Root$6 = VisuallyHidden;
+var Root$8 = VisuallyHidden;
 var import_react_dom$3 = /* @__PURE__ */ __toESM(require_react_dom(), 1);
 var PROVIDER_NAME$1 = "ToastProvider";
 var [Collection$1, useCollection$1, createCollectionScope$1] = createCollection("Toast");
@@ -18535,7 +18535,7 @@ var ToastImpl = import_react.forwardRef((props, forwardedRef) => {
 		onClose: handleClose,
 		children: import_react_dom$3.createPortal(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection$1.ItemSlot, {
 			scope: __scopeToast,
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$7, {
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$9, {
 				asChild: true,
 				onEscapeKeyDown: composeEventHandlers(onEscapeKeyDown, () => {
 					if (!context.isFocusedToastEscapeKeyDownRef.current) handleClose();
@@ -18927,6 +18927,29 @@ var Bell = createLucideIcon("bell", [["path", {
 	d: "M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326",
 	key: "11g9vi"
 }]]);
+var CircleCheck = createLucideIcon("circle-check", [["circle", {
+	cx: "12",
+	cy: "12",
+	r: "10",
+	key: "1mglay"
+}], ["path", {
+	d: "m9 12 2 2 4-4",
+	key: "dzmm74"
+}]]);
+var CreditCard = createLucideIcon("credit-card", [["rect", {
+	width: "20",
+	height: "14",
+	x: "2",
+	y: "5",
+	rx: "2",
+	key: "ynyp8z"
+}], ["line", {
+	x1: "2",
+	x2: "22",
+	y1: "10",
+	y2: "10",
+	key: "1b3vmo"
+}]]);
 var History = createLucideIcon("history", [
 	["path", {
 		d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8",
@@ -18941,6 +18964,59 @@ var History = createLucideIcon("history", [
 		key: "1fdv2h"
 	}]
 ]);
+var Hotel = createLucideIcon("hotel", [
+	["path", {
+		d: "M10 22v-6.57",
+		key: "1wmca3"
+	}],
+	["path", {
+		d: "M12 11h.01",
+		key: "z322tv"
+	}],
+	["path", {
+		d: "M12 7h.01",
+		key: "1ivr5q"
+	}],
+	["path", {
+		d: "M14 15.43V22",
+		key: "1q2vjd"
+	}],
+	["path", {
+		d: "M15 16a5 5 0 0 0-6 0",
+		key: "o9wqvi"
+	}],
+	["path", {
+		d: "M16 11h.01",
+		key: "xkw8gn"
+	}],
+	["path", {
+		d: "M16 7h.01",
+		key: "1kdx03"
+	}],
+	["path", {
+		d: "M8 11h.01",
+		key: "1dfujw"
+	}],
+	["path", {
+		d: "M8 7h.01",
+		key: "1vti4s"
+	}],
+	["rect", {
+		x: "4",
+		y: "2",
+		width: "16",
+		height: "20",
+		rx: "2",
+		key: "1uxh74"
+	}]
+]);
+var Laptop = createLucideIcon("laptop", [["path", {
+	d: "M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z",
+	key: "1pdavp"
+}], ["path", {
+	d: "M20.054 15.987H3.946",
+	key: "14rxg9"
+}]]);
 var LayoutDashboard = createLucideIcon("layout-dashboard", [
 	["rect", {
 		width: "7",
@@ -19038,6 +19114,20 @@ var Plane = createLucideIcon("plane", [["path", {
 	d: "M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z",
 	key: "1v9wt8"
 }]]);
+var Save = createLucideIcon("save", [
+	["path", {
+		d: "M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z",
+		key: "1c8476"
+	}],
+	["path", {
+		d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7",
+		key: "1ydtos"
+	}],
+	["path", {
+		d: "M7 3v4a1 1 0 0 0 1 1h7",
+		key: "t51u73"
+	}]
+]);
 var Settings = createLucideIcon("settings", [["path", {
 	d: "M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915",
 	key: "1i5ecw"
@@ -19047,6 +19137,20 @@ var Settings = createLucideIcon("settings", [["path", {
 	r: "3",
 	key: "1v7zrd"
 }]]);
+var ShoppingBag = createLucideIcon("shopping-bag", [
+	["path", {
+		d: "M16 10a4 4 0 0 1-8 0",
+		key: "1ltviw"
+	}],
+	["path", {
+		d: "M3.103 6.034h17.794",
+		key: "awc11p"
+	}],
+	["path", {
+		d: "M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z",
+		key: "o988cm"
+	}]
+]);
 var Sparkles = createLucideIcon("sparkles", [
 	["path", {
 		d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z",
@@ -19093,6 +19197,15 @@ var TrendingUp = createLucideIcon("trending-up", [["path", {
 }], ["path", {
 	d: "m22 7-8.5 8.5-5-5L2 17",
 	key: "1t1m79"
+}]]);
+var User = createLucideIcon("user", [["path", {
+	d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2",
+	key: "975kel"
+}], ["circle", {
+	cx: "12",
+	cy: "7",
+	r: "4",
+	key: "17ys0d"
 }]]);
 var X = createLucideIcon("x", [["path", {
 	d: "M18 6 6 18",
@@ -19388,12 +19501,12 @@ var lengthUnitRegex = /\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|
 var colorFunctionRegex = /^(rgba?|hsla?|hwb|(ok)?(lab|lch)|color-mix)\(.+\)$/;
 var shadowRegex = /^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/;
 var imageRegex = /^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/;
-var isLength = (value) => isNumber(value) || stringLengths.has(value) || fractionRegex.test(value);
+var isLength = (value) => isNumber$1(value) || stringLengths.has(value) || fractionRegex.test(value);
 var isArbitraryLength = (value) => getIsArbitraryValue(value, "length", isLengthOnly);
-var isNumber = (value) => Boolean(value) && !Number.isNaN(Number(value));
-var isArbitraryNumber = (value) => getIsArbitraryValue(value, "number", isNumber);
+var isNumber$1 = (value) => Boolean(value) && !Number.isNaN(Number(value));
+var isArbitraryNumber = (value) => getIsArbitraryValue(value, "number", isNumber$1);
 var isInteger = (value) => Boolean(value) && Number.isInteger(Number(value));
-var isPercent = (value) => value.endsWith("%") && isNumber(value.slice(0, -1));
+var isPercent = (value) => value.endsWith("%") && isNumber$1(value.slice(0, -1));
 var isArbitraryValue = (value) => arbitraryValueRegex.test(value);
 var isTshirtSize = (value) => tshirtUnitRegex.test(value);
 var sizeLabels = /* @__PURE__ */ new Set([
@@ -19470,7 +19583,7 @@ var getDefaultConfig = () => {
 	];
 	const getNumberWithAutoAndArbitrary = () => [
 		"auto",
-		isNumber,
+		isNumber$1,
 		isArbitraryValue
 	];
 	const getPositions = () => [
@@ -19533,7 +19646,7 @@ var getDefaultConfig = () => {
 		"right",
 		"column"
 	];
-	const getNumberAndArbitrary = () => [isNumber, isArbitraryValue];
+	const getNumberAndArbitrary = () => [isNumber$1, isArbitraryValue];
 	return {
 		cacheSize: 500,
 		separator: ":",
@@ -19922,7 +20035,7 @@ var getDefaultConfig = () => {
 			] }],
 			"line-clamp": [{ "line-clamp": [
 				"none",
-				isNumber,
+				isNumber$1,
 				isArbitraryNumber
 			] }],
 			leading: [{ leading: [
@@ -20890,10 +21003,10 @@ var Observer = class {
 			if (typeof id !== "string" && typeof id !== "number") return { unwrap };
 			else return Object.assign(id, { unwrap });
 		};
-		this.custom = (jsx$21, data) => {
+		this.custom = (jsx$23, data) => {
 			const id = (data == null ? void 0 : data.id) || toastsCounter++;
 			this.create({
-				jsx: jsx$21(id),
+				jsx: jsx$23(id),
 				id,
 				...data
 			});
@@ -23033,7 +23146,7 @@ var Arrow$1 = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 Arrow$1.displayName = NAME$2;
-var Root$5 = Arrow$1;
+var Root$7 = Arrow$1;
 function useSize(element) {
 	const [size$3, setSize] = import_react.useState(void 0);
 	useLayoutEffect2(() => {
@@ -23250,7 +23363,7 @@ var PopperArrow = import_react.forwardRef(function PopperArrow2(props, forwarded
 			}[contentContext.placedSide],
 			visibility: contentContext.shouldHideArrow ? "hidden" : void 0
 		},
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$5, {
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$7, {
 			...arrowProps,
 			ref: forwardedRef,
 			style: {
@@ -23632,7 +23745,7 @@ var TooltipContentImpl = import_react.forwardRef((props, forwardedRef) => {
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Slottable, { children }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(VisuallyHiddenContentContextProvider, {
 				scope: __scopeTooltip,
 				isInside: true,
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$6, {
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$8, {
 					id: context.contentId,
 					role: "tooltip",
 					children: ariaLabel || children
@@ -23983,14 +24096,14 @@ var Label$1 = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 Label$1.displayName = NAME$1;
-var Root$4 = Label$1;
+var Root$6 = Label$1;
 var labelVariants = cva("text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70");
-var Label = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$4, {
+var Label = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$6, {
 	ref,
 	className: cn(labelVariants(), className),
 	...props
 }));
-Label.displayName = Root$4.displayName;
+Label.displayName = Root$6.displayName;
 function clamp(value, [min$1, max$1]) {
 	return Math.min(max$1, Math.max(min$1, value));
 }
@@ -24308,7 +24421,7 @@ var SliderRange = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 SliderRange.displayName = RANGE_NAME;
-var THUMB_NAME = "SliderThumb";
+var THUMB_NAME$1 = "SliderThumb";
 var SliderThumb = import_react.forwardRef((props, forwardedRef) => {
 	const getItems = useCollection(props.__scopeSlider);
 	const [thumb, setThumb] = import_react.useState(null);
@@ -24322,8 +24435,8 @@ var SliderThumb = import_react.forwardRef((props, forwardedRef) => {
 });
 var SliderThumbImpl = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeSlider, index: index$1, name, ...thumbProps } = props;
-	const context = useSliderContext(THUMB_NAME, __scopeSlider);
-	const orientation = useSliderOrientationContext(THUMB_NAME, __scopeSlider);
+	const context = useSliderContext(THUMB_NAME$1, __scopeSlider);
+	const orientation = useSliderOrientationContext(THUMB_NAME$1, __scopeSlider);
 	const [thumb, setThumb] = import_react.useState(null);
 	const composedRefs = useComposedRefs(forwardedRef, (node) => setThumb(node));
 	const isFormControl = thumb ? context.form || !!thumb.closest("form") : true;
@@ -24373,8 +24486,8 @@ var SliderThumbImpl = import_react.forwardRef((props, forwardedRef) => {
 		}, index$1)]
 	});
 });
-SliderThumb.displayName = THUMB_NAME;
-var BUBBLE_INPUT_NAME = "RadioBubbleInput";
+SliderThumb.displayName = THUMB_NAME$1;
+var BUBBLE_INPUT_NAME$1 = "RadioBubbleInput";
 var SliderBubbleInput = import_react.forwardRef(({ __scopeSlider, value, ...props }, forwardedRef) => {
 	const ref = import_react.useRef(null);
 	const composedRefs = useComposedRefs(ref, forwardedRef);
@@ -24397,7 +24510,7 @@ var SliderBubbleInput = import_react.forwardRef(({ __scopeSlider, value, ...prop
 		defaultValue: value
 	});
 });
-SliderBubbleInput.displayName = BUBBLE_INPUT_NAME;
+SliderBubbleInput.displayName = BUBBLE_INPUT_NAME$1;
 function getNextSortedValues(prevValues = [], nextValue, atIndex) {
 	const nextValues = [...prevValues];
 	nextValues[atIndex] = nextValue;
@@ -24445,20 +24558,20 @@ function roundValue(value, decimalCount) {
 	const rounder = Math.pow(10, decimalCount);
 	return Math.round(value * rounder) / rounder;
 }
-var Root$3 = Slider$1;
+var Root$5 = Slider$1;
 var Track = SliderTrack;
 var Range = SliderRange;
-var Thumb = SliderThumb;
-var Slider = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Root$3, {
+var Thumb$1 = SliderThumb;
+var Slider = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Root$5, {
 	ref,
 	className: cn("relative flex w-full touch-none select-none items-center", className),
 	...props,
 	children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Track, {
 		className: "relative h-2 w-full grow overflow-hidden rounded-full bg-secondary",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Range, { className: "absolute h-full bg-primary" })
-	}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Thumb, { className: "block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50" })]
+	}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Thumb$1, { className: "block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50" })]
 }));
-Slider.displayName = Root$3.displayName;
+Slider.displayName = Root$5.displayName;
 function Skeleton({ className, ...props }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		className: cn("animate-pulse rounded-md bg-muted", className),
@@ -32629,6 +32742,756 @@ function Index() {
 		})]
 	});
 }
+var Table = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+	className: "relative w-full overflow-auto",
+	children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("table", {
+		ref,
+		className: cn("w-full caption-bottom text-sm", className),
+		...props
+	})
+}));
+Table.displayName = "Table";
+var TableHeader = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", {
+	ref,
+	className: cn("[&_tr]:border-b", className),
+	...props
+}));
+TableHeader.displayName = "TableHeader";
+var TableBody = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tbody", {
+	ref,
+	className: cn("[&_tr:last-child]:border-0", className),
+	...props
+}));
+TableBody.displayName = "TableBody";
+var TableFooter = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tfoot", {
+	ref,
+	className: cn("border-t bg-muted/50 font-medium [&>tr]:last:border-b-0", className),
+	...props
+}));
+TableFooter.displayName = "TableFooter";
+var TableRow = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tr", {
+	ref,
+	className: cn("border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", className),
+	...props
+}));
+TableRow.displayName = "TableRow";
+var TableHead = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+	ref,
+	className: cn("h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0", className),
+	...props
+}));
+TableHead.displayName = "TableHead";
+var TableCell = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+	ref,
+	className: cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className),
+	...props
+}));
+TableCell.displayName = "TableCell";
+var TableCaption = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("caption", {
+	ref,
+	className: cn("mt-4 text-sm text-muted-foreground", className),
+	...props
+}));
+TableCaption.displayName = "TableCaption";
+var transactions = [
+	{
+		id: 1,
+		icon: ShoppingBag,
+		desc: "Compra de Celular na Amazon",
+		miles: 45e3,
+		multiplier: "10x",
+		date: "15/10/2026"
+	},
+	{
+		id: 2,
+		icon: Hotel,
+		desc: "Reserva de Hotel - Copacabana",
+		miles: 12e3,
+		multiplier: "4x",
+		date: "02/10/2026"
+	},
+	{
+		id: 3,
+		icon: Laptop,
+		desc: "Assinatura de Software",
+		miles: 1500,
+		multiplier: "2x",
+		date: "28/09/2026"
+	},
+	{
+		id: 4,
+		icon: CreditCard,
+		desc: "Fatura Cartão Black",
+		miles: 8500,
+		multiplier: "2.2x",
+		date: "15/09/2026"
+	},
+	{
+		id: 5,
+		icon: Plane,
+		desc: "Passagem São Paulo - Miami",
+		miles: 6e3,
+		multiplier: "1x",
+		date: "01/09/2026"
+	}
+];
+function HistoryPage() {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "space-y-6 md:space-y-8 pb-4 animate-fade-in-up",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+			className: "text-2xl md:text-3xl font-bold text-secondary tracking-tight flex items-center gap-2",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(History, { className: "w-8 h-8 text-primary" }), "Histórico de Milhas"]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+			className: "text-muted-foreground mt-1 text-sm md:text-base font-medium",
+			children: "Acompanhe todas as suas atividades e acúmulos recentes."
+		})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+			className: "shadow-elevation border-muted",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
+				className: "border-b border-muted/50 pb-4",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, { children: "Transações Recentes" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, { children: "Suas últimas compras simuladas e milhas adicionadas." })]
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+				className: "p-0",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
+					className: "bg-muted/30",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, { children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+							className: "w-[60px] text-center",
+							children: "Tipo"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, { children: "Descrição" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+							className: "text-right",
+							children: "Milhas Geradas"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+							className: "text-center",
+							children: "Multiplicador"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+							className: "text-right pr-6",
+							children: "Data"
+						})
+					] })
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableBody, { children: transactions.map((tx) => {
+					const Icon$1 = tx.icon;
+					return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+						className: "hover:bg-muted/20 transition-colors",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+								className: "text-center",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "inline-flex items-center justify-center p-2 rounded-full bg-primary/10 text-primary",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon$1, { className: "w-4 h-4" })
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+								className: "font-medium text-secondary",
+								children: tx.desc
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableCell, {
+								className: "text-right font-bold text-success",
+								children: ["+", new Intl.NumberFormat("pt-BR").format(tx.miles)]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+								className: "text-center",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "inline-flex px-2 py-1 rounded-md text-xs font-semibold bg-accent/10 text-accent-foreground border border-accent/20",
+									children: tx.multiplier
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+								className: "text-right text-muted-foreground pr-6",
+								children: tx.date
+							})
+						]
+					}, tx.id);
+				}) })] })
+			})]
+		})]
+	});
+}
+function createContextScope(scopeName, createContextScopeDeps = []) {
+	let defaultContexts = [];
+	function createContext3(rootComponentName, defaultContext) {
+		const BaseContext = import_react.createContext(defaultContext);
+		BaseContext.displayName = rootComponentName + "Context";
+		const index$1 = defaultContexts.length;
+		defaultContexts = [...defaultContexts, defaultContext];
+		const Provider$2 = (props) => {
+			const { scope, children, ...context } = props;
+			const Context = scope?.[scopeName]?.[index$1] || BaseContext;
+			const value = import_react.useMemo(() => context, Object.values(context));
+			return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Context.Provider, {
+				value,
+				children
+			});
+		};
+		Provider$2.displayName = rootComponentName + "Provider";
+		function useContext2(consumerName, scope) {
+			const Context = scope?.[scopeName]?.[index$1] || BaseContext;
+			const context = import_react.useContext(Context);
+			if (context) return context;
+			if (defaultContext !== void 0) return defaultContext;
+			throw new Error(`\`${consumerName}\` must be used within \`${rootComponentName}\``);
+		}
+		return [Provider$2, useContext2];
+	}
+	const createScope = () => {
+		const scopeContexts = defaultContexts.map((defaultContext) => {
+			return import_react.createContext(defaultContext);
+		});
+		return function useScope(scope) {
+			const contexts = scope?.[scopeName] || scopeContexts;
+			return import_react.useMemo(() => ({ [`__scope${scopeName}`]: {
+				...scope,
+				[scopeName]: contexts
+			} }), [scope, contexts]);
+		};
+	};
+	createScope.scopeName = scopeName;
+	return [createContext3, composeContextScopes(createScope, ...createContextScopeDeps)];
+}
+function composeContextScopes(...scopes) {
+	const baseScope = scopes[0];
+	if (scopes.length === 1) return baseScope;
+	const createScope = () => {
+		const scopeHooks = scopes.map((createScope2) => ({
+			useScope: createScope2(),
+			scopeName: createScope2.scopeName
+		}));
+		return function useComposedScopes(overrideScopes) {
+			const nextScopes = scopeHooks.reduce((nextScopes2, { useScope, scopeName }) => {
+				const currentScope = useScope(overrideScopes)[`__scope${scopeName}`];
+				return {
+					...nextScopes2,
+					...currentScope
+				};
+			}, {});
+			return import_react.useMemo(() => ({ [`__scope${baseScope.scopeName}`]: nextScopes }), [nextScopes]);
+		};
+	};
+	createScope.scopeName = baseScope.scopeName;
+	return createScope;
+}
+var PROGRESS_NAME = "Progress";
+var DEFAULT_MAX = 100;
+var [createProgressContext, createProgressScope] = createContextScope(PROGRESS_NAME);
+var [ProgressProvider, useProgressContext] = createProgressContext(PROGRESS_NAME);
+var Progress$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeProgress, value: valueProp = null, max: maxProp, getValueLabel = defaultGetValueLabel, ...progressProps } = props;
+	if ((maxProp || maxProp === 0) && !isValidMaxNumber(maxProp)) console.error(getInvalidMaxError(`${maxProp}`, "Progress"));
+	const max$1 = isValidMaxNumber(maxProp) ? maxProp : DEFAULT_MAX;
+	if (valueProp !== null && !isValidValueNumber(valueProp, max$1)) console.error(getInvalidValueError(`${valueProp}`, "Progress"));
+	const value = isValidValueNumber(valueProp, max$1) ? valueProp : null;
+	const valueLabel = isNumber(value) ? getValueLabel(value, max$1) : void 0;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProgressProvider, {
+		scope: __scopeProgress,
+		value,
+		max: max$1,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive.div, {
+			"aria-valuemax": max$1,
+			"aria-valuemin": 0,
+			"aria-valuenow": isNumber(value) ? value : void 0,
+			"aria-valuetext": valueLabel,
+			role: "progressbar",
+			"data-state": getProgressState(value, max$1),
+			"data-value": value ?? void 0,
+			"data-max": max$1,
+			...progressProps,
+			ref: forwardedRef
+		})
+	});
+});
+Progress$1.displayName = PROGRESS_NAME;
+var INDICATOR_NAME = "ProgressIndicator";
+var ProgressIndicator = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeProgress, ...indicatorProps } = props;
+	const context = useProgressContext(INDICATOR_NAME, __scopeProgress);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive.div, {
+		"data-state": getProgressState(context.value, context.max),
+		"data-value": context.value ?? void 0,
+		"data-max": context.max,
+		...indicatorProps,
+		ref: forwardedRef
+	});
+});
+ProgressIndicator.displayName = INDICATOR_NAME;
+function defaultGetValueLabel(value, max$1) {
+	return `${Math.round(value / max$1 * 100)}%`;
+}
+function getProgressState(value, maxValue) {
+	return value == null ? "indeterminate" : value === maxValue ? "complete" : "loading";
+}
+function isNumber(value) {
+	return typeof value === "number";
+}
+function isValidMaxNumber(max$1) {
+	return isNumber(max$1) && !isNaN(max$1) && max$1 > 0;
+}
+function isValidValueNumber(value, max$1) {
+	return isNumber(value) && !isNaN(value) && value <= max$1 && value >= 0;
+}
+function getInvalidMaxError(propValue, componentName) {
+	return `Invalid prop \`max\` of value \`${propValue}\` supplied to \`${componentName}\`. Only numbers greater than 0 are valid max values. Defaulting to \`${DEFAULT_MAX}\`.`;
+}
+function getInvalidValueError(propValue, componentName) {
+	return `Invalid prop \`value\` of value \`${propValue}\` supplied to \`${componentName}\`. The \`value\` prop must be:
+  - a positive number
+  - less than the value passed to \`max\` (or ${DEFAULT_MAX} if no \`max\` prop is set)
+  - \`null\` or \`undefined\` if the progress is indeterminate.
+
+Defaulting to \`null\`.`;
+}
+var Root$4 = Progress$1;
+var Indicator = ProgressIndicator;
+var Progress = import_react.forwardRef(({ className, value, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$4, {
+	ref,
+	className: cn("relative h-4 w-full overflow-hidden rounded-full bg-secondary", className),
+	...props,
+	children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Indicator, {
+		className: "h-full w-full flex-1 bg-primary transition-all",
+		style: { transform: `translateX(-${100 - (value || 0)}%)` }
+	})
+}));
+Progress.displayName = Root$4.displayName;
+var initialGoals = [
+	{
+		id: 1,
+		title: "Orlando (Disney/Universal)",
+		current: 85e3,
+		target: 12e4,
+		image: "orlando disney",
+		active: true
+	},
+	{
+		id: 2,
+		title: "Canadá (Toronto, Montreal e Quebec)",
+		current: 45e3,
+		target: 18e4,
+		image: "canada toronto",
+		active: false
+	},
+	{
+		id: 3,
+		title: "Hungria",
+		current: 15e3,
+		target: 2e5,
+		image: "budapest hungary",
+		active: false
+	}
+];
+function GoalsPage() {
+	const [goals, setGoals] = (0, import_react.useState)(initialGoals);
+	const handleSetActive = (id) => {
+		setGoals(goals.map((g) => ({
+			...g,
+			active: g.id === id
+		})));
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "space-y-6 md:space-y-8 pb-4 animate-fade-in-up",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+			className: "text-2xl md:text-3xl font-bold text-secondary tracking-tight flex items-center gap-2",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Target, { className: "w-8 h-8 text-primary" }), "Meus Objetivos"]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+			className: "text-muted-foreground mt-1 text-sm md:text-base font-medium",
+			children: "Gerencie suas metas de viagem e defina qual é a sua prioridade."
+		})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+			children: goals.map((goal, index$1) => {
+				const percentage = Math.min(goal.current / goal.target * 100, 100);
+				return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+					className: cn("overflow-hidden flex flex-col transition-all duration-300 shadow-sm hover:shadow-md animate-fade-in-up", goal.active ? "border-primary ring-1 ring-primary/20" : "border-muted"),
+					style: { animationDelay: `${index$1 * 100}ms` },
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "h-36 relative w-full overflow-hidden bg-muted",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+									src: `https://img.usecurling.com/p/600/300?q=${encodeURIComponent(goal.image)}&dpr=2`,
+									alt: goal.title,
+									className: "w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" }),
+								goal.active && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "absolute top-3 right-3 bg-primary text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleCheck, { className: "w-3.5 h-3.5" }), " Principal"]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "absolute bottom-3 left-3 right-3",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
+										className: "text-white font-bold text-lg leading-tight flex items-start gap-1.5 drop-shadow-md",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, { className: "w-4 h-4 mt-1 shrink-0 text-primary" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "line-clamp-2",
+											children: goal.title
+										})]
+									})
+								})
+							]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+							className: "pt-5 flex-1 space-y-4",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-2",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex justify-between items-end text-sm",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "font-semibold text-secondary",
+											children: "Progresso"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+											className: "font-bold text-primary",
+											children: [percentage.toFixed(1), "%"]
+										})]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Progress, {
+										value: percentage,
+										className: "h-2.5"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex justify-between text-xs font-medium text-muted-foreground pt-1",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [new Intl.NumberFormat("pt-BR").format(goal.current), " mi"] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [new Intl.NumberFormat("pt-BR").format(goal.target), " mi"] })]
+									})
+								]
+							})
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardFooter, {
+							className: "pt-0 pb-5 px-5",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+								variant: goal.active ? "secondary" : "outline",
+								className: cn("w-full font-semibold", goal.active ? "bg-secondary/10 text-secondary hover:bg-secondary/20" : ""),
+								disabled: goal.active,
+								onClick: () => handleSetActive(goal.id),
+								children: [goal.active ? "Meta Ativa" : "Tornar Meta Principal", !goal.active && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaneTakeoff, { className: "w-4 h-4 ml-2" })]
+							})
+						})
+					]
+				}, goal.id);
+			})
+		})]
+	});
+}
+var SWITCH_NAME = "Switch";
+var [createSwitchContext, createSwitchScope] = createContextScope$1(SWITCH_NAME);
+var [SwitchProvider, useSwitchContext] = createSwitchContext(SWITCH_NAME);
+var Switch$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeSwitch, name, checked: checkedProp, defaultChecked, required, disabled, value = "on", onCheckedChange, form, ...switchProps } = props;
+	const [button, setButton] = import_react.useState(null);
+	const composedRefs = useComposedRefs(forwardedRef, (node) => setButton(node));
+	const hasConsumerStoppedPropagationRef = import_react.useRef(false);
+	const isFormControl = button ? form || !!button.closest("form") : true;
+	const [checked, setChecked] = useControllableState({
+		prop: checkedProp,
+		defaultProp: defaultChecked ?? false,
+		onChange: onCheckedChange,
+		caller: SWITCH_NAME
+	});
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(SwitchProvider, {
+		scope: __scopeSwitch,
+		checked,
+		disabled,
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.button, {
+			type: "button",
+			role: "switch",
+			"aria-checked": checked,
+			"aria-required": required,
+			"data-state": getState$1(checked),
+			"data-disabled": disabled ? "" : void 0,
+			disabled,
+			value,
+			...switchProps,
+			ref: composedRefs,
+			onClick: composeEventHandlers(props.onClick, (event) => {
+				setChecked((prevChecked) => !prevChecked);
+				if (isFormControl) {
+					hasConsumerStoppedPropagationRef.current = event.isPropagationStopped();
+					if (!hasConsumerStoppedPropagationRef.current) event.stopPropagation();
+				}
+			})
+		}), isFormControl && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SwitchBubbleInput, {
+			control: button,
+			bubbles: !hasConsumerStoppedPropagationRef.current,
+			name,
+			value,
+			checked,
+			required,
+			disabled,
+			form,
+			style: { transform: "translateX(-100%)" }
+		})]
+	});
+});
+Switch$1.displayName = SWITCH_NAME;
+var THUMB_NAME = "SwitchThumb";
+var SwitchThumb = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeSwitch, ...thumbProps } = props;
+	const context = useSwitchContext(THUMB_NAME, __scopeSwitch);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.span, {
+		"data-state": getState$1(context.checked),
+		"data-disabled": context.disabled ? "" : void 0,
+		...thumbProps,
+		ref: forwardedRef
+	});
+});
+SwitchThumb.displayName = THUMB_NAME;
+var BUBBLE_INPUT_NAME = "SwitchBubbleInput";
+var SwitchBubbleInput = import_react.forwardRef(({ __scopeSwitch, control, checked, bubbles = true, ...props }, forwardedRef) => {
+	const ref = import_react.useRef(null);
+	const composedRefs = useComposedRefs(ref, forwardedRef);
+	const prevChecked = usePrevious(checked);
+	const controlSize = useSize(control);
+	import_react.useEffect(() => {
+		const input = ref.current;
+		if (!input) return;
+		const inputProto = window.HTMLInputElement.prototype;
+		const setChecked = Object.getOwnPropertyDescriptor(inputProto, "checked").set;
+		if (prevChecked !== checked && setChecked) {
+			const event = new Event("click", { bubbles });
+			setChecked.call(input, checked);
+			input.dispatchEvent(event);
+		}
+	}, [
+		prevChecked,
+		checked,
+		bubbles
+	]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+		type: "checkbox",
+		"aria-hidden": true,
+		defaultChecked: checked,
+		...props,
+		tabIndex: -1,
+		ref: composedRefs,
+		style: {
+			...props.style,
+			...controlSize,
+			position: "absolute",
+			pointerEvents: "none",
+			opacity: 0,
+			margin: 0
+		}
+	});
+});
+SwitchBubbleInput.displayName = BUBBLE_INPUT_NAME;
+function getState$1(checked) {
+	return checked ? "checked" : "unchecked";
+}
+var Root$3 = Switch$1;
+var Thumb = SwitchThumb;
+var Switch = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$3, {
+	className: cn("peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input", className),
+	...props,
+	ref,
+	children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Thumb, { className: cn("pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0") })
+}));
+Switch.displayName = Root$3.displayName;
+function SettingsPage() {
+	const { toast: toast$2 } = useToast();
+	const [isSaving, setIsSaving] = (0, import_react.useState)(false);
+	const [profile, setProfile] = (0, import_react.useState)({
+		name: "Viajante Premium",
+		email: "viajante@example.com"
+	});
+	const [programs, setPrograms] = (0, import_react.useState)({
+		livelo: true,
+		esfera: false,
+		smiles: true,
+		latampass: true,
+		tudoazul: false
+	});
+	const handleSave = () => {
+		setIsSaving(true);
+		setTimeout(() => {
+			setIsSaving(false);
+			toast$2({
+				title: "Configurações salvas",
+				description: "Seu perfil e programas de fidelidade foram atualizados com sucesso."
+			});
+		}, 800);
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "space-y-6 md:space-y-8 pb-4 animate-fade-in-up",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+			className: "text-2xl md:text-3xl font-bold text-secondary tracking-tight flex items-center gap-2",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Settings, { className: "w-8 h-8 text-primary" }), "Configurações"]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+			className: "text-muted-foreground mt-1 text-sm md:text-base font-medium",
+			children: "Gerencie seu perfil e suas contas de programas de fidelidade."
+		})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+				className: "shadow-elevation border-muted h-fit",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
+						className: "border-b border-muted/50 pb-5",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center gap-2 text-primary mb-1",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(User, { className: "w-5 h-5" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
+								className: "text-xl",
+								children: "Meu Perfil"
+							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, { children: "Atualize suas informações pessoais." })]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+						className: "pt-6 space-y-5",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "space-y-2.5",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+								htmlFor: "name",
+								className: "text-secondary font-semibold",
+								children: "Nome Completo"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+								id: "name",
+								value: profile.name,
+								onChange: (e) => setProfile({
+									...profile,
+									name: e.target.value
+								}),
+								className: "h-11 bg-muted/30 focus:bg-background transition-colors"
+							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "space-y-2.5",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+								htmlFor: "email",
+								className: "text-secondary font-semibold",
+								children: "E-mail"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+								id: "email",
+								type: "email",
+								value: profile.email,
+								onChange: (e) => setProfile({
+									...profile,
+									email: e.target.value
+								}),
+								className: "h-11 bg-muted/30 focus:bg-background transition-colors"
+							})]
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardFooter, {
+						className: "pt-2 pb-6 px-6",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+							onClick: handleSave,
+							disabled: isSaving,
+							className: "w-full sm:w-auto font-semibold",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Save, { className: "w-4 h-4 mr-2" }), isSaving ? "Salvando..." : "Salvar Alterações"]
+						})
+					})
+				]
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+				className: "shadow-elevation border-muted h-fit",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
+					className: "border-b border-muted/50 pb-5",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex items-center gap-2 text-primary mb-1",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CreditCard, { className: "w-5 h-5" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
+							className: "text-xl",
+							children: "Meus Programas de Fidelidade"
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, { children: "Selecione os programas que você utiliza para transferências." })]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+					className: "pt-6 space-y-4",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center justify-between p-3 rounded-lg border border-border bg-card shadow-sm hover:bg-muted/20 transition-colors",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-0.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+									className: "text-base font-semibold text-secondary cursor-pointer",
+									children: "Livelo"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-xs text-muted-foreground font-medium",
+									children: "Programa de pontos do Bradesco e BB"
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Switch, {
+								checked: programs.livelo,
+								onCheckedChange: (v) => setPrograms({
+									...programs,
+									livelo: v
+								})
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center justify-between p-3 rounded-lg border border-border bg-card shadow-sm hover:bg-muted/20 transition-colors",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-0.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+									className: "text-base font-semibold text-secondary cursor-pointer",
+									children: "Esfera"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-xs text-muted-foreground font-medium",
+									children: "Programa de pontos do Santander"
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Switch, {
+								checked: programs.esfera,
+								onCheckedChange: (v) => setPrograms({
+									...programs,
+									esfera: v
+								})
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center justify-between p-3 rounded-lg border border-border bg-card shadow-sm hover:bg-muted/20 transition-colors",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-0.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+									className: "text-base font-semibold text-secondary cursor-pointer",
+									children: "Smiles"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-xs text-muted-foreground font-medium",
+									children: "Programa de fidelidade da GOL"
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Switch, {
+								checked: programs.smiles,
+								onCheckedChange: (v) => setPrograms({
+									...programs,
+									smiles: v
+								})
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center justify-between p-3 rounded-lg border border-border bg-card shadow-sm hover:bg-muted/20 transition-colors",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-0.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+									className: "text-base font-semibold text-secondary cursor-pointer",
+									children: "Latam Pass"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-xs text-muted-foreground font-medium",
+									children: "Programa de fidelidade da LATAM"
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Switch, {
+								checked: programs.latampass,
+								onCheckedChange: (v) => setPrograms({
+									...programs,
+									latampass: v
+								})
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center justify-between p-3 rounded-lg border border-border bg-card shadow-sm hover:bg-muted/20 transition-colors",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-0.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+									className: "text-base font-semibold text-secondary cursor-pointer",
+									children: "TudoAzul"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-xs text-muted-foreground font-medium",
+									children: "Programa de fidelidade da Azul"
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Switch, {
+								checked: programs.tudoazul,
+								onCheckedChange: (v) => setPrograms({
+									...programs,
+									tudoazul: v
+								})
+							})]
+						})
+					]
+				})]
+			})]
+		})]
+	});
+}
 var NotFound = () => {
 	const location = useLocation();
 	(0, import_react.useEffect)(() => {
@@ -34265,69 +35128,6 @@ var SidebarMenuSubButton = import_react.forwardRef(({ asChild = false, size: siz
 	});
 });
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton";
-function createContextScope(scopeName, createContextScopeDeps = []) {
-	let defaultContexts = [];
-	function createContext3(rootComponentName, defaultContext) {
-		const BaseContext = import_react.createContext(defaultContext);
-		BaseContext.displayName = rootComponentName + "Context";
-		const index$1 = defaultContexts.length;
-		defaultContexts = [...defaultContexts, defaultContext];
-		const Provider$2 = (props) => {
-			const { scope, children, ...context } = props;
-			const Context = scope?.[scopeName]?.[index$1] || BaseContext;
-			const value = import_react.useMemo(() => context, Object.values(context));
-			return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Context.Provider, {
-				value,
-				children
-			});
-		};
-		Provider$2.displayName = rootComponentName + "Provider";
-		function useContext2(consumerName, scope) {
-			const Context = scope?.[scopeName]?.[index$1] || BaseContext;
-			const context = import_react.useContext(Context);
-			if (context) return context;
-			if (defaultContext !== void 0) return defaultContext;
-			throw new Error(`\`${consumerName}\` must be used within \`${rootComponentName}\``);
-		}
-		return [Provider$2, useContext2];
-	}
-	const createScope = () => {
-		const scopeContexts = defaultContexts.map((defaultContext) => {
-			return import_react.createContext(defaultContext);
-		});
-		return function useScope(scope) {
-			const contexts = scope?.[scopeName] || scopeContexts;
-			return import_react.useMemo(() => ({ [`__scope${scopeName}`]: {
-				...scope,
-				[scopeName]: contexts
-			} }), [scope, contexts]);
-		};
-	};
-	createScope.scopeName = scopeName;
-	return [createContext3, composeContextScopes(createScope, ...createContextScopeDeps)];
-}
-function composeContextScopes(...scopes) {
-	const baseScope = scopes[0];
-	if (scopes.length === 1) return baseScope;
-	const createScope = () => {
-		const scopeHooks = scopes.map((createScope2) => ({
-			useScope: createScope2(),
-			scopeName: createScope2.scopeName
-		}));
-		return function useComposedScopes(overrideScopes) {
-			const nextScopes = scopeHooks.reduce((nextScopes2, { useScope, scopeName }) => {
-				const currentScope = useScope(overrideScopes)[`__scope${scopeName}`];
-				return {
-					...nextScopes2,
-					...currentScope
-				};
-			}, {});
-			return import_react.useMemo(() => ({ [`__scope${baseScope.scopeName}`]: nextScopes }), [nextScopes]);
-		};
-	};
-	createScope.scopeName = baseScope.scopeName;
-	return createScope;
-}
 /**
 * @license React
 * use-sync-external-store-shim.development.js
@@ -34349,7 +35149,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				var cachedValue = getSnapshot();
 				objectIs(value, cachedValue) || (console.error("The result of getSnapshot should be cached to avoid an infinite loop"), didWarnUncachedGetSnapshot = !0);
 			}
-			cachedValue = useState$4({ inst: {
+			cachedValue = useState$6({ inst: {
 				value,
 				getSnapshot
 			} });
@@ -34386,7 +35186,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 			return getSnapshot();
 		}
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-		var React$2 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$4 = React$2.useState, useEffect$3 = React$2.useEffect, useLayoutEffect$1 = React$2.useLayoutEffect, useDebugValue = React$2.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
+		var React$2 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$6 = React$2.useState, useEffect$3 = React$2.useEffect, useLayoutEffect$1 = React$2.useLayoutEffect, useDebugValue = React$2.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
 		exports.useSyncExternalStore = void 0 !== React$2.useSyncExternalStore ? React$2.useSyncExternalStore : shim;
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
 	})();
@@ -34774,15 +35574,15 @@ var AppRoutes = () => {
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
 					path: "/objetivos",
-					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Index, {})
+					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(GoalsPage, {})
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
 					path: "/historico",
-					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Index, {})
+					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HistoryPage, {})
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
 					path: "/configuracoes",
-					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Index, {})
+					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SettingsPage, {})
 				})
 			]
 		}),
@@ -34806,4 +35606,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-DuACgCT_.js.map
+//# sourceMappingURL=index-CSeK2Cx3.js.map

@@ -15,7 +15,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          full_name: string
+          id: string
+          plan_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          full_name: string
+          id: string
+          plan_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          full_name?: string
+          id?: string
+          plan_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      travel_goals: {
+        Row: {
+          current_miles: number
+          destination_name: string
+          id: string
+          target_date: string | null
+          target_miles: number
+          user_id: string
+        }
+        Insert: {
+          current_miles?: number
+          destination_name: string
+          id?: string
+          target_date?: string | null
+          target_miles: number
+          user_id: string
+        }
+        Update: {
+          current_miles?: number
+          destination_name?: string
+          id?: string
+          target_date?: string | null
+          target_miles?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -158,3 +205,27 @@ export const Constants = {
 // ====== DATABASE EXTENDED CONTEXT (auto-generated) ======
 // This section contains constraints, RLS policies, functions, triggers,
 // indexes and materialized views not present in the type definitions above.
+
+// --- CONSTRAINTS ---
+// Table: profiles
+//   FOREIGN KEY profiles_id_fkey: FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE
+//   PRIMARY KEY profiles_pkey: PRIMARY KEY (id)
+// Table: travel_goals
+//   PRIMARY KEY travel_goals_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY travel_goals_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+
+// --- ROW LEVEL SECURITY POLICIES ---
+// Table: profiles
+//   Policy "Users can update own profile." (UPDATE, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = id)
+//   Policy "Users can view own profile." (SELECT, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = id)
+// Table: travel_goals
+//   Policy "Users can delete own travel goals." (DELETE, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = user_id)
+//   Policy "Users can insert own travel goals." (INSERT, PERMISSIVE) roles={public}
+//     WITH CHECK: (auth.uid() = user_id)
+//   Policy "Users can update own travel goals." (UPDATE, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = user_id)
+//   Policy "Users can view own travel goals." (SELECT, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = user_id)
