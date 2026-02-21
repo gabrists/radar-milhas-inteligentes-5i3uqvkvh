@@ -10,6 +10,7 @@ import {
   LogOut,
   Tag,
   ShieldAlert,
+  Calculator,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -87,6 +88,17 @@ export default function Layout() {
                 <Link to="/">
                   <LayoutDashboard />
                   <span>Dashboard</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={location.pathname === '/calculadora'}
+              >
+                <Link to="/calculadora">
+                  <Calculator />
+                  <span>Calculadora</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -267,7 +279,7 @@ export default function Layout() {
           </div>
         </main>
 
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t flex justify-around items-center h-16 z-50 px-1 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)] overflow-x-auto">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t flex justify-around items-center h-16 z-50 px-1 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)] overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             to="/"
             className={cn(
@@ -284,6 +296,23 @@ export default function Layout() {
               )}
             />
             <span>Painel</span>
+          </Link>
+          <Link
+            to="/calculadora"
+            className={cn(
+              'flex flex-col items-center justify-center min-w-[64px] h-full space-y-1 text-[10px] font-medium transition-colors',
+              location.pathname === '/calculadora'
+                ? 'text-primary'
+                : 'text-muted-foreground',
+            )}
+          >
+            <Calculator
+              className={cn(
+                'h-5 w-5',
+                location.pathname === '/calculadora' && 'fill-primary/20',
+              )}
+            />
+            <span>Simular</span>
           </Link>
           <Link
             to="/objetivos"

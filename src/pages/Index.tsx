@@ -1,94 +1,113 @@
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Slider } from '@/components/ui/slider'
-import { Skeleton } from '@/components/ui/skeleton'
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
-  Target,
-  Sparkles,
-  MapPin,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Wallet,
+  AlertTriangle,
   TrendingUp,
-  Lightbulb,
+  Tag,
   ArrowRight,
   PlaneTakeoff,
+  MapPin,
+  Target,
   Loader2,
-  Megaphone,
-  ArrowRightLeft,
-  Calculator,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
 import { useToast } from '@/hooks/use-toast'
-
-interface Profile {
-  full_name: string
-}
 
 interface TravelGoal {
   id: string
   destination_name: string
   target_miles: number
-  current_miles: number
+  image_url: string | null
 }
+
+const programsList = [
+  { name: 'Livelo', color: 'bg-pink-100 text-pink-700', icon: 'L' },
+  { name: 'Esfera', color: 'bg-red-100 text-red-700', icon: 'E' },
+  { name: 'Smiles', color: 'bg-orange-100 text-orange-700', icon: 'S' },
+  { name: 'Latam Pass', color: 'bg-blue-100 text-blue-700', icon: 'LP' },
+  { name: 'TudoAzul', color: 'bg-cyan-100 text-cyan-700', icon: 'TA' },
+]
 
 export default function Index() {
   const { user } = useAuth()
   const { toast } = useToast()
-  const location = useLocation()
-  const navigate = useNavigate()
-
-  const calculatorRef = useRef<HTMLDivElement>(null)
 
   const [loading, setLoading] = useState(true)
-  const [isSaving, setIsSaving] = useState(false)
-
-  const [profile, setProfile] = useState<Profile | null>(null)
+  const [profile, setProfile] = useState<any>(null)
+  const [promo, setPromo] = useState<any>(null)
   const [goal, setGoal] = useState<TravelGoal | null>(null)
-  const [topPromos, setTopPromos] = useState<any[]>([])
+  const [balances, setBalances] = useState<Record<string, number>>({})
 
-  const [productName, setProductName] = useState('')
-  const [productValue, setProductValue] = useState<string>('5000')
-  const [pointsPerReal, setPointsPerReal] = useState<string>('10')
-  const [transferBonus, setTransferBonus] = useState<number[]>([100])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedProgram, setSelectedProgram] = useState('')
+  const [newBalance, setNewBalance] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
       if (!user) return
       try {
-        const [profileRes, goalsRes, promosRes] = await Promise.all([
+        const [profileRes, promoRes, goalRes, balancesRes] = await Promise.all([
           supabase
             .from('profiles')
             .select('full_name')
             .eq('id', user.id)
             .single(),
           supabase
+            .from('active_promotions')
+            .select('*')
+            .order('bonus_percentage', { ascending: false })
+            .limit(1)
+            .maybeSingle(),
+          supabase
+            .from('travel_goals')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('is_active', true)
+            .maybeSingle(),
+          supabase.from('loyalty_balances').select('*').eq('user_id', user.id),
+        ])
+
+        if (profileRes.data) setProfile(profileRes.data)
+        if (promoRes.data) setPromo(promoRes.data)
+
+        if (goalRes.data) {
+          setGoal(goalRes.data)
+        } else {
+          const fallbackGoal = await supabase
             .from('travel_goals')
             .select('*')
             .eq('user_id', user.id)
             .limit(1)
-            .maybeSingle(),
-          supabase
-            .from('active_promotions')
-            .select('*')
-            .order('bonus_percentage', { ascending: false })
-            .limit(2),
-        ])
+            .maybeSingle()
+          if (fallbackGoal.data) setGoal(fallbackGoal.data)
+        }
 
-        if (profileRes.data) setProfile(profileRes.data)
-        if (goalsRes.data) setGoal(goalsRes.data)
-        if (promosRes.data) setTopPromos(promosRes.data)
-      } catch (error) {
-        console.error('Error fetching data:', error)
+        const newBalances: Record<string, number> = {}
+        programsList.forEach((p) => (newBalances[p.name] = 0))
+        if (balancesRes.data) {
+          balancesRes.data.forEach((b: any) => {
+            newBalances[b.program_name] = b.balance
+          })
+        }
+        setBalances(newBalances)
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err)
       } finally {
         setLoading(false)
       }
@@ -96,82 +115,58 @@ export default function Index() {
     fetchData()
   }, [user])
 
-  const goalTotal = goal?.target_miles || 120000
-  const currentMiles = goal?.current_miles || 0
-  const currentPercentage = goalTotal > 0 ? (currentMiles / goalTotal) * 100 : 0
+  const totalBalance = Object.values(balances).reduce(
+    (acc, curr) => acc + curr,
+    0,
+  )
+  const estimatedValue = (totalBalance / 1000) * 20
 
-  const numericValue = parseFloat(productValue) || 0
-  const numericMultiplier = parseFloat(pointsPerReal) || 0
-  const bonusPercentage = transferBonus[0] || 0
+  const goalTotal = goal?.target_miles || 100000
+  const currentPercentage = goalTotal > 0 ? (totalBalance / goalTotal) * 100 : 0
+  const goalImage =
+    goal?.image_url ||
+    `https://img.usecurling.com/p/800/600?q=${encodeURIComponent(goal?.destination_name || 'vacation')}&dpr=2`
 
-  const generatedMiles = useMemo(() => {
-    return Math.floor(
-      numericValue * numericMultiplier * (1 + bonusPercentage / 100),
-    )
-  }, [numericValue, numericMultiplier, bonusPercentage])
+  const handleOpenModal = (program: string) => {
+    setSelectedProgram(program)
+    setNewBalance(balances[program]?.toString() || '0')
+    setIsModalOpen(true)
+  }
 
-  const percentageOfGoal = useMemo(() => {
-    return goalTotal > 0
-      ? ((generatedMiles / goalTotal) * 100).toFixed(1)
-      : '0.0'
-  }, [generatedMiles, goalTotal])
-
-  const [animatedMiles, setAnimatedMiles] = useState(0)
-
-  useEffect(() => {
-    let start = animatedMiles
-    const end = generatedMiles
-    if (start === end) return
-    const duration = 500
-    const incrementTime = 20
-    const steps = duration / incrementTime
-    const stepValue = (end - start) / steps
-
-    const timer = setInterval(() => {
-      start += stepValue
-      if ((stepValue > 0 && start >= end) || (stepValue < 0 && start <= end)) {
-        setAnimatedMiles(end)
-        clearInterval(timer)
-      } else {
-        setAnimatedMiles(Math.floor(start))
-      }
-    }, incrementTime)
-
-    return () => clearInterval(timer)
-  }, [generatedMiles])
-
-  const handleSaveMiles = async () => {
-    if (!user || !goal) return
-
+  const handleSaveBalance = async () => {
+    if (!user) return
     setIsSaving(true)
     try {
-      const newTotalMiles = currentMiles + generatedMiles
+      const val = parseInt(newBalance, 10) || 0
+      const { data: existing } = await supabase
+        .from('loyalty_balances')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('program_name', selectedProgram)
+        .maybeSingle()
 
-      const { error } = await supabase
-        .from('travel_goals')
-        .update({ current_miles: newTotalMiles })
-        .eq('id', goal.id)
+      if (existing) {
+        await supabase
+          .from('loyalty_balances')
+          .update({ balance: val, updated_at: new Date().toISOString() })
+          .eq('id', existing.id)
+      } else {
+        await supabase
+          .from('loyalty_balances')
+          .insert({
+            user_id: user.id,
+            program_name: selectedProgram,
+            balance: val,
+          })
+      }
 
-      if (error) throw error
-
-      setGoal((prev) =>
-        prev ? { ...prev, current_miles: newTotalMiles } : null,
-      )
-
+      setBalances((prev) => ({ ...prev, [selectedProgram]: val }))
+      setIsModalOpen(false)
+      toast({ title: 'Sucesso!', description: 'Saldo atualizado com sucesso.' })
+    } catch (err) {
       toast({
-        title: 'Sucesso!',
-        description:
-          'Milhas adicionadas com sucesso! Estás mais perto do teu destino!',
-      })
-
-      setProductName('')
-      setProductValue('')
-    } catch (error) {
-      console.error('Error saving miles:', error)
-      toast({
-        title: 'Erro ao salvar',
-        description:
-          'Ocorreu um erro ao tentar adicionar as milhas. Tente novamente.',
+        title: 'Erro',
+        description: 'Ocorreu um erro ao tentar atualizar o saldo.',
         variant: 'destructive',
       })
     } finally {
@@ -179,100 +174,189 @@ export default function Index() {
     }
   }
 
-  const applyPromo = useCallback(
-    (bonus: number) => {
-      setTransferBonus([bonus])
-      setTimeout(() => {
-        calculatorRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        })
-      }, 100)
-      toast({
-        title: 'Bônus Aplicado!',
-        description: `A calculadora foi ajustada para ${bonus}% de bônus automaticamente.`,
-      })
-    },
-    [toast],
-  )
-
-  useEffect(() => {
-    if (location.state?.applyBonus) {
-      applyPromo(location.state.applyBonus)
-      navigate(location.pathname, { replace: true, state: {} })
-    }
-  }, [location.state, navigate, location.pathname, applyPromo])
-
   if (loading) {
     return (
       <div className="space-y-6 md:space-y-8 pb-4">
-        <div className="space-y-2">
-          <Skeleton className="h-10 w-64" />
-          <Skeleton className="h-5 w-48" />
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-          <div className="lg:col-span-5 flex flex-col gap-6">
-            <Skeleton className="h-[300px] w-full rounded-xl" />
-            <Skeleton className="h-[160px] w-full rounded-xl" />
-            <Skeleton className="h-[140px] w-full rounded-xl" />
-          </div>
-          <div className="lg:col-span-7">
-            <Skeleton className="h-[460px] w-full rounded-xl" />
-          </div>
+        <Skeleton className="h-[200px] w-full rounded-2xl" />
+        <Skeleton className="h-[140px] w-full rounded-xl" />
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {[...Array(5)].map((_, i) => (
+            <Skeleton key={i} className="h-32 w-full rounded-xl" />
+          ))}
         </div>
       </div>
     )
   }
 
-  const isHighValue = parseFloat(percentageOfGoal) >= 10
-  const isFormValid = numericValue > 0 && numericMultiplier > 0
-
   return (
-    <div className="space-y-6 md:space-y-8 pb-4">
+    <div className="space-y-8 md:space-y-10 pb-6">
+      {/* Welcome Section */}
       <section className="animate-fade-in-up">
         <h2 className="text-2xl md:text-3xl font-bold text-secondary tracking-tight">
           Olá, {profile?.full_name || 'Viajante'}! 👋
         </h2>
         <p className="text-muted-foreground mt-1 text-sm md:text-base font-medium">
-          {new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full' }).format(
-            new Date(),
-          )}
+          Confira o resumo da sua carteira de milhas e as melhores oportunidades
+          do momento.
         </p>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+      {/* Promotions Hub Banner */}
+      <div
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-blue-800 p-6 md:p-8 text-white shadow-elevation animate-fade-in-up"
+        style={{ animationDelay: '50ms' }}
+      >
+        <div className="absolute inset-0 bg-[url('https://img.usecurling.com/p/1200/400?q=airport%20lounge')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2.5 max-w-2xl">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold shadow-sm border border-white/10">
+              <Tag className="w-4 h-4" /> Hub de Promoções
+            </span>
+            <h3 className="text-2xl md:text-3xl font-extrabold leading-tight drop-shadow-md">
+              {promo
+                ? `🔥 ${promo.title}`
+                : 'Fique por dentro das melhores ofertas!'}
+            </h3>
+            <p className="text-white/90 text-sm md:text-base font-medium">
+              {promo
+                ? `Transfira seus pontos com até ${promo.bonus_percentage}% de bônus e alcance seu próximo destino mais rápido.`
+                : 'Aproveite bônus de transferência e acelere sua viagem.'}
+            </p>
+          </div>
+          <Button
+            asChild
+            variant="secondary"
+            size="lg"
+            className="font-bold shadow-sm shrink-0"
+          >
+            <Link to="/promocoes">
+              Ver todas as ofertas <ArrowRight className="w-5 h-5 ml-2" />
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
         <div
-          className="lg:col-span-5 flex flex-col gap-6 animate-fade-in-up"
+          className="lg:col-span-8 flex flex-col gap-8 animate-fade-in-up"
           style={{ animationDelay: '100ms' }}
         >
-          {/* Goal Card */}
+          {/* Financial Summary */}
+          <Card className="shadow-elevation border-muted bg-white overflow-hidden">
+            <CardContent className="p-6 md:p-8">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="space-y-2">
+                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                    <Wallet className="w-4 h-4 text-primary" /> Patrimônio em
+                    Milhas
+                  </p>
+                  <h2 className="text-4xl md:text-5xl font-black text-secondary tracking-tight">
+                    {new Intl.NumberFormat('pt-BR').format(totalBalance)}{' '}
+                    <span className="text-2xl text-muted-foreground font-semibold">
+                      mi
+                    </span>
+                  </h2>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100 mt-2">
+                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+                    <p className="text-emerald-700 font-bold text-sm">
+                      Valor Estimado: ~{' '}
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      }).format(estimatedValue)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex flex-col gap-2 w-full md:max-w-[280px]">
+                  <div className="flex items-center gap-2 text-orange-800 font-bold text-sm">
+                    <AlertTriangle className="w-4 h-4 text-orange-500" />
+                    Atenção aos Vencimentos
+                  </div>
+                  <p className="text-orange-700/90 text-sm font-medium leading-snug">
+                    ⚠️ 5.000 pontos Livelo vencem em 15 dias. Transfira agora e
+                    não perca!
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Wallet Grid */}
+          <div className="space-y-5">
+            <h3 className="text-xl font-bold text-secondary flex items-center gap-2">
+              <Wallet className="w-6 h-6 text-primary" />
+              Minha Carteira
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+              {programsList.map((prog) => (
+                <Card
+                  key={prog.name}
+                  className="shadow-sm border-muted hover:border-primary/30 transition-colors"
+                >
+                  <CardContent className="p-5 flex flex-col items-center text-center gap-3">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${prog.color}`}
+                    >
+                      {prog.icon}
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-secondary">
+                        {prog.name}
+                      </h4>
+                      <p className="text-2xl font-bold text-primary mt-1">
+                        {new Intl.NumberFormat('pt-BR').format(
+                          balances[prog.name] || 0,
+                        )}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-xs font-semibold text-muted-foreground hover:text-primary mt-2"
+                      onClick={() => handleOpenModal(prog.name)}
+                    >
+                      Atualizar saldo
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="lg:col-span-4 flex flex-col gap-6 animate-fade-in-up"
+          style={{ animationDelay: '150ms' }}
+        >
+          {/* Travel Goal Integration */}
           <Card className="overflow-hidden border-none shadow-elevation relative group h-[300px] flex flex-col justify-between shrink-0">
             <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-700 opacity-95 z-0"></div>
-            <div className="absolute inset-0 bg-[url('https://img.usecurling.com/p/800/600?q=orlando%20disney')] bg-cover bg-center mix-blend-overlay opacity-30 z-0 transition-transform duration-700 group-hover:scale-105"></div>
+            <div
+              className="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-30 z-0 transition-transform duration-700 group-hover:scale-105"
+              style={{ backgroundImage: `url('${goalImage}')` }}
+            ></div>
 
             <CardHeader className="relative z-10 text-white pb-2">
               <div className="flex justify-between items-start mb-2">
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-medium text-white shadow-sm border border-white/10">
                   <Target className="w-3.5 h-3.5" />
-                  Meta Ativa
+                  Progresso da Viagem
                 </span>
                 <span className="inline-flex items-center gap-1 text-xs font-medium bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-md shadow-sm border border-white/10">
-                  <MapPin className="w-3.5 h-3.5" /> Viagem
+                  <MapPin className="w-3.5 h-3.5" /> Principal
                 </span>
               </div>
               <CardTitle className="text-2xl font-bold leading-tight text-white drop-shadow-sm">
                 {goal?.destination_name || 'Nenhuma meta definida'}
               </CardTitle>
-              <CardDescription className="text-primary-foreground/90 text-sm font-medium drop-shadow-sm">
-                Acompanhe o seu progresso
-              </CardDescription>
             </CardHeader>
 
             <CardContent className="relative z-10 text-white pt-2 pb-6">
               <div className="flex justify-between items-end mb-3">
                 <div>
                   <div className="text-3xl md:text-4xl font-bold tracking-tight drop-shadow-md">
-                    {new Intl.NumberFormat('pt-BR').format(currentMiles)}
+                    {new Intl.NumberFormat('pt-BR').format(totalBalance)}
                   </div>
                   <div className="text-primary-foreground/90 text-sm font-medium drop-shadow-sm">
                     de {new Intl.NumberFormat('pt-BR').format(goalTotal)} milhas
@@ -281,9 +365,6 @@ export default function Index() {
                 <div className="text-right">
                   <div className="text-2xl font-bold drop-shadow-md">
                     {currentPercentage.toFixed(1)}%
-                  </div>
-                  <div className="text-primary-foreground/90 text-[10px] uppercase tracking-wider font-bold drop-shadow-sm">
-                    Concluído
                   </div>
                 </div>
               </div>
@@ -300,271 +381,54 @@ export default function Index() {
                   }}
                 />
               </div>
-
-              <div className="mt-5 flex items-center justify-between text-xs text-primary-foreground bg-black/20 px-3.5 py-2.5 rounded-xl backdrop-blur-md border border-white/10 shadow-sm">
-                <span className="flex items-center gap-1.5 font-medium">
-                  <TrendingUp className="w-3.5 h-3.5 text-success" /> Em bom
-                  ritmo
-                </span>
-                <span className="font-medium">Faltam ~3 meses</span>
-              </div>
             </CardContent>
-          </Card>
-
-          {/* Acelere sua Meta Widget */}
-          {goal && topPromos.length > 0 && (
-            <div
-              className="space-y-3.5 animate-fade-in-up"
-              style={{ animationDelay: '150ms' }}
-            >
-              <h3 className="font-bold text-secondary text-[15px] flex items-center gap-2">
-                <div className="bg-primary/10 p-1.5 rounded-md text-primary">
-                  <Megaphone className="w-4 h-4" />
-                </div>
-                Acelere sua viagem para {goal.destination_name}
-              </h3>
-              <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x">
-                {topPromos.map((promo) => (
-                  <Card
-                    key={promo.id}
-                    className="min-w-[260px] md:min-w-[280px] shrink-0 snap-start shadow-sm border-muted transition-all hover:shadow-md hover:border-primary/30"
-                  >
-                    <CardContent className="p-4 flex flex-col gap-3.5">
-                      <div className="flex justify-between items-start">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-bold border border-primary/10">
-                          🔥 {promo.bonus_percentage}% Bônus
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm font-semibold text-secondary bg-muted/40 p-2.5 rounded-lg border border-muted/50">
-                        <span className="truncate flex-1 text-center">
-                          {promo.origin}
-                        </span>
-                        <ArrowRightLeft className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                        <span className="truncate flex-1 text-center">
-                          {promo.destination}
-                        </span>
-                      </div>
-                      <Button
-                        onClick={() => applyPromo(promo.bonus_percentage)}
-                        size="sm"
-                        className="w-full text-xs font-bold shadow-sm h-9"
-                      >
-                        <Calculator className="w-4 h-4 mr-1.5" />
-                        Aplicar na Calculadora
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Dicas do Radar */}
-          <Card className="bg-primary/5 border-primary/10 shadow-sm transition-all duration-300 hover:bg-primary/10 shrink-0">
-            <CardContent className="p-5 flex gap-4 items-start">
-              <div className="bg-primary/10 p-2.5 rounded-full text-primary shrink-0 mt-0.5">
-                <Lightbulb className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-secondary text-sm mb-1.5">
-                  Dica do Radar
-                </h4>
-                <p className="text-secondary/80 text-sm leading-relaxed font-medium">
-                  Transfira seus pontos com{' '}
-                  <strong className="text-primary">100% de bônus</strong> na
-                  Livelo hoje! A promoção é válida até amanhã às 23:59.
-                </p>
-                <button className="mt-3 text-primary text-sm font-bold flex items-center gap-1.5 hover:text-primary/80 transition-colors group">
-                  Ver detalhes{' '}
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Magic Calculator */}
-        <div
-          ref={calculatorRef}
-          className="lg:col-span-7 animate-fade-in-up"
-          style={{ animationDelay: '200ms' }}
-        >
-          <Card className="shadow-elevation border-muted h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/20 scroll-mt-24">
-            <CardHeader className="pb-5 border-b border-muted">
-              <div className="flex items-center gap-2 text-primary mb-2">
-                <Sparkles className="w-5 h-5" />
-                <span className="font-bold text-xs tracking-wider uppercase text-muted-foreground">
-                  Simulador
-                </span>
-              </div>
-              <CardTitle className="text-2xl md:text-3xl text-secondary font-bold tracking-tight">
-                A Calculadora Mágica
-              </CardTitle>
-              <CardDescription className="text-muted-foreground text-base font-medium">
-                Descubra quantas milhas a sua próxima compra pode render.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6 pb-8 flex-1 flex flex-col gap-6">
-              <div className="space-y-6">
-                <div className="space-y-2.5">
-                  <Label
-                    htmlFor="product-name"
-                    className="text-secondary font-semibold"
-                  >
-                    O que você vai comprar?
-                  </Label>
-                  <Input
-                    id="product-name"
-                    placeholder="Ex: iPhone 15 Pro, Geladeira..."
-                    value={productName}
-                    onChange={(e) => setProductName(e.target.value)}
-                    className="h-12 bg-muted/30 border-muted focus:bg-background transition-colors text-base font-medium shadow-sm"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="space-y-2.5">
-                    <Label
-                      htmlFor="product-value"
-                      className="text-secondary font-semibold"
-                    >
-                      Valor do produto (R$)
-                    </Label>
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">
-                        R$
-                      </span>
-                      <Input
-                        id="product-value"
-                        type="number"
-                        placeholder="0.00"
-                        value={productValue}
-                        onChange={(e) => setProductValue(e.target.value)}
-                        className={cn(
-                          'pl-10 h-12 bg-muted/30 border-muted focus:bg-background text-base font-medium transition-colors shadow-sm',
-                          productValue
-                            ? 'border-primary/30 ring-primary/10'
-                            : '',
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2.5">
-                    <Label
-                      htmlFor="points-multiplier"
-                      className="text-secondary font-semibold"
-                    >
-                      Pontos por Real
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="points-multiplier"
-                        type="number"
-                        placeholder="Ex: 10"
-                        value={pointsPerReal}
-                        onChange={(e) => setPointsPerReal(e.target.value)}
-                        className={cn(
-                          'pr-14 h-12 bg-muted/30 border-muted focus:bg-background text-base font-medium transition-colors shadow-sm',
-                          pointsPerReal
-                            ? 'border-primary/30 ring-primary/10'
-                            : '',
-                        )}
-                      />
-                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold">
-                        pts/R$
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-5 pt-5 border-t border-muted/50">
-                  <div className="flex justify-between items-center">
-                    <Label className="text-secondary font-semibold">
-                      Bônus de Transferência
-                    </Label>
-                    <span className="font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg shadow-sm">
-                      {transferBonus[0]}%
-                    </span>
-                  </div>
-                  <Slider
-                    value={transferBonus}
-                    onValueChange={setTransferBonus}
-                    max={150}
-                    step={10}
-                    className="py-3 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground font-bold">
-                    <span>0%</span>
-                    <span>150%</span>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <Button
-                    onClick={handleSaveMiles}
-                    disabled={isSaving || !isFormValid || !goal}
-                    className="w-full h-12 text-base font-bold shadow-md hover:shadow-lg transition-all"
-                  >
-                    {isSaving ? (
-                      <>
-                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />A
-                        guardar...
-                      </>
-                    ) : (
-                      <>
-                        <PlaneTakeoff className="w-5 h-5 mr-2" />
-                        Adicionar à minha Meta
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-            <div className="p-6 md:p-8 bg-muted/30 border-t border-muted rounded-b-xl">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
-                <div className="w-full sm:w-auto">
-                  <p className="text-muted-foreground font-semibold text-sm mb-1 text-center sm:text-left uppercase tracking-wider">
-                    Milhas Geradas
-                  </p>
-                  <div className="text-5xl md:text-6xl font-extrabold text-secondary tracking-tighter text-center sm:text-left transition-all duration-200">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-br from-primary to-blue-600 drop-shadow-sm">
-                      {new Intl.NumberFormat('pt-BR').format(animatedMiles)}
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  className={cn(
-                    'p-4 rounded-xl border max-w-[280px] w-full text-center sm:text-left transition-all duration-500',
-                    isHighValue
-                      ? 'bg-emerald-50 border-emerald-200 shadow-[0_4px_20px_rgba(16,185,129,0.15)] scale-105'
-                      : 'bg-card border-border shadow-sm',
-                  )}
-                >
-                  <p
-                    className={cn(
-                      'text-sm font-medium leading-relaxed',
-                      isHighValue ? 'text-emerald-800' : 'text-secondary/80',
-                    )}
-                  >
-                    Com essa compra, você garante{' '}
-                    <strong
-                      className={cn(
-                        'text-xl block mt-1 font-black',
-                        isHighValue ? 'text-emerald-600' : 'text-primary',
-                      )}
-                    >
-                      {percentageOfGoal}%
-                    </strong>{' '}
-                    da sua passagem!
-                  </p>
-                </div>
-              </div>
-            </div>
           </Card>
         </div>
       </div>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Wallet className="w-5 h-5 text-primary" />
+              Atualizar Saldo: {selectedProgram}
+            </DialogTitle>
+            <DialogDescription>
+              Insira o saldo atual consolidado que você possui no{' '}
+              {selectedProgram}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Label
+              htmlFor="balance"
+              className="mb-2 block font-semibold text-secondary"
+            >
+              Saldo de Milhas / Pontos
+            </Label>
+            <Input
+              id="balance"
+              type="number"
+              value={newBalance}
+              onChange={(e) => setNewBalance(e.target.value)}
+              className="h-12 text-lg focus-visible:ring-primary/20"
+              placeholder="0"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveBalance} disabled={isSaving}>
+              {isSaving ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Wallet className="w-4 h-4 mr-2" />
+              )}
+              Salvar Saldo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

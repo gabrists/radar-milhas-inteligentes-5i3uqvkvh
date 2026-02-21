@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import Index from './pages/Index'
+import CalculatorPage from './pages/CalculatorPage'
 import HistoryPage from './pages/HistoryPage'
 import GoalsPage from './pages/GoalsPage'
 import SettingsPage from './pages/SettingsPage'
@@ -51,6 +52,7 @@ const AppRoutes = () => {
         }
       >
         <Route path="/" element={<Index />} />
+        <Route path="/calculadora" element={<CalculatorPage />} />
         <Route path="/objetivos" element={<GoalsPage />} />
         <Route path="/historico" element={<HistoryPage />} />
         <Route path="/promocoes" element={<PromotionsPage />} />
