@@ -17,30 +17,33 @@ import {
   Wallet,
   AlertTriangle,
   TrendingUp,
-  Tag,
   ArrowRight,
-  PlaneTakeoff,
   MapPin,
   Target,
   Loader2,
+  Edit2,
+  Sparkles,
+  Percent,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
 import { useToast } from '@/hooks/use-toast'
+import { cn } from '@/lib/utils'
 
 interface TravelGoal {
   id: string
   destination_name: string
   target_miles: number
+  current_miles: number
   image_url: string | null
 }
 
 const programsList = [
-  { name: 'Livelo', color: 'bg-pink-100 text-pink-700', icon: 'L' },
-  { name: 'Esfera', color: 'bg-red-100 text-red-700', icon: 'E' },
-  { name: 'Smiles', color: 'bg-orange-100 text-orange-700', icon: 'S' },
-  { name: 'Latam Pass', color: 'bg-blue-100 text-blue-700', icon: 'LP' },
-  { name: 'TudoAzul', color: 'bg-cyan-100 text-cyan-700', icon: 'TA' },
+  { name: 'Livelo', query: 'gift', color: 'rose' },
+  { name: 'Esfera', query: 'sphere', color: 'red' },
+  { name: 'Smiles', query: 'smile', color: 'orange' },
+  { name: 'Latam Pass', query: 'plane', color: 'blue' },
+  { name: 'TudoAzul', query: 'plane', color: 'cyan' },
 ]
 
 export default function Index() {
@@ -122,10 +125,14 @@ export default function Index() {
   const estimatedValue = (totalBalance / 1000) * 20
 
   const goalTotal = goal?.target_miles || 100000
-  const currentPercentage = goalTotal > 0 ? (totalBalance / goalTotal) * 100 : 0
+  const currentMiles = goal?.current_miles || totalBalance
+  const currentPercentage = goalTotal > 0 ? (currentMiles / goalTotal) * 100 : 0
   const goalImage =
     goal?.image_url ||
     `https://img.usecurling.com/p/800/600?q=${encodeURIComponent(goal?.destination_name || 'vacation')}&dpr=2`
+  const promoImage = promo
+    ? `https://img.usecurling.com/p/400/300?q=${encodeURIComponent(promo.destination)}&dpr=2`
+    : `https://img.usecurling.com/p/400/300?q=airport&dpr=2`
 
   const handleOpenModal = (program: string) => {
     setSelectedProgram(program)
@@ -176,251 +183,285 @@ export default function Index() {
 
   if (loading) {
     return (
-      <div className="space-y-6 md:space-y-8 pb-4">
-        <Skeleton className="h-[200px] w-full rounded-2xl" />
-        <Skeleton className="h-[140px] w-full rounded-xl" />
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="space-y-10 md:space-y-12 pb-8">
+        <Skeleton className="h-8 w-48 rounded-md" />
+        <Skeleton className="h-[280px] w-full rounded-3xl" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Skeleton className="h-[360px] w-full rounded-2xl lg:col-span-2" />
+          <Skeleton className="h-[360px] w-full rounded-2xl lg:col-span-1" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-xl" />
+            <Skeleton key={i} className="h-24 w-full rounded-xl" />
           ))}
         </div>
       </div>
     )
   }
 
+  const hasExpiringMiles = true // Mocked for demonstration
+
   return (
-    <div className="space-y-8 md:space-y-10 pb-6">
+    <div className="space-y-10 md:space-y-12 pb-8">
       <section className="animate-fade-in-up">
-        <h2 className="text-2xl md:text-3xl font-bold text-secondary tracking-tight">
-          Olá, {profile?.full_name || 'Viajante'}! 👋
-        </h2>
-        <p className="text-muted-foreground mt-1 text-sm md:text-base font-medium">
-          Confira o resumo da sua carteira de milhas e as melhores oportunidades
-          do momento.
-        </p>
+        <h1 className="text-xl md:text-2xl font-bold text-secondary tracking-tight">
+          Olá, {profile?.full_name?.split(' ')[0] || 'Viajante'}
+        </h1>
       </section>
 
-      <div
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-blue-800 p-6 md:p-8 text-white shadow-elevation animate-fade-in-up"
-        style={{ animationDelay: '50ms' }}
-      >
-        <div className="absolute inset-0 bg-[url('https://img.usecurling.com/p/1200/400?q=airport%20lounge')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2.5 max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold shadow-sm border border-white/10">
-              <Tag className="w-4 h-4" /> Hub de Promoções
-            </span>
-            <h3 className="text-2xl md:text-3xl font-extrabold leading-tight drop-shadow-md">
-              {promo
-                ? `🔥 ${promo.title}`
-                : 'Fique por dentro das melhores ofertas!'}
-            </h3>
-            <p className="text-white/90 text-sm md:text-base font-medium">
-              {promo
-                ? `Transfira seus pontos com até ${promo.bonus_percentage}% de bônus e alcance seu próximo destino mais rápido.`
-                : 'Aproveite bônus de transferência e acelere sua viagem.'}
-            </p>
+      {hasExpiringMiles && (
+        <div
+          className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex items-center justify-between gap-4 animate-fade-in-up shadow-sm"
+          style={{ animationDelay: '50ms' }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="bg-orange-100 p-2 rounded-full text-orange-600 shrink-0">
+              <AlertTriangle className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-orange-900 font-bold text-sm">
+                Atenção aos Vencimentos
+              </h3>
+              <p className="text-orange-800/90 text-sm font-medium">
+                Você tem 5.000 pontos Livelo expirando nos próximos 15 dias.
+              </p>
+            </div>
           </div>
           <Button
-            asChild
-            variant="secondary"
-            size="lg"
-            className="font-bold shadow-sm shrink-0"
+            variant="outline"
+            size="sm"
+            className="bg-white border-orange-200 text-orange-700 hover:bg-orange-50 hover:text-orange-800 shrink-0"
           >
-            <Link to="/promocoes">
-              Ver todas as ofertas <ArrowRight className="w-5 h-5 ml-2" />
-            </Link>
+            Ver detalhes
           </Button>
         </div>
-      </div>
+      )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-        <div
-          className="lg:col-span-8 flex flex-col gap-8 animate-fade-in-up"
-          style={{ animationDelay: '100ms' }}
-        >
-          <Card className="shadow-elevation border-muted bg-white overflow-hidden">
-            <CardContent className="p-6 md:p-8">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div className="space-y-2">
-                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                    <Wallet className="w-4 h-4 text-primary" /> Patrimônio em
-                    Milhas
-                  </p>
-                  <h2 className="text-4xl md:text-5xl font-black text-secondary tracking-tight">
-                    {new Intl.NumberFormat('pt-BR').format(totalBalance)}{' '}
-                    <span className="text-2xl text-muted-foreground font-semibold">
-                      mi
-                    </span>
-                  </h2>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100 mt-2">
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
-                    <p className="text-emerald-700 font-bold text-sm">
-                      Valor Estimado: ~{' '}
-                      {new Intl.NumberFormat('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL',
-                      }).format(estimatedValue)}
-                    </p>
-                  </div>
-                </div>
+      <section
+        className="animate-fade-in-up"
+        style={{ animationDelay: '100ms' }}
+      >
+        <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-muted flex flex-col items-center justify-center text-center relative overflow-hidden group">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent opacity-50"></div>
 
-                <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex flex-col gap-2 w-full md:max-w-[280px]">
-                  <div className="flex items-center gap-2 text-orange-800 font-bold text-sm">
-                    <AlertTriangle className="w-4 h-4 text-orange-500" />
-                    Atenção aos Vencimentos
-                  </div>
-                  <p className="text-orange-700/90 text-sm font-medium leading-snug">
-                    ⚠️ 5.000 pontos Livelo vencem em 15 dias. Transfira agora e
-                    não perca!
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="relative z-10 flex flex-col items-center">
+            <p className="text-xs md:text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground mb-4 md:mb-6 flex items-center gap-2">
+              <Wallet className="w-4 h-4 text-primary" /> Patrimônio em Milhas
+            </p>
 
-          <div className="space-y-5">
-            <h3 className="text-xl font-bold text-secondary flex items-center gap-2">
-              <Wallet className="w-6 h-6 text-primary" />
-              Minha Carteira
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
-              {programsList.map((prog) => (
-                <Link
-                  key={prog.name}
-                  to={`/programa/${prog.name.toLowerCase().replace(/\s+/g, '')}`}
-                  className="block"
-                >
-                  <Card className="shadow-sm border-muted transition-all duration-200 hover:scale-105 hover:shadow-md hover:border-primary/30 h-full">
-                    <CardContent className="p-5 flex flex-col items-center text-center gap-3">
-                      <div
-                        className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${prog.color}`}
-                      >
-                        {prog.icon}
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-secondary">
-                          {prog.name}
-                        </h4>
-                        <p className="text-2xl font-bold text-primary mt-1">
-                          {new Intl.NumberFormat('pt-BR').format(
-                            balances[prog.name] || 0,
-                          )}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full text-xs font-semibold text-muted-foreground hover:text-primary mt-2"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          handleOpenModal(prog.name)
-                        }}
-                      >
-                        Atualizar saldo
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+            <h2 className="text-5xl md:text-7xl font-black text-secondary tracking-tighter transition-transform duration-300 group-hover:scale-105">
+              {new Intl.NumberFormat('pt-BR').format(totalBalance)}{' '}
+              <span className="text-2xl md:text-4xl text-muted-foreground font-semibold tracking-normal">
+                mi
+              </span>
+            </h2>
+
+            <div className="mt-6 md:mt-8 inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-5 py-2.5 rounded-full font-bold border border-emerald-100 shadow-sm transition-colors hover:bg-emerald-100 cursor-default">
+              <TrendingUp className="w-4 h-4 text-emerald-600" />
+              Valor Estimado: ~{' '}
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(estimatedValue)}
             </div>
           </div>
         </div>
+      </section>
 
-        <div
-          className="lg:col-span-4 flex flex-col gap-6 animate-fade-in-up"
-          style={{ animationDelay: '150ms' }}
-        >
-          <Card className="overflow-hidden border-none shadow-elevation relative group h-[300px] flex flex-col justify-between shrink-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-700 opacity-95 z-0"></div>
-            <div
-              className="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-30 z-0 transition-transform duration-700 group-hover:scale-105"
-              style={{ backgroundImage: `url('${goalImage}')` }}
-            ></div>
+      <section
+        className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 animate-fade-in-up"
+        style={{ animationDelay: '150ms' }}
+      >
+        <div className="lg:col-span-2 flex flex-col h-full">
+          <h2 className="text-xl font-bold text-secondary mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5 text-primary" /> Meta Principal
+          </h2>
+          <Card
+            className="flex-1 overflow-hidden border-none shadow-elevation relative group min-h-[320px] rounded-2xl cursor-pointer"
+            onClick={() => (window.location.href = '/objetivos')}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-secondary via-secondary/60 to-transparent z-10 transition-opacity duration-300 group-hover:opacity-90"></div>
+            <img
+              src={goalImage}
+              alt={goal?.destination_name}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
 
-            <CardHeader className="relative z-10 text-white pb-2">
-              <div className="flex justify-between items-start mb-2">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-medium text-white shadow-sm border border-white/10">
-                  <Target className="w-3.5 h-3.5" />
-                  Progresso da Viagem
-                </span>
-                <span className="inline-flex items-center gap-1 text-xs font-medium bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-md shadow-sm border border-white/10">
-                  <MapPin className="w-3.5 h-3.5" /> Principal
-                </span>
-              </div>
-              <CardTitle className="text-2xl font-bold leading-tight text-white drop-shadow-sm">
+            <div className="absolute top-4 left-4 z-20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold text-white shadow-sm border border-white/20">
+                <MapPin className="w-3.5 h-3.5" /> Destino Ativo
+              </span>
+            </div>
+
+            <CardContent className="absolute bottom-0 left-0 right-0 z-20 p-6 md:p-8 text-white">
+              <CardTitle className="text-3xl md:text-4xl font-black leading-tight drop-shadow-md mb-6">
                 {goal?.destination_name || 'Nenhuma meta definida'}
               </CardTitle>
-            </CardHeader>
 
-            <CardContent className="relative z-10 text-white pt-2 pb-6">
-              <div className="flex justify-between items-end mb-3">
-                <div>
-                  <div className="text-3xl md:text-4xl font-bold tracking-tight drop-shadow-md">
-                    {new Intl.NumberFormat('pt-BR').format(totalBalance)}
+              <div className="space-y-3">
+                <div className="flex justify-between items-end">
+                  <div className="font-medium text-white/90">
+                    <span className="text-2xl font-bold text-white mr-1">
+                      {new Intl.NumberFormat('pt-BR').format(currentMiles)}
+                    </span>
+                    <span className="text-sm">
+                      / {new Intl.NumberFormat('pt-BR').format(goalTotal)} mi
+                    </span>
                   </div>
-                  <div className="text-primary-foreground/90 text-sm font-medium drop-shadow-sm">
-                    de {new Intl.NumberFormat('pt-BR').format(goalTotal)} milhas
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold drop-shadow-md">
+                  <div className="text-xl font-bold text-primary-foreground drop-shadow-sm bg-primary/20 px-2 py-0.5 rounded backdrop-blur-sm">
                     {currentPercentage.toFixed(1)}%
                   </div>
                 </div>
-              </div>
 
-              <div className="relative h-4 mt-6 bg-black/20 rounded-full overflow-hidden backdrop-blur-md border border-white/10 shadow-inner">
-                <div
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-accent to-orange-500 rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(245,158,11,0.5)]"
-                  style={{ width: `${Math.min(currentPercentage, 100)}%` }}
-                ></div>
-                <PlaneTakeoff
-                  className="absolute top-1/2 -translate-y-1/2 text-white drop-shadow-lg w-5 h-5 transition-all duration-1000 ease-out"
-                  style={{
-                    left: `calc(${Math.min(currentPercentage, 100)}% - 10px)`,
-                  }}
-                />
+                <div className="relative h-3 bg-black/40 rounded-full overflow-hidden backdrop-blur-md border border-white/10 shadow-inner">
+                  <div
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-blue-400 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${Math.min(currentPercentage, 100)}%` }}
+                  ></div>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
-      </div>
+
+        <div className="lg:col-span-1 flex flex-col h-full">
+          <h2 className="text-xl font-bold text-secondary mb-4 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-accent" /> Oportunidade do Dia
+          </h2>
+          <Card className="flex-1 flex flex-col overflow-hidden shadow-sm border-muted transition-all duration-300 hover:shadow-elevation hover:border-primary/30 rounded-2xl group">
+            <div className="h-40 relative overflow-hidden shrink-0 bg-muted">
+              <img
+                src={promoImage}
+                alt="Promoção"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent"></div>
+              {promo && (
+                <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-accent text-accent-foreground text-xs font-black shadow-sm">
+                    <Percent className="w-3.5 h-3.5" /> {promo.bonus_percentage}
+                    % BÔNUS
+                  </span>
+                </div>
+              )}
+            </div>
+            <CardContent className="p-5 flex flex-col flex-1 gap-4">
+              <div className="flex-1">
+                <h3 className="font-bold text-secondary text-lg leading-tight mb-2 line-clamp-2">
+                  {promo
+                    ? promo.title
+                    : 'Fique por dentro das melhores ofertas!'}
+                </h3>
+                <p className="text-sm font-medium text-muted-foreground line-clamp-2">
+                  {promo
+                    ? `Transfira de ${promo.origin} para ${promo.destination} e ganhe bônus exclusivos.`
+                    : 'Aproveite bônus de transferência para acelerar sua viagem.'}
+                </p>
+              </div>
+              <Button
+                asChild
+                className="w-full font-bold shadow-sm"
+                variant={promo ? 'default' : 'outline'}
+              >
+                <Link to={promo ? `/promocoes/${promo.id}` : '/promocoes'}>
+                  {promo ? 'Ver Oferta' : 'Ver Promoções'}{' '}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <section
+        className="animate-fade-in-up"
+        style={{ animationDelay: '200ms' }}
+      >
+        <h2 className="text-xl font-bold text-secondary mb-4 flex items-center gap-2">
+          <Wallet className="w-5 h-5 text-primary" /> Minha Carteira
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {programsList.map((prog) => (
+            <Card
+              key={prog.name}
+              className="flex items-center p-4 gap-4 group hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 cursor-pointer rounded-2xl bg-white"
+              onClick={() => handleOpenModal(prog.name)}
+            >
+              <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-muted/50 bg-muted/20 flex items-center justify-center">
+                <img
+                  src={`https://img.usecurling.com/i?q=${prog.name}&color=${prog.color}`}
+                  alt={prog.name}
+                  className="w-8 h-8 object-contain"
+                  onError={(e) => {
+                    // Fallback if image fails
+                    e.currentTarget.style.display = 'none'
+                    e.currentTarget.parentElement!.innerHTML = `<span class="font-bold text-lg text-muted-foreground">${prog.name.charAt(0)}</span>`
+                  }}
+                />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-semibold text-muted-foreground truncate">
+                  {prog.name}
+                </h3>
+                <p className="text-xl font-bold text-secondary truncate mt-0.5">
+                  {new Intl.NumberFormat('pt-BR').format(
+                    balances[prog.name] || 0,
+                  )}
+                </p>
+              </div>
+
+              <div className="w-8 h-8 rounded-full bg-muted/30 flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0">
+                <Edit2 className="w-4 h-4" />
+              </div>
+            </Card>
+          ))}
+        </div>
+      </section>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="sm:max-w-[400px] rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-xl">
               <Wallet className="w-5 h-5 text-primary" />
-              Atualizar Saldo: {selectedProgram}
+              Atualizar Saldo
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-base font-medium mt-2">
               Insira o saldo atual consolidado que você possui no{' '}
-              {selectedProgram}.
+              <strong className="text-secondary">{selectedProgram}</strong>.
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <Label
-              htmlFor="balance"
-              className="mb-2 block font-semibold text-secondary"
-            >
+          <div className="py-4 space-y-3">
+            <Label htmlFor="balance" className="font-semibold text-secondary">
               Saldo de Milhas / Pontos
             </Label>
-            <Input
-              id="balance"
-              type="number"
-              value={newBalance}
-              onChange={(e) => setNewBalance(e.target.value)}
-              className="h-12 text-lg focus-visible:ring-primary/20"
-              placeholder="0"
-            />
+            <div className="relative">
+              <Input
+                id="balance"
+                type="number"
+                value={newBalance}
+                onChange={(e) => setNewBalance(e.target.value)}
+                className="h-14 text-lg focus-visible:ring-primary/20 bg-muted/20 font-semibold pl-4"
+                placeholder="0"
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold text-sm">
+                pts
+              </span>
+            </div>
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
+            <Button
+              variant="ghost"
+              onClick={() => setIsModalOpen(false)}
+              className="font-semibold"
+            >
               Cancelar
             </Button>
-            <Button onClick={handleSaveBalance} disabled={isSaving}>
+            <Button
+              onClick={handleSaveBalance}
+              disabled={isSaving}
+              className="font-bold shadow-sm"
+            >
               {isSaving ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (

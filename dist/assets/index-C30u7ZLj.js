@@ -33399,28 +33399,28 @@ const AuthProvider = ({ children }) => {
 var programsList = [
 	{
 		name: "Livelo",
-		color: "bg-pink-100 text-pink-700",
-		icon: "L"
+		query: "gift",
+		color: "rose"
 	},
 	{
 		name: "Esfera",
-		color: "bg-red-100 text-red-700",
-		icon: "E"
+		query: "sphere",
+		color: "red"
 	},
 	{
 		name: "Smiles",
-		color: "bg-orange-100 text-orange-700",
-		icon: "S"
+		query: "smile",
+		color: "orange"
 	},
 	{
 		name: "Latam Pass",
-		color: "bg-blue-100 text-blue-700",
-		icon: "LP"
+		query: "plane",
+		color: "blue"
 	},
 	{
 		name: "TudoAzul",
-		color: "bg-cyan-100 text-cyan-700",
-		icon: "TA"
+		query: "plane",
+		color: "cyan"
 	}
 ];
 function Index() {
@@ -33469,8 +33469,10 @@ function Index() {
 	const totalBalance = Object.values(balances).reduce((acc, curr) => acc + curr, 0);
 	const estimatedValue = totalBalance / 1e3 * 20;
 	const goalTotal = goal?.target_miles || 1e5;
-	const currentPercentage = goalTotal > 0 ? totalBalance / goalTotal * 100 : 0;
+	const currentMiles = goal?.current_miles || totalBalance;
+	const currentPercentage = goalTotal > 0 ? currentMiles / goalTotal * 100 : 0;
 	const goalImage = goal?.image_url || `https://img.usecurling.com/p/800/600?q=${encodeURIComponent(goal?.destination_name || "vacation")}&dpr=2`;
+	const promoImage = promo ? `https://img.usecurling.com/p/400/300?q=${encodeURIComponent(promo.destination)}&dpr=2` : `https://img.usecurling.com/p/400/300?q=airport&dpr=2`;
 	const handleOpenModal = (program) => {
 		setSelectedProgram(program);
 		setNewBalance(balances[program]?.toString() || "0");
@@ -33511,269 +33513,303 @@ function Index() {
 		}
 	};
 	if (loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "space-y-6 md:space-y-8 pb-4",
+		className: "space-y-10 md:space-y-12 pb-8",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[200px] w-full rounded-2xl" }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[140px] w-full rounded-xl" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-48 rounded-md" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[280px] w-full rounded-3xl" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "grid grid-cols-1 lg:grid-cols-3 gap-6",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[360px] w-full rounded-2xl lg:col-span-2" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[360px] w-full rounded-2xl lg:col-span-1" })]
+			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "grid grid-cols-2 md:grid-cols-5 gap-4",
-				children: [...Array(5)].map((_$1, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-32 w-full rounded-xl" }, i))
+				className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4",
+				children: [...Array(5)].map((_$1, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-24 w-full rounded-xl" }, i))
 			})
 		]
 	});
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "space-y-8 md:space-y-10 pb-6",
+		className: "space-y-10 md:space-y-12 pb-8",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
 				className: "animate-fade-in-up",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
-					className: "text-2xl md:text-3xl font-bold text-secondary tracking-tight",
-					children: [
-						"Olá, ",
-						profile?.full_name || "Viajante",
-						"! 👋"
-					]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "text-muted-foreground mt-1 text-sm md:text-base font-medium",
-					children: "Confira o resumo da sua carteira de milhas e as melhores oportunidades do momento."
-				})]
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h1", {
+					className: "text-xl md:text-2xl font-bold text-secondary tracking-tight",
+					children: ["Olá, ", profile?.full_name?.split(" ")[0] || "Viajante"]
+				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-blue-800 p-6 md:p-8 text-white shadow-elevation animate-fade-in-up",
+				className: "bg-orange-50 border border-orange-200 rounded-xl p-4 flex items-center justify-between gap-4 animate-fade-in-up shadow-sm",
 				style: { animationDelay: "50ms" },
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-[url('https://img.usecurling.com/p/1200/400?q=airport%20lounge')] bg-cover bg-center opacity-20 mix-blend-overlay" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "space-y-2.5 max-w-2xl",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex items-center gap-3",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "bg-orange-100 p-2 rounded-full text-orange-600 shrink-0",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TriangleAlert, { className: "w-5 h-5" })
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+						className: "text-orange-900 font-bold text-sm",
+						children: "Atenção aos Vencimentos"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "text-orange-800/90 text-sm font-medium",
+						children: "Você tem 5.000 pontos Livelo expirando nos próximos 15 dias."
+					})] })]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+					variant: "outline",
+					size: "sm",
+					className: "bg-white border-orange-200 text-orange-700 hover:bg-orange-50 hover:text-orange-800 shrink-0",
+					children: "Ver detalhes"
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
+				className: "animate-fade-in-up",
+				style: { animationDelay: "100ms" },
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-muted flex flex-col items-center justify-center text-center relative overflow-hidden group",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent opacity-50" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "relative z-10 flex flex-col items-center",
 						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								className: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold shadow-sm border border-white/10",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tag, { className: "w-4 h-4" }), " Hub de Promoções"]
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+								className: "text-xs md:text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground mb-4 md:mb-6 flex items-center gap-2",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Wallet, { className: "w-4 h-4 text-primary" }), " Patrimônio em Milhas"]
 							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-								className: "text-2xl md:text-3xl font-extrabold leading-tight drop-shadow-md",
-								children: promo ? `🔥 ${promo.title}` : "Fique por dentro das melhores ofertas!"
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+								className: "text-5xl md:text-7xl font-black text-secondary tracking-tighter transition-transform duration-300 group-hover:scale-105",
+								children: [
+									new Intl.NumberFormat("pt-BR").format(totalBalance),
+									" ",
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "text-2xl md:text-4xl text-muted-foreground font-semibold tracking-normal",
+										children: "mi"
+									})
+								]
 							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								className: "text-white/90 text-sm md:text-base font-medium",
-								children: promo ? `Transfira seus pontos com até ${promo.bonus_percentage}% de bônus e alcance seu próximo destino mais rápido.` : "Aproveite bônus de transferência e acelere sua viagem."
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "mt-6 md:mt-8 inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-5 py-2.5 rounded-full font-bold border border-emerald-100 shadow-sm transition-colors hover:bg-emerald-100 cursor-default",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TrendingUp, { className: "w-4 h-4 text-emerald-600" }),
+									"Valor Estimado: ~",
+									" ",
+									new Intl.NumberFormat("pt-BR", {
+										style: "currency",
+										currency: "BRL"
+									}).format(estimatedValue)
+								]
 							})
 						]
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						asChild: true,
-						variant: "secondary",
-						size: "lg",
-						className: "font-bold shadow-sm shrink-0",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
-							to: "/promocoes",
-							children: ["Ver todas as ofertas ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowRight, { className: "w-5 h-5 ml-2" })]
-						})
 					})]
-				})]
+				})
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+				className: "grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 animate-fade-in-up",
+				style: { animationDelay: "150ms" },
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "lg:col-span-8 flex flex-col gap-8 animate-fade-in-up",
-					style: { animationDelay: "100ms" },
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
-						className: "shadow-elevation border-muted bg-white overflow-hidden",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							className: "p-6 md:p-8",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "flex flex-col md:flex-row justify-between items-start md:items-center gap-6",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "space-y-2",
-									children: [
-										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-											className: "text-sm font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Wallet, { className: "w-4 h-4 text-primary" }), " Patrimônio em Milhas"]
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
-											className: "text-4xl md:text-5xl font-black text-secondary tracking-tight",
-											children: [
-												new Intl.NumberFormat("pt-BR").format(totalBalance),
-												" ",
-												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-													className: "text-2xl text-muted-foreground font-semibold",
-													children: "mi"
-												})
-											]
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											className: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100 mt-2",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TrendingUp, { className: "w-4 h-4 text-emerald-600" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-												className: "text-emerald-700 font-bold text-sm",
+					className: "lg:col-span-2 flex flex-col h-full",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+						className: "text-xl font-bold text-secondary mb-4 flex items-center gap-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Target, { className: "w-5 h-5 text-primary" }), " Meta Principal"]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+						className: "flex-1 overflow-hidden border-none shadow-elevation relative group min-h-[320px] rounded-2xl cursor-pointer",
+						onClick: () => window.location.href = "/objetivos",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-gradient-to-t from-secondary via-secondary/60 to-transparent z-10 transition-opacity duration-300 group-hover:opacity-90" }),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+								src: goalImage,
+								alt: goal?.destination_name,
+								className: "absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "absolute top-4 left-4 z-20",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+									className: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold text-white shadow-sm border border-white/20",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, { className: "w-3.5 h-3.5" }), " Destino Ativo"]
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+								className: "absolute bottom-0 left-0 right-0 z-20 p-6 md:p-8 text-white",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
+									className: "text-3xl md:text-4xl font-black leading-tight drop-shadow-md mb-6",
+									children: goal?.destination_name || "Nenhuma meta definida"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "space-y-3",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex justify-between items-end",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "font-medium text-white/90",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-2xl font-bold text-white mr-1",
+												children: new Intl.NumberFormat("pt-BR").format(currentMiles)
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+												className: "text-sm",
 												children: [
-													"Valor Estimado: ~",
-													" ",
-													new Intl.NumberFormat("pt-BR", {
-														style: "currency",
-														currency: "BRL"
-													}).format(estimatedValue)
+													"/ ",
+													new Intl.NumberFormat("pt-BR").format(goalTotal),
+													" mi"
 												]
 											})]
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "text-xl font-bold text-primary-foreground drop-shadow-sm bg-primary/20 px-2 py-0.5 rounded backdrop-blur-sm",
+											children: [currentPercentage.toFixed(1), "%"]
+										})]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "relative h-3 bg-black/40 rounded-full overflow-hidden backdrop-blur-md border border-white/10 shadow-inner",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											className: "absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-blue-400 rounded-full transition-all duration-1000 ease-out",
+											style: { width: `${Math.min(currentPercentage, 100)}%` }
 										})
-									]
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "bg-orange-50 border border-orange-200 rounded-xl p-4 flex flex-col gap-2 w-full md:max-w-[280px]",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										className: "flex items-center gap-2 text-orange-800 font-bold text-sm",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TriangleAlert, { className: "w-4 h-4 text-orange-500" }), "Atenção aos Vencimentos"]
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-										className: "text-orange-700/90 text-sm font-medium leading-snug",
-										children: "⚠️ 5.000 pontos Livelo vencem em 15 dias. Transfira agora e não perca!"
 									})]
 								})]
 							})
-						})
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "space-y-5",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
-							className: "text-xl font-bold text-secondary flex items-center gap-2",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Wallet, { className: "w-6 h-6 text-primary" }), "Minha Carteira"]
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4",
-							children: programsList.map((prog) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-								to: `/programa/${prog.name.toLowerCase().replace(/\s+/g, "")}`,
-								className: "block",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
-									className: "shadow-sm border-muted transition-all duration-200 hover:scale-105 hover:shadow-md hover:border-primary/30 h-full",
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-										className: "p-5 flex flex-col items-center text-center gap-3",
+						]
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "lg:col-span-1 flex flex-col h-full",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+						className: "text-xl font-bold text-secondary mb-4 flex items-center gap-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sparkles, { className: "w-5 h-5 text-accent" }), " Oportunidade do Dia"]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+						className: "flex-1 flex flex-col overflow-hidden shadow-sm border-muted transition-all duration-300 hover:shadow-elevation hover:border-primary/30 rounded-2xl group",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "h-40 relative overflow-hidden shrink-0 bg-muted",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+									src: promoImage,
+									alt: "Promoção",
+									className: "w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent" }),
+								promo && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "absolute bottom-3 left-3 flex items-center gap-1.5",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+										className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-accent text-accent-foreground text-xs font-black shadow-sm",
 										children: [
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-												className: `w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${prog.color}`,
-												children: prog.icon
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
-												className: "font-semibold text-secondary",
-												children: prog.name
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-												className: "text-2xl font-bold text-primary mt-1",
-												children: new Intl.NumberFormat("pt-BR").format(balances[prog.name] || 0)
-											})] }),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-												variant: "ghost",
-												size: "sm",
-												className: "w-full text-xs font-semibold text-muted-foreground hover:text-primary mt-2",
-												onClick: (e) => {
-													e.preventDefault();
-													e.stopPropagation();
-													handleOpenModal(prog.name);
-												},
-												children: "Atualizar saldo"
-											})
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Percent, { className: "w-3.5 h-3.5" }),
+											" ",
+											promo.bonus_percentage,
+											"% BÔNUS"
 										]
 									})
 								})
-							}, prog.name))
+							]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+							className: "p-5 flex flex-col flex-1 gap-4",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex-1",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+									className: "font-bold text-secondary text-lg leading-tight mb-2 line-clamp-2",
+									children: promo ? promo.title : "Fique por dentro das melhores ofertas!"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-sm font-medium text-muted-foreground line-clamp-2",
+									children: promo ? `Transfira de ${promo.origin} para ${promo.destination} e ganhe bônus exclusivos.` : "Aproveite bônus de transferência para acelerar sua viagem."
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+								asChild: true,
+								className: "w-full font-bold shadow-sm",
+								variant: promo ? "default" : "outline",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
+									to: promo ? `/promocoes/${promo.id}` : "/promocoes",
+									children: [
+										promo ? "Ver Oferta" : "Ver Promoções",
+										" ",
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowRight, { className: "w-4 h-4 ml-2" })
+									]
+								})
+							})]
 						})]
 					})]
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+				className: "animate-fade-in-up",
+				style: { animationDelay: "200ms" },
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+					className: "text-xl font-bold text-secondary mb-4 flex items-center gap-2",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Wallet, { className: "w-5 h-5 text-primary" }), " Minha Carteira"]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "lg:col-span-4 flex flex-col gap-6 animate-fade-in-up",
-					style: { animationDelay: "150ms" },
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						className: "overflow-hidden border-none shadow-elevation relative group h-[300px] flex flex-col justify-between shrink-0",
+					className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4",
+					children: programsList.map((prog) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+						className: "flex items-center p-4 gap-4 group hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 cursor-pointer rounded-2xl bg-white",
+						onClick: () => handleOpenModal(prog.name),
 						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-gradient-to-br from-primary to-blue-700 opacity-95 z-0" }),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-30 z-0 transition-transform duration-700 group-hover:scale-105",
-								style: { backgroundImage: `url('${goalImage}')` }
+								className: "w-12 h-12 rounded-full overflow-hidden shrink-0 border border-muted/50 bg-muted/20 flex items-center justify-center",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+									src: `https://img.usecurling.com/i?q=${prog.name}&color=${prog.color}`,
+									alt: prog.name,
+									className: "w-8 h-8 object-contain",
+									onError: (e) => {
+										e.currentTarget.style.display = "none";
+										e.currentTarget.parentElement.innerHTML = `<span class="font-bold text-lg text-muted-foreground">${prog.name.charAt(0)}</span>`;
+									}
+								})
 							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
-								className: "relative z-10 text-white pb-2",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "flex justify-between items-start mb-2",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-										className: "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-medium text-white shadow-sm border border-white/10",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Target, { className: "w-3.5 h-3.5" }), "Progresso da Viagem"]
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-										className: "inline-flex items-center gap-1 text-xs font-medium bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-md shadow-sm border border-white/10",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, { className: "w-3.5 h-3.5" }), " Principal"]
-									})]
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-									className: "text-2xl font-bold leading-tight text-white drop-shadow-sm",
-									children: goal?.destination_name || "Nenhuma meta definida"
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex-1 min-w-0",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+									className: "text-sm font-semibold text-muted-foreground truncate",
+									children: prog.name
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-xl font-bold text-secondary truncate mt-0.5",
+									children: new Intl.NumberFormat("pt-BR").format(balances[prog.name] || 0)
 								})]
 							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-								className: "relative z-10 text-white pt-2 pb-6",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "flex justify-between items-end mb-3",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										className: "text-3xl md:text-4xl font-bold tracking-tight drop-shadow-md",
-										children: new Intl.NumberFormat("pt-BR").format(totalBalance)
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										className: "text-primary-foreground/90 text-sm font-medium drop-shadow-sm",
-										children: [
-											"de ",
-											new Intl.NumberFormat("pt-BR").format(goalTotal),
-											" milhas"
-										]
-									})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										className: "text-right",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											className: "text-2xl font-bold drop-shadow-md",
-											children: [currentPercentage.toFixed(1), "%"]
-										})
-									})]
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "relative h-4 mt-6 bg-black/20 rounded-full overflow-hidden backdrop-blur-md border border-white/10 shadow-inner",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										className: "absolute top-0 left-0 h-full bg-gradient-to-r from-accent to-orange-500 rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(245,158,11,0.5)]",
-										style: { width: `${Math.min(currentPercentage, 100)}%` }
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaneTakeoff, {
-										className: "absolute top-1/2 -translate-y-1/2 text-white drop-shadow-lg w-5 h-5 transition-all duration-1000 ease-out",
-										style: { left: `calc(${Math.min(currentPercentage, 100)}% - 10px)` }
-									})]
-								})]
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "w-8 h-8 rounded-full bg-muted/30 flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pen, { className: "w-4 h-4" })
 							})
 						]
-					})
+					}, prog.name))
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
 				open: isModalOpen,
 				onOpenChange: setIsModalOpen,
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogContent, {
-					className: "sm:max-w-[400px]",
+					className: "sm:max-w-[400px] rounded-2xl",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogHeader, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogTitle, {
-							className: "flex items-center gap-2",
+							className: "flex items-center gap-2 text-xl",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Wallet, { className: "w-5 h-5 text-primary" }), "Atualizar Saldo"]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogDescription, {
+							className: "text-base font-medium mt-2",
 							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Wallet, { className: "w-5 h-5 text-primary" }),
-								"Atualizar Saldo: ",
-								selectedProgram
+								"Insira o saldo atual consolidado que você possui no",
+								" ",
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
+									className: "text-secondary",
+									children: selectedProgram
+								}),
+								"."
 							]
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogDescription, { children: [
-							"Insira o saldo atual consolidado que você possui no",
-							" ",
-							selectedProgram,
-							"."
-						] })] }),
+						})] }),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "py-4",
+							className: "py-4 space-y-3",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
 								htmlFor: "balance",
-								className: "mb-2 block font-semibold text-secondary",
+								className: "font-semibold text-secondary",
 								children: "Saldo de Milhas / Pontos"
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-								id: "balance",
-								type: "number",
-								value: newBalance,
-								onChange: (e) => setNewBalance(e.target.value),
-								className: "h-12 text-lg focus-visible:ring-primary/20",
-								placeholder: "0"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "relative",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									id: "balance",
+									type: "number",
+									value: newBalance,
+									onChange: (e) => setNewBalance(e.target.value),
+									className: "h-14 text-lg focus-visible:ring-primary/20 bg-muted/20 font-semibold pl-4",
+									placeholder: "0"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold text-sm",
+									children: "pts"
+								})]
 							})]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogFooter, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 							variant: "ghost",
 							onClick: () => setIsModalOpen(false),
+							className: "font-semibold",
 							children: "Cancelar"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 							onClick: handleSaveBalance,
 							disabled: isSaving,
+							className: "font-bold shadow-sm",
 							children: [isSaving ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-4 h-4 mr-2 animate-spin" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Wallet, { className: "w-4 h-4 mr-2" }), "Salvar Saldo"]
 						})] })
 					]
@@ -40679,4 +40715,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-BmZMhEIQ.js.map
+//# sourceMappingURL=index-C30u7ZLj.js.map
