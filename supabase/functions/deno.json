@@ -1,7 +1,6 @@
 {
   "_versions": {
     "sync-promotions": 4,
-    "sync-prices": 2,
-    "functions": 2
+    "sync-prices": 2
   }
 }
