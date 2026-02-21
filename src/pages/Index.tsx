@@ -31,6 +31,8 @@ import { TransactionModal } from '@/components/TransactionModal'
 import azulLogo from '@/assets/azul-39f96.svg'
 import latamLogo from '@/assets/latam-13e30.svg'
 import smilesLogo from '@/assets/smiles-3b02a.svg'
+import esferaLogo from '@/assets/esfera-1668b.png'
+import liveloLogo from '@/assets/livelo-398a4.svg'
 
 interface TravelGoal {
   id: string
@@ -41,8 +43,8 @@ interface TravelGoal {
 }
 
 const programsList = [
-  { name: 'Livelo', query: 'gift', color: 'rose' },
-  { name: 'Esfera', query: 'sphere', color: 'red' },
+  { name: 'Livelo', logo: liveloLogo },
+  { name: 'Esfera', logo: esferaLogo },
   { name: 'Smiles', logo: smilesLogo },
   { name: 'Latam Pass', logo: latamLogo },
   { name: 'TudoAzul', logo: azulLogo },
@@ -243,15 +245,9 @@ export default function Index() {
                     className="w-10 h-10 object-contain"
                   />
                 ) : (
-                  <img
-                    src={`https://img.usecurling.com/i?q=${prog.query}&color=${prog.color}`}
-                    alt={prog.name}
-                    className="w-8 h-8 object-contain"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none'
-                      e.currentTarget.parentElement!.innerHTML = `<span class="font-bold text-lg text-muted-foreground">${prog.name.charAt(0)}</span>`
-                    }}
-                  />
+                  <span className="font-bold text-lg text-muted-foreground">
+                    {prog.name.charAt(0)}
+                  </span>
                 )}
               </div>
 
