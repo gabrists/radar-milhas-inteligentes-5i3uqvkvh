@@ -22,10 +22,12 @@ import {
   Sparkles,
   Percent,
   ArrowRight,
+  PlusCircle,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
 import { useToast } from '@/hooks/use-toast'
+import { TransactionModal } from '@/components/TransactionModal'
 
 interface TravelGoal {
   id: string
@@ -53,6 +55,9 @@ export default function Index() {
   const [promo, setPromo] = useState<any>(null)
   const [goal, setGoal] = useState<TravelGoal | null>(null)
   const [balances, setBalances] = useState<Record<string, number>>({})
+
+  const [refreshKey, setRefreshKey] = useState(0)
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProgram, setSelectedProgram] = useState('')
@@ -114,7 +119,7 @@ export default function Index() {
       }
     }
     fetchData()
-  }, [user])
+  }, [user, refreshKey])
 
   const totalBalance = Object.values(balances).reduce(
     (acc, curr) => acc + curr,
@@ -206,9 +211,18 @@ export default function Index() {
         className="animate-fade-in-up"
         style={{ animationDelay: '50ms' }}
       >
-        <h2 className="text-xl font-bold text-secondary mb-4 flex items-center gap-2">
-          <Wallet className="w-5 h-5 text-primary" /> Minha Carteira
-        </h2>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+          <h2 className="text-xl font-bold text-secondary flex items-center gap-2">
+            <Wallet className="w-5 h-5 text-primary" /> Minha Carteira
+          </h2>
+          <Button
+            onClick={() => setIsTransactionModalOpen(true)}
+            className="font-bold shadow-sm rounded-full shrink-0 h-10 px-5"
+          >
+            <PlusCircle className="w-4 h-4 mr-2" /> Nova Movimentação
+          </Button>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {programsList.map((prog) => (
             <Card
@@ -226,7 +240,6 @@ export default function Index() {
                   alt={prog.name}
                   className="w-8 h-8 object-contain"
                   onError={(e) => {
-                    // Fallback if image fails
                     e.currentTarget.style.display = 'none'
                     e.currentTarget.parentElement!.innerHTML = `<span class="font-bold text-lg text-muted-foreground">${prog.name.charAt(0)}</span>`
                   }}
@@ -416,6 +429,12 @@ export default function Index() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <TransactionModal
+        isOpen={isTransactionModalOpen}
+        onClose={() => setIsTransactionModalOpen(false)}
+        onSuccess={() => setRefreshKey((k) => k + 1)}
+      />
     </div>
   )
 }
