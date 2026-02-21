@@ -1934,12 +1934,12 @@ section[aria-label='Notifications alt+T'] {
   max-height: 320px;
 }
 
-.max-h-\[50vh\]{
-  max-height: 50vh;
-}
-
 .max-h-\[60vh\]{
   max-height: 60vh;
+}
+
+.max-h-\[85vh\]{
+  max-height: 85vh;
 }
 
 .max-h-\[90vh\]{
@@ -2409,6 +2409,10 @@ section[aria-label='Notifications alt+T'] {
 
 .flex-wrap{
   flex-wrap: wrap;
+}
+
+.flex-nowrap{
+  flex-wrap: nowrap;
 }
 
 .items-start{
@@ -5571,6 +5575,10 @@ section[aria-label='Notifications alt+T'] {
 
   .sm\:flex{
     display: flex;
+  }
+
+  .sm\:max-h-\[600px\]{
+    max-height: 600px;
   }
 
   .sm\:w-auto{

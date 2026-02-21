@@ -39357,10 +39357,10 @@ function AddWalletModal({ isOpen, onClose, onSuccess }) {
 		open: isOpen,
 		onOpenChange: (o) => !o && onClose(),
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogContent, {
-			className: "sm:max-w-[520px] p-0 overflow-hidden gap-0 rounded-2xl border-none shadow-elevation",
+			className: "sm:max-w-[520px] flex flex-col max-h-[85vh] sm:max-h-[600px] p-0 overflow-hidden gap-0 rounded-2xl border-none shadow-elevation",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogHeader, {
-					className: "p-6 pb-4 text-left",
+					className: "p-6 pb-4 text-left shrink-0",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogTitle, {
 						className: "text-lg font-semibold text-foreground",
 						children: "Adicionar Programa"
@@ -39370,7 +39370,7 @@ function AddWalletModal({ isOpen, onClose, onSuccess }) {
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "px-6 pb-2 space-y-6",
+					className: "px-6 pb-2 space-y-6 shrink-0",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "relative",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Search, { className: "absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
@@ -39382,17 +39382,17 @@ function AddWalletModal({ isOpen, onClose, onSuccess }) {
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "relative -mx-2 px-2",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: "flex gap-2 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+							className: "flex flex-nowrap gap-2 overflow-x-auto pb-4 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
 							children: CONTINENTS.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 								onClick: () => setSelectedContinent(c),
-								className: cn("px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all border", selectedContinent === c ? "bg-primary text-primary-foreground border-transparent shadow-sm" : "bg-background text-muted-foreground border-border/60 hover:bg-muted/50 hover:text-foreground"),
+								className: cn("px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all border shrink-0", selectedContinent === c ? "bg-primary text-primary-foreground border-transparent shadow-sm" : "bg-background text-muted-foreground border-border/60 hover:bg-muted/50 hover:text-foreground"),
 								children: c
 							}, c))
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" })]
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "overflow-y-auto max-h-[50vh] px-6 pb-6 space-y-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent relative",
+					className: "flex-1 overflow-y-auto min-h-0 px-6 pb-6 space-y-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent relative",
 					children: [isSaving && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 						className: "absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-b-2xl",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-8 h-8 animate-spin text-primary" })
@@ -45282,4 +45282,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-BUXb79jM.js.map
+//# sourceMappingURL=index-CtwenrLM.js.map
