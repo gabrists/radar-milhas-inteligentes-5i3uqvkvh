@@ -190,7 +190,6 @@ export default function Index() {
 
   return (
     <div className="space-y-8 md:space-y-10 pb-6">
-      {/* Welcome Section */}
       <section className="animate-fade-in-up">
         <h2 className="text-2xl md:text-3xl font-bold text-secondary tracking-tight">
           Olá, {profile?.full_name || 'Viajante'}! 👋
@@ -201,7 +200,6 @@ export default function Index() {
         </p>
       </section>
 
-      {/* Promotions Hub Banner */}
       <div
         className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-blue-800 p-6 md:p-8 text-white shadow-elevation animate-fade-in-up"
         style={{ animationDelay: '50ms' }}
@@ -241,7 +239,6 @@ export default function Index() {
           className="lg:col-span-8 flex flex-col gap-8 animate-fade-in-up"
           style={{ animationDelay: '100ms' }}
         >
-          {/* Financial Summary */}
           <Card className="shadow-elevation border-muted bg-white overflow-hidden">
             <CardContent className="p-6 md:p-8">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -282,7 +279,6 @@ export default function Index() {
             </CardContent>
           </Card>
 
-          {/* Wallet Grid */}
           <div className="space-y-5">
             <h3 className="text-xl font-bold text-secondary flex items-center gap-2">
               <Wallet className="w-6 h-6 text-primary" />
@@ -290,36 +286,43 @@ export default function Index() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
               {programsList.map((prog) => (
-                <Card
+                <Link
                   key={prog.name}
-                  className="shadow-sm border-muted hover:border-primary/30 transition-colors"
+                  to={`/programa/${prog.name.toLowerCase().replace(/\s+/g, '')}`}
+                  className="block"
                 >
-                  <CardContent className="p-5 flex flex-col items-center text-center gap-3">
-                    <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${prog.color}`}
-                    >
-                      {prog.icon}
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-secondary">
-                        {prog.name}
-                      </h4>
-                      <p className="text-2xl font-bold text-primary mt-1">
-                        {new Intl.NumberFormat('pt-BR').format(
-                          balances[prog.name] || 0,
-                        )}
-                      </p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full text-xs font-semibold text-muted-foreground hover:text-primary mt-2"
-                      onClick={() => handleOpenModal(prog.name)}
-                    >
-                      Atualizar saldo
-                    </Button>
-                  </CardContent>
-                </Card>
+                  <Card className="shadow-sm border-muted transition-all duration-200 hover:scale-105 hover:shadow-md hover:border-primary/30 h-full">
+                    <CardContent className="p-5 flex flex-col items-center text-center gap-3">
+                      <div
+                        className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${prog.color}`}
+                      >
+                        {prog.icon}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-secondary">
+                          {prog.name}
+                        </h4>
+                        <p className="text-2xl font-bold text-primary mt-1">
+                          {new Intl.NumberFormat('pt-BR').format(
+                            balances[prog.name] || 0,
+                          )}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-xs font-semibold text-muted-foreground hover:text-primary mt-2"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          handleOpenModal(prog.name)
+                        }}
+                      >
+                        Atualizar saldo
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           </div>
@@ -329,7 +332,6 @@ export default function Index() {
           className="lg:col-span-4 flex flex-col gap-6 animate-fade-in-up"
           style={{ animationDelay: '150ms' }}
         >
-          {/* Travel Goal Integration */}
           <Card className="overflow-hidden border-none shadow-elevation relative group h-[300px] flex flex-col justify-between shrink-0">
             <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-700 opacity-95 z-0"></div>
             <div

@@ -1644,6 +1644,10 @@ section[aria-label='Notifications alt+T'] {
   margin-left: auto;
 }
 
+.mr-1{
+  margin-right: 0.25rem;
+}
+
 .mr-1\.5{
   margin-right: 0.375rem;
 }
@@ -1705,6 +1709,10 @@ section[aria-label='Notifications alt+T'] {
 
 .block{
   display: block;
+}
+
+.inline-block{
+  display: inline-block;
 }
 
 .flex{
@@ -2042,8 +2050,16 @@ section[aria-label='Notifications alt+T'] {
   width: 140px;
 }
 
+.w-\[150px\]{
+  width: 150px;
+}
+
 .w-\[1px\]{
   width: 1px;
+}
+
+.w-\[220px\]{
+  width: 220px;
 }
 
 .w-\[60px\]{
@@ -2493,6 +2509,16 @@ section[aria-label='Notifications alt+T'] {
   margin-bottom: calc(2rem * var(--tw-space-y-reverse));
 }
 
+.divide-y > :not([hidden]) ~ :not([hidden]){
+  --tw-divide-y-reverse: 0;
+  border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
+  border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
+}
+
+.divide-border > :not([hidden]) ~ :not([hidden]){
+  border-color: hsl(var(--border));
+}
+
 .overflow-auto{
   overflow: auto;
 }
@@ -2793,6 +2819,11 @@ section[aria-label='Notifications alt+T'] {
 
 .bg-destructive{
   background-color: hsl(var(--destructive));
+}
+
+.bg-emerald-100{
+  --tw-bg-opacity: 1;
+  background-color: rgb(209 250 229 / var(--tw-bg-opacity, 1));
 }
 
 .bg-emerald-50{
@@ -4365,6 +4396,11 @@ section[aria-label='Notifications alt+T'] {
   background-color: hsl(var(--destructive) / 0.9);
 }
 
+.hover\:bg-emerald-200:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(167 243 208 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:bg-muted:hover{
   background-color: hsl(var(--muted));
 }
@@ -4385,6 +4421,11 @@ section[aria-label='Notifications alt+T'] {
   background-color: hsl(var(--muted) / 0.8);
 }
 
+.hover\:bg-orange-200:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 215 170 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:bg-primary\/10:hover{
   background-color: hsl(var(--primary) / 0.1);
 }
@@ -4395,6 +4436,11 @@ section[aria-label='Notifications alt+T'] {
 
 .hover\:bg-primary\/90:hover{
   background-color: hsl(var(--primary) / 0.9);
+}
+
+.hover\:bg-red-200:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 202 202 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-secondary:hover{

@@ -19304,6 +19304,10 @@ var Megaphone = createLucideIcon("megaphone", [
 		key: "15ugcq"
 	}]
 ]);
+var Minus = createLucideIcon("minus", [["path", {
+	d: "M5 12h14",
+	key: "1ays0h"
+}]]);
 var PanelLeft = createLucideIcon("panel-left", [["rect", {
 	width: "18",
 	height: "18",
@@ -33630,30 +33634,38 @@ function Index() {
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Wallet, { className: "w-6 h-6 text-primary" }), "Minha Carteira"]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 							className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4",
-							children: programsList.map((prog) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
-								className: "shadow-sm border-muted hover:border-primary/30 transition-colors",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-									className: "p-5 flex flex-col items-center text-center gap-3",
-									children: [
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-											className: `w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${prog.color}`,
-											children: prog.icon
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
-											className: "font-semibold text-secondary",
-											children: prog.name
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-											className: "text-2xl font-bold text-primary mt-1",
-											children: new Intl.NumberFormat("pt-BR").format(balances[prog.name] || 0)
-										})] }),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-											variant: "ghost",
-											size: "sm",
-											className: "w-full text-xs font-semibold text-muted-foreground hover:text-primary mt-2",
-											onClick: () => handleOpenModal(prog.name),
-											children: "Atualizar saldo"
-										})
-									]
+							children: programsList.map((prog) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+								to: `/programa/${prog.name.toLowerCase().replace(/\s+/g, "")}`,
+								className: "block",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
+									className: "shadow-sm border-muted transition-all duration-200 hover:scale-105 hover:shadow-md hover:border-primary/30 h-full",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+										className: "p-5 flex flex-col items-center text-center gap-3",
+										children: [
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: `w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${prog.color}`,
+												children: prog.icon
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+												className: "font-semibold text-secondary",
+												children: prog.name
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+												className: "text-2xl font-bold text-primary mt-1",
+												children: new Intl.NumberFormat("pt-BR").format(balances[prog.name] || 0)
+											})] }),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+												variant: "ghost",
+												size: "sm",
+												className: "w-full text-xs font-semibold text-muted-foreground hover:text-primary mt-2",
+												onClick: (e) => {
+													e.preventDefault();
+													e.stopPropagation();
+													handleOpenModal(prog.name);
+												},
+												children: "Atualizar saldo"
+											})
+										]
+									})
 								})
 							}, prog.name))
 						})]
@@ -38455,6 +38467,203 @@ function PromotionDetailsPage() {
 		]
 	});
 }
+var badgeVariants = cva("inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2", {
+	variants: { variant: {
+		default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+		secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+		destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+		outline: "text-foreground"
+	} },
+	defaultVariants: { variant: "default" }
+});
+function Badge({ className, variant, ...props }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		className: cn(badgeVariants({ variant }), className),
+		...props
+	});
+}
+var mockTransactions = [
+	{
+		id: 1,
+		date: "21 Fev 2026",
+		type: "accumulate",
+		desc: "Compra Casas Bahia",
+		amount: 5e3
+	},
+	{
+		id: 2,
+		date: "15 Fev 2026",
+		type: "transfer",
+		desc: "Transferência para Smiles",
+		amount: -1e4
+	},
+	{
+		id: 3,
+		date: "10 Fev 2026",
+		type: "expire",
+		desc: "Pontos Expirados",
+		amount: -500
+	},
+	{
+		id: 4,
+		date: "01 Fev 2026",
+		type: "accumulate",
+		desc: "Fatura Cartão Black",
+		amount: 12500
+	}
+];
+function ProgramDetailsPage() {
+	const { id } = useParams();
+	const { user } = useAuth();
+	const [balance, setBalance] = (0, import_react.useState)(null);
+	const [loading, setLoading] = (0, import_react.useState)(true);
+	const programName = id ? {
+		livelo: "Livelo",
+		esfera: "Esfera",
+		smiles: "Smiles",
+		latampass: "Latam Pass",
+		tudoazul: "TudoAzul"
+	}[id] || id.charAt(0).toUpperCase() + id.slice(1) : "Programa";
+	(0, import_react.useEffect)(() => {
+		async function fetchBalance() {
+			if (!user) return;
+			try {
+				const { data } = await supabase.from("loyalty_balances").select("balance").eq("user_id", user.id).eq("program_name", programName).maybeSingle();
+				setBalance(data?.balance || 0);
+			} catch (err) {
+				console.error(err);
+			} finally {
+				setLoading(false);
+			}
+		}
+		fetchBalance();
+	}, [user, programName]);
+	const renderBadge = (type) => {
+		switch (type) {
+			case "accumulate": return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
+				className: "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-none font-bold shadow-none",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { className: "w-3 h-3 mr-1" }), " Acúmulo"]
+			});
+			case "transfer": return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
+				className: "bg-red-100 text-red-700 hover:bg-red-200 border-none font-bold shadow-none",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Minus, { className: "w-3 h-3 mr-1" }), " Transferência/Gasto"]
+			});
+			case "expire": return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
+				className: "bg-orange-100 text-orange-700 hover:bg-orange-200 border-none font-bold shadow-none",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TriangleAlert, { className: "w-3 h-3 mr-1" }), " Vencimento"]
+			});
+			default: return null;
+		}
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "space-y-6 md:space-y-8 pb-8 animate-fade-in-up",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				variant: "ghost",
+				asChild: true,
+				className: "pl-0 text-muted-foreground hover:text-secondary -ml-2 mb-2",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
+					to: "/",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowLeft, { className: "w-4 h-4 mr-2" }), " Voltar"]
+				})
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex flex-col md:flex-row md:items-center justify-between gap-4",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
+					className: "text-3xl md:text-4xl font-extrabold text-secondary tracking-tight",
+					children: programName
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "mt-2 text-xl font-medium text-muted-foreground",
+					children: [
+						"Saldo Atual:",
+						" ",
+						loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-6 w-24 inline-block align-middle" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							className: "font-bold text-primary",
+							children: [new Intl.NumberFormat("pt-BR").format(balance || 0), " pts"]
+						})
+					]
+				})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+					className: "font-bold shadow-md",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { className: "w-4 h-4 mr-2" }), " Nova Movimentação"]
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+				className: "shadow-elevation border-muted overflow-hidden",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "hidden md:block",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
+						className: "bg-muted/30",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, { children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+								className: "w-[150px]",
+								children: "Data"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+								className: "w-[220px]",
+								children: "Tipo"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, { children: "Descrição" }),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+								className: "text-right",
+								children: "Valor"
+							})
+						] })
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableBody, { children: mockTransactions.map((tx, index$1) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+						className: index$1 % 2 === 0 ? "bg-background" : "bg-muted/10",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+								className: "font-medium text-secondary",
+								children: tx.date
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, { children: renderBadge(tx.type) }),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+								className: "text-secondary",
+								children: tx.desc
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableCell, {
+								className: `text-right font-bold ${tx.amount > 0 ? "text-emerald-600" : "text-secondary"}`,
+								children: [
+									tx.amount > 0 ? "+" : "-",
+									" ",
+									new Intl.NumberFormat("pt-BR").format(Math.abs(tx.amount)),
+									" ",
+									"pts"
+								]
+							})
+						]
+					}, tx.id)) })] })
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "md:hidden divide-y divide-border",
+					children: mockTransactions.map((tx, index$1) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: `p-4 flex flex-col gap-3 ${index$1 % 2 === 0 ? "bg-background" : "bg-muted/10"}`,
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex justify-between items-center",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-sm font-medium text-muted-foreground",
+								children: tx.date
+							}), renderBadge(tx.type)]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex justify-between items-end",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "font-semibold text-secondary text-sm leading-tight max-w-[200px]",
+								children: tx.desc
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+								className: `font-bold ${tx.amount > 0 ? "text-emerald-600" : "text-secondary"}`,
+								children: [
+									tx.amount > 0 ? "+" : "-",
+									" ",
+									new Intl.NumberFormat("pt-BR").format(Math.abs(tx.amount)),
+									" ",
+									"pts"
+								]
+							})]
+						})]
+					}, tx.id))
+				})]
+			})
+		]
+	});
+}
 var Textarea = import_react.forwardRef(({ className, ...props }, ref) => {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", {
 		className: cn("flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm", className),
@@ -39305,7 +39514,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				var cachedValue = getSnapshot();
 				objectIs(value, cachedValue) || (console.error("The result of getSnapshot should be cached to avoid an infinite loop"), didWarnUncachedGetSnapshot = !0);
 			}
-			cachedValue = useState$12({ inst: {
+			cachedValue = useState$13({ inst: {
 				value,
 				getSnapshot
 			} });
@@ -39319,7 +39528,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				value,
 				getSnapshot
 			]);
-			useEffect$10(function() {
+			useEffect$11(function() {
 				checkIfSnapshotChanged(inst) && forceUpdate({ inst });
 				return subscribe$1(function() {
 					checkIfSnapshotChanged(inst) && forceUpdate({ inst });
@@ -39342,7 +39551,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 			return getSnapshot();
 		}
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-		var React$2 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$12 = React$2.useState, useEffect$10 = React$2.useEffect, useLayoutEffect$1 = React$2.useLayoutEffect, useDebugValue = React$2.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
+		var React$2 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$13 = React$2.useState, useEffect$11 = React$2.useEffect, useLayoutEffect$1 = React$2.useLayoutEffect, useDebugValue = React$2.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
 		exports.useSyncExternalStore = void 0 !== React$2.useSyncExternalStore ? React$2.useSyncExternalStore : shim;
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
 	})();
@@ -40440,6 +40649,10 @@ var AppRoutes = () => {
 					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PromotionDetailsPage, {})
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+					path: "/programa/:id",
+					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProgramDetailsPage, {})
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
 					path: "/admin/promocoes",
 					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminPromotionsPage, {})
 				}),
@@ -40469,4 +40682,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-Dnt_NOAS.js.map
+//# sourceMappingURL=index-BKFM4zlJ.js.map
