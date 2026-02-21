@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import {
   Plane,
@@ -23,12 +24,31 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
+import { supabase } from '@/lib/supabase/client'
 
 export default function Layout() {
   const location = useLocation()
-  const { signOut } = useAuth()
+  const { signOut, user } = useAuth()
+  const [recentPromos, setRecentPromos] = useState<any[]>([])
+
+  useEffect(() => {
+    const fetchPromos = async () => {
+      const { data } = await supabase
+        .from('active_promotions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(3)
+      if (data) setRecentPromos(data)
+    }
+    fetchPromos()
+  }, [])
 
   return (
     <SidebarProvider>
@@ -145,14 +165,69 @@ export default function Layout() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative text-secondary hover:bg-muted/80 hover:text-primary transition-colors"
-            >
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-2 right-2.5 h-2 w-2 rounded-full bg-destructive border border-card"></span>
-            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative text-secondary hover:bg-muted/80 hover:text-primary transition-colors"
+                >
+                  <Bell className="h-5 w-5" />
+                  {recentPromos.length > 0 && (
+                    <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-white animate-pulse shadow-sm">
+                      {recentPromos.length}
+                    </span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="end"
+                className="w-80 p-0 shadow-elevation rounded-xl border-muted z-50"
+              >
+                <div className="p-3.5 border-b border-muted bg-muted/30 rounded-t-xl">
+                  <h4 className="font-semibold text-sm text-secondary">
+                    Notificações
+                  </h4>
+                </div>
+                <div className="flex flex-col max-h-[320px] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  {recentPromos.length > 0 ? (
+                    recentPromos.map((promo) => (
+                      <Link
+                        key={promo.id}
+                        to="/promocoes"
+                        className="p-3.5 hover:bg-muted/50 border-b border-muted/50 transition-colors flex flex-col gap-1.5 last:border-b-0"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary border border-primary/10">
+                            🔥 {promo.bonus_percentage}% Bônus
+                          </span>
+                        </div>
+                        <span className="text-sm font-semibold text-secondary line-clamp-2 leading-tight">
+                          {promo.title}
+                        </span>
+                        <span className="text-xs font-medium text-muted-foreground">
+                          {promo.origin} → {promo.destination}
+                        </span>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="p-8 text-sm font-medium text-muted-foreground text-center">
+                      Nenhuma promoção no momento.
+                    </div>
+                  )}
+                </div>
+                <div className="p-2 border-t border-muted bg-muted/10 rounded-b-xl">
+                  <Button
+                    variant="ghost"
+                    className="w-full text-xs font-bold h-8 text-primary hover:text-primary/80"
+                    asChild
+                  >
+                    <Link to="/promocoes">Ver todas as promoções</Link>
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+
             <Button
               variant="ghost"
               size="icon"

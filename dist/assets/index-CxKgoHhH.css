@@ -716,12 +716,12 @@ section[aria-label='Notifications alt+T'] {
   right: 0.25rem;
 }
 
-.right-2{
-  right: 0.5rem;
+.right-1\.5{
+  right: 0.375rem;
 }
 
-.right-2\.5{
-  right: 0.625rem;
+.right-2{
+  right: 0.5rem;
 }
 
 .right-3{
@@ -803,6 +803,11 @@ section[aria-label='Notifications alt+T'] {
 .-mx-1{
   margin-left: -0.25rem;
   margin-right: -0.25rem;
+}
+
+.-mx-4{
+  margin-left: -1rem;
+  margin-right: -1rem;
 }
 
 .mx-2{
@@ -1043,6 +1048,10 @@ section[aria-label='Notifications alt+T'] {
   height: 140px;
 }
 
+.h-\[160px\]{
+  height: 160px;
+}
+
 .h-\[1px\]{
   height: 1px;
 }
@@ -1098,6 +1107,10 @@ section[aria-label='Notifications alt+T'] {
 
 .max-h-\[300px\]{
   max-height: 300px;
+}
+
+.max-h-\[320px\]{
+  max-height: 320px;
 }
 
 .max-h-\[var\(--radix-dropdown-menu-content-available-height\)\]{
@@ -1200,6 +1213,10 @@ section[aria-label='Notifications alt+T'] {
   width: 2rem;
 }
 
+.w-80{
+  width: 20rem;
+}
+
 .w-9{
   width: 2.25rem;
 }
@@ -1272,6 +1289,10 @@ section[aria-label='Notifications alt+T'] {
 
 .min-w-\[12rem\]{
   min-width: 12rem;
+}
+
+.min-w-\[260px\]{
+  min-width: 260px;
 }
 
 .min-w-\[64px\]{
@@ -1461,6 +1482,18 @@ section[aria-label='Notifications alt+T'] {
           user-select: none;
 }
 
+.snap-x{
+  scroll-snap-type: x var(--tw-scroll-snap-strictness);
+}
+
+.snap-start{
+  scroll-snap-align: start;
+}
+
+.scroll-mt-24{
+  scroll-margin-top: 6rem;
+}
+
 .list-none{
   list-style-type: none;
 }
@@ -1537,6 +1570,10 @@ section[aria-label='Notifications alt+T'] {
   gap: 0.75rem;
 }
 
+.gap-3\.5{
+  gap: 0.875rem;
+}
+
 .gap-4{
   gap: 1rem;
 }
@@ -1597,6 +1634,12 @@ section[aria-label='Notifications alt+T'] {
   margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
 }
 
+.space-y-3\.5 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.875rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.875rem * var(--tw-space-y-reverse));
+}
+
 .space-y-4 > :not([hidden]) ~ :not([hidden]){
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
@@ -1649,6 +1692,10 @@ section[aria-label='Notifications alt+T'] {
   overflow-wrap: break-word;
 }
 
+.rounded{
+  border-radius: 0.25rem;
+}
+
 .rounded-\[2px\]{
   border-radius: 2px;
 }
@@ -1699,6 +1746,11 @@ section[aria-label='Notifications alt+T'] {
 .rounded-t-\[10px\]{
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+}
+
+.rounded-t-xl{
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
 }
 
 .rounded-tl-sm{
@@ -1768,10 +1820,6 @@ section[aria-label='Notifications alt+T'] {
 
 .border-border\/50{
   border-color: hsl(var(--border) / 0.5);
-}
-
-.border-card{
-  border-color: hsl(var(--card));
 }
 
 .border-destructive{
@@ -1895,6 +1943,10 @@ section[aria-label='Notifications alt+T'] {
 
 .bg-muted\/30{
   background-color: hsl(var(--muted) / 0.3);
+}
+
+.bg-muted\/40{
+  background-color: hsl(var(--muted) / 0.4);
 }
 
 .bg-muted\/50{
@@ -2044,6 +2096,10 @@ section[aria-label='Notifications alt+T'] {
   padding: 0.25rem;
 }
 
+.p-1\.5{
+  padding: 0.375rem;
+}
+
 .p-2{
   padding: 0.5rem;
 }
@@ -2054,6 +2110,10 @@ section[aria-label='Notifications alt+T'] {
 
 .p-3{
   padding: 0.75rem;
+}
+
+.p-3\.5{
+  padding: 0.875rem;
 }
 
 .p-4{
@@ -2068,6 +2128,10 @@ section[aria-label='Notifications alt+T'] {
   padding: 1.5rem;
 }
 
+.p-8{
+  padding: 2rem;
+}
+
 .p-\[1px\]{
   padding: 1px;
 }
@@ -2075,6 +2139,11 @@ section[aria-label='Notifications alt+T'] {
 .px-1{
   padding-left: 0.25rem;
   padding-right: 0.25rem;
+}
+
+.px-1\.5{
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
 }
 
 .px-2{
@@ -2317,6 +2386,14 @@ section[aria-label='Notifications alt+T'] {
 
 .text-\[10px\]{
   font-size: 10px;
+}
+
+.text-\[15px\]{
+  font-size: 15px;
+}
+
+.text-\[9px\]{
+  font-size: 9px;
 }
 
 .text-base{
@@ -2885,6 +2962,14 @@ section[aria-label='Notifications alt+T'] {
   --cell-size: 2rem;
 }
 
+.\[-ms-overflow-style\:none\]{
+  -ms-overflow-style: none;
+}
+
+.\[scrollbar-width\:none\]{
+  scrollbar-width: none;
+}
+
 .file\:border-0::file-selector-button{
   border-width: 0px;
 }
@@ -2965,6 +3050,10 @@ section[aria-label='Notifications alt+T'] {
   border-bottom-right-radius: calc(var(--radius) - 2px);
 }
 
+.last\:border-b-0:last-child{
+  border-bottom-width: 0px;
+}
+
 .hover\:scale-105:hover{
   --tw-scale-x: 1.05;
   --tw-scale-y: 1.05;
@@ -2973,6 +3062,10 @@ section[aria-label='Notifications alt+T'] {
 
 .hover\:border-primary\/20:hover{
   border-color: hsl(var(--primary) / 0.2);
+}
+
+.hover\:border-primary\/30:hover{
+  border-color: hsl(var(--primary) / 0.3);
 }
 
 .hover\:bg-accent:hover{
@@ -4059,6 +4152,11 @@ section[aria-label='Notifications alt+T'] {
     position: absolute;
   }
 
+  .md\:mx-0{
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
   .md\:block{
     display: block;
   }
@@ -4077,6 +4175,10 @@ section[aria-label='Notifications alt+T'] {
 
   .md\:w-auto{
     width: auto;
+  }
+
+  .md\:min-w-\[280px\]{
+    min-width: 280px;
   }
 
   .md\:max-w-\[420px\]{
@@ -4103,6 +4205,11 @@ section[aria-label='Notifications alt+T'] {
 
   .md\:p-8{
     padding: 2rem;
+  }
+
+  .md\:px-0{
+    padding-left: 0px;
+    padding-right: 0px;
   }
 
   .md\:px-8{
@@ -4197,6 +4304,10 @@ section[aria-label='Notifications alt+T'] {
   .lg\:grid-cols-3{
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+.\[\&\:\:-webkit-scrollbar\]\:hidden::-webkit-scrollbar{
+  display: none;
 }
 
 .\[\&\:first-child\[data-selected\=true\]_button\]\:rounded-l-md:first-child[data-selected=true] button{

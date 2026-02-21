@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import {
   Card,
   CardContent,
@@ -20,6 +20,9 @@ import {
   ArrowRight,
   PlaneTakeoff,
   Loader2,
+  Megaphone,
+  ArrowRightLeft,
+  Calculator,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
@@ -41,11 +44,14 @@ export default function Index() {
   const { user } = useAuth()
   const { toast } = useToast()
 
+  const calculatorRef = useRef<HTMLDivElement>(null)
+
   const [loading, setLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
 
   const [profile, setProfile] = useState<Profile | null>(null)
   const [goal, setGoal] = useState<TravelGoal | null>(null)
+  const [topPromos, setTopPromos] = useState<any[]>([])
 
   const [productName, setProductName] = useState('')
   const [productValue, setProductValue] = useState<string>('5000')
@@ -56,7 +62,7 @@ export default function Index() {
     async function fetchData() {
       if (!user) return
       try {
-        const [profileRes, goalsRes] = await Promise.all([
+        const [profileRes, goalsRes, promosRes] = await Promise.all([
           supabase
             .from('profiles')
             .select('full_name')
@@ -68,10 +74,16 @@ export default function Index() {
             .eq('user_id', user.id)
             .limit(1)
             .maybeSingle(),
+          supabase
+            .from('active_promotions')
+            .select('*')
+            .order('bonus_percentage', { ascending: false })
+            .limit(2),
         ])
 
         if (profileRes.data) setProfile(profileRes.data)
         if (goalsRes.data) setGoal(goalsRes.data)
+        if (promosRes.data) setTopPromos(promosRes.data)
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
@@ -164,6 +176,18 @@ export default function Index() {
     }
   }
 
+  const applyPromo = (bonus: number) => {
+    setTransferBonus([bonus])
+    calculatorRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+    toast({
+      title: 'Bônus Aplicado!',
+      description: `A calculadora foi ajustada para ${bonus}% de bônus automaticamente.`,
+    })
+  }
+
   if (loading) {
     return (
       <div className="space-y-6 md:space-y-8 pb-4">
@@ -174,6 +198,7 @@ export default function Index() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
           <div className="lg:col-span-5 flex flex-col gap-6">
             <Skeleton className="h-[300px] w-full rounded-xl" />
+            <Skeleton className="h-[160px] w-full rounded-xl" />
             <Skeleton className="h-[140px] w-full rounded-xl" />
           </div>
           <div className="lg:col-span-7">
@@ -201,12 +226,12 @@ export default function Index() {
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-        {/* Goal Card */}
         <div
           className="lg:col-span-5 flex flex-col gap-6 animate-fade-in-up"
           style={{ animationDelay: '100ms' }}
         >
-          <Card className="overflow-hidden border-none shadow-elevation relative group h-[300px] flex flex-col justify-between">
+          {/* Goal Card */}
+          <Card className="overflow-hidden border-none shadow-elevation relative group h-[300px] flex flex-col justify-between shrink-0">
             <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-700 opacity-95 z-0"></div>
             <div className="absolute inset-0 bg-[url('https://img.usecurling.com/p/800/600?q=orlando%20disney')] bg-cover bg-center mix-blend-overlay opacity-30 z-0 transition-transform duration-700 group-hover:scale-105"></div>
 
@@ -271,8 +296,56 @@ export default function Index() {
             </CardContent>
           </Card>
 
+          {/* Acelere sua Meta Widget */}
+          {goal && topPromos.length > 0 && (
+            <div
+              className="space-y-3.5 animate-fade-in-up"
+              style={{ animationDelay: '150ms' }}
+            >
+              <h3 className="font-bold text-secondary text-[15px] flex items-center gap-2">
+                <div className="bg-primary/10 p-1.5 rounded-md text-primary">
+                  <Megaphone className="w-4 h-4" />
+                </div>
+                Acelere sua viagem para {goal.destination_name}
+              </h3>
+              <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x">
+                {topPromos.map((promo) => (
+                  <Card
+                    key={promo.id}
+                    className="min-w-[260px] md:min-w-[280px] shrink-0 snap-start shadow-sm border-muted transition-all hover:shadow-md hover:border-primary/30"
+                  >
+                    <CardContent className="p-4 flex flex-col gap-3.5">
+                      <div className="flex justify-between items-start">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-bold border border-primary/10">
+                          🔥 {promo.bonus_percentage}% Bônus
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-secondary bg-muted/40 p-2.5 rounded-lg border border-muted/50">
+                        <span className="truncate flex-1 text-center">
+                          {promo.origin}
+                        </span>
+                        <ArrowRightLeft className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                        <span className="truncate flex-1 text-center">
+                          {promo.destination}
+                        </span>
+                      </div>
+                      <Button
+                        onClick={() => applyPromo(promo.bonus_percentage)}
+                        size="sm"
+                        className="w-full text-xs font-bold shadow-sm h-9"
+                      >
+                        <Calculator className="w-4 h-4 mr-1.5" />
+                        Aplicar na Calculadora
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Dicas do Radar */}
-          <Card className="bg-primary/5 border-primary/10 shadow-sm transition-all duration-300 hover:bg-primary/10">
+          <Card className="bg-primary/5 border-primary/10 shadow-sm transition-all duration-300 hover:bg-primary/10 shrink-0">
             <CardContent className="p-5 flex gap-4 items-start">
               <div className="bg-primary/10 p-2.5 rounded-full text-primary shrink-0 mt-0.5">
                 <Lightbulb className="w-5 h-5" />
@@ -297,10 +370,11 @@ export default function Index() {
 
         {/* Magic Calculator */}
         <div
+          ref={calculatorRef}
           className="lg:col-span-7 animate-fade-in-up"
           style={{ animationDelay: '200ms' }}
         >
-          <Card className="shadow-elevation border-muted h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/20">
+          <Card className="shadow-elevation border-muted h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/20 scroll-mt-24">
             <CardHeader className="pb-5 border-b border-muted">
               <div className="flex items-center gap-2 text-primary mb-2">
                 <Sparkles className="w-5 h-5" />
