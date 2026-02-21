@@ -7,7 +7,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Search, Loader2 } from 'lucide-react'
+import { Search, Loader2, PlusCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth'
@@ -92,47 +92,52 @@ export function AddWalletModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden gap-0 rounded-2xl">
-        <DialogHeader className="sr-only">
-          <DialogTitle>Adicionar Novo Programa</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden gap-0 rounded-2xl border-none shadow-elevation">
+        <DialogHeader className="p-6 pb-4 text-left">
+          <DialogTitle className="text-lg font-semibold text-foreground">
+            Adicionar Programa
+          </DialogTitle>
+          <DialogDescription className="sr-only">
             Busque e selecione um programa de fidelidade para adicionar à sua
             carteira.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="p-4 border-b space-y-4 bg-muted/10">
+        <div className="px-6 pb-2 space-y-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar programa ou companhia..."
-              className="pl-10 h-12 bg-background border-muted-foreground/20 rounded-xl text-base focus-visible:ring-primary/20"
+              className="pl-12 h-14 bg-muted/60 border-transparent hover:bg-muted/80 focus-visible:bg-muted focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xl text-base transition-colors placeholder:text-muted-foreground/70"
             />
           </div>
 
-          <div className="flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            {CONTINENTS.map((c) => (
-              <button
-                key={c}
-                onClick={() => setSelectedContinent(c)}
-                className={cn(
-                  'px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors border',
-                  selectedContinent === c
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : 'bg-background text-muted-foreground border-border hover:bg-muted',
-                )}
-              >
-                {c}
-              </button>
-            ))}
+          <div className="relative -mx-2 px-2">
+            <div className="flex gap-2 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              {CONTINENTS.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setSelectedContinent(c)}
+                  className={cn(
+                    'px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all border',
+                    selectedContinent === c
+                      ? 'bg-primary text-primary-foreground border-transparent shadow-sm'
+                      : 'bg-background text-muted-foreground border-border/60 hover:bg-muted/50 hover:text-foreground',
+                  )}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+            <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" />
           </div>
         </div>
 
-        <div className="overflow-y-auto max-h-[50vh] p-2 relative">
+        <div className="overflow-y-auto max-h-[50vh] px-6 pb-6 space-y-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent relative">
           {isSaving && (
-            <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center">
+            <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-b-2xl">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           )}
@@ -143,25 +148,30 @@ export function AddWalletModal({
                 key={p.id}
                 onClick={() => handleSelect(p)}
                 disabled={isSaving}
-                className="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors text-left disabled:opacity-50"
+                className="w-full flex items-center justify-between p-4 rounded-xl border border-border/40 bg-card hover:border-border/80 hover:shadow-sm hover:bg-muted/30 transition-all text-left disabled:opacity-50 group"
               >
-                <div className="w-12 h-12 rounded-full border border-muted-foreground/20 bg-background flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
-                  <img
-                    src={p.logoUrl}
-                    alt={p.name}
-                    className="w-8 h-8 object-contain"
-                  />
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-12 h-12 rounded-full border border-border/40 bg-background flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                    <img
+                      src={p.logoUrl}
+                      alt={p.name}
+                      className="w-8 h-8 object-contain"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-foreground truncate">
+                      {p.name}
+                    </p>
+                    <p className="text-sm text-muted-foreground truncate">
+                      {p.airline}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-secondary truncate">{p.name}</p>
-                  <p className="text-sm font-medium text-muted-foreground truncate">
-                    {p.airline}
-                  </p>
-                </div>
+                <PlusCircle className="w-5 h-5 text-primary opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all shrink-0 ml-4" />
               </button>
             ))
           ) : (
-            <div className="p-8 text-center text-muted-foreground font-medium">
+            <div className="py-12 text-center text-muted-foreground font-medium">
               Nenhum programa encontrado.
             </div>
           )}

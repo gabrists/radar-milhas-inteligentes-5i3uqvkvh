@@ -39357,59 +39357,71 @@ function AddWalletModal({ isOpen, onClose, onSuccess }) {
 		open: isOpen,
 		onOpenChange: (o) => !o && onClose(),
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogContent, {
-			className: "sm:max-w-[480px] p-0 overflow-hidden gap-0 rounded-2xl",
+			className: "sm:max-w-[520px] p-0 overflow-hidden gap-0 rounded-2xl border-none shadow-elevation",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogHeader, {
-					className: "sr-only",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogTitle, { children: "Adicionar Novo Programa" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogDescription, { children: "Busque e selecione um programa de fidelidade para adicionar à sua carteira." })]
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "p-4 border-b space-y-4 bg-muted/10",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "relative",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-							value: searchQuery,
-							onChange: (e) => setSearchQuery(e.target.value),
-							placeholder: "Buscar programa ou companhia...",
-							className: "pl-10 h-12 bg-background border-muted-foreground/20 rounded-xl text-base focus-visible:ring-primary/20"
-						})]
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
-						children: CONTINENTS.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-							onClick: () => setSelectedContinent(c),
-							className: cn("px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors border", selectedContinent === c ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border hover:bg-muted"),
-							children: c
-						}, c))
+					className: "p-6 pb-4 text-left",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogTitle, {
+						className: "text-lg font-semibold text-foreground",
+						children: "Adicionar Programa"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogDescription, {
+						className: "sr-only",
+						children: "Busque e selecione um programa de fidelidade para adicionar à sua carteira."
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "overflow-y-auto max-h-[50vh] p-2 relative",
+					className: "px-6 pb-2 space-y-6",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "relative",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Search, { className: "absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+							value: searchQuery,
+							onChange: (e) => setSearchQuery(e.target.value),
+							placeholder: "Buscar programa ou companhia...",
+							className: "pl-12 h-14 bg-muted/60 border-transparent hover:bg-muted/80 focus-visible:bg-muted focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xl text-base transition-colors placeholder:text-muted-foreground/70"
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "relative -mx-2 px-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "flex gap-2 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+							children: CONTINENTS.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								onClick: () => setSelectedContinent(c),
+								className: cn("px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all border", selectedContinent === c ? "bg-primary text-primary-foreground border-transparent shadow-sm" : "bg-background text-muted-foreground border-border/60 hover:bg-muted/50 hover:text-foreground"),
+								children: c
+							}, c))
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" })]
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "overflow-y-auto max-h-[50vh] px-6 pb-6 space-y-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent relative",
 					children: [isSaving && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center",
+						className: "absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-b-2xl",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-8 h-8 animate-spin text-primary" })
 					}), filteredPrograms.length > 0 ? filteredPrograms.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 						onClick: () => handleSelect(p),
 						disabled: isSaving,
-						className: "w-full flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors text-left disabled:opacity-50",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: "w-12 h-12 rounded-full border border-muted-foreground/20 bg-background flex items-center justify-center shrink-0 overflow-hidden shadow-sm",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-								src: p.logoUrl,
-								alt: p.name,
-								className: "w-8 h-8 object-contain"
-							})
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex-1 min-w-0",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								className: "font-bold text-secondary truncate",
-								children: p.name
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								className: "text-sm font-medium text-muted-foreground truncate",
-								children: p.airline
+						className: "w-full flex items-center justify-between p-4 rounded-xl border border-border/40 bg-card hover:border-border/80 hover:shadow-sm hover:bg-muted/30 transition-all text-left disabled:opacity-50 group",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center gap-4 min-w-0",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "w-12 h-12 rounded-full border border-border/40 bg-background flex items-center justify-center shrink-0 overflow-hidden shadow-sm",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+									src: p.logoUrl,
+									alt: p.name,
+									className: "w-8 h-8 object-contain"
+								})
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex-1 min-w-0",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "font-semibold text-foreground truncate",
+									children: p.name
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-sm text-muted-foreground truncate",
+									children: p.airline
+								})]
 							})]
-						})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CirclePlus, { className: "w-5 h-5 text-primary opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all shrink-0 ml-4" })]
 					}, p.id)) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "p-8 text-center text-muted-foreground font-medium",
+						className: "py-12 text-center text-muted-foreground font-medium",
 						children: "Nenhum programa encontrado."
 					})]
 				})
@@ -45270,4 +45282,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-BlzdzLC-.js.map
+//# sourceMappingURL=index-BUXb79jM.js.map
