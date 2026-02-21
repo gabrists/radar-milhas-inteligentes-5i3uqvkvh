@@ -1,18 +1,12 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
-import { Sparkles, PlaneTakeoff, Loader2, Calculator } from 'lucide-react'
+import { PlaneTakeoff, Loader2, Calculator } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
@@ -219,21 +213,7 @@ export default function CalculatorPage() {
           style={{ animationDelay: '100ms' }}
         >
           <Card className="shadow-elevation border-muted h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/20 scroll-mt-24">
-            <CardHeader className="pb-5 border-b border-muted">
-              <div className="flex items-center gap-2 text-primary mb-2">
-                <Sparkles className="w-5 h-5" />
-                <span className="font-bold text-xs tracking-wider uppercase text-muted-foreground">
-                  Simulador de Ganhos
-                </span>
-              </div>
-              <CardTitle className="text-2xl md:text-3xl text-secondary font-bold tracking-tight">
-                Calculadora Mágica
-              </CardTitle>
-              <CardDescription className="text-muted-foreground text-base font-medium">
-                Insira o valor da compra e descubra quantas milhas renderá.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6 pb-8 flex-1 flex flex-col gap-6">
+            <CardContent className="p-6 md:p-8 flex-1 flex flex-col gap-6">
               <div className="space-y-6">
                 <div className="space-y-2.5">
                   <Label

@@ -39446,7 +39446,7 @@ var azul_39f96_default = "data:image/svg+xml,%3csvg%20width='287'%20height='80'%
 var latam_13e30_default = "/assets/latam-13e30-3rzc6oft.svg";
 var smiles_3b02a_default = "/assets/smiles-3b02a-BxaDhO8p.svg";
 var esfera_1668b_default = "/assets/esfera-1668b-DMm9LNXp.png";
-var livelo_557eb_default = "/assets/livelo-398a4-CqVphfWR.svg";
+var livelo_557eb_default = "/assets/livelo-557eb-CqVphfWR.svg";
 var capa_latam_5ab79_default = "/assets/capa-latam-5ab79-Bb7Ro3pO.png";
 var capa_smiles_ae370_default = "/assets/capa-smiles-ae370-DxPWnK9n.png";
 var capa_tudo_azul_4e5d4_default = "/assets/capa-tudo-azul-4e5d4-Nl5_aw4A.png";
@@ -40001,163 +40001,140 @@ function CalculatorPage() {
 				style: { animationDelay: "100ms" },
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
 					className: "shadow-elevation border-muted h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/20 scroll-mt-24",
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
-							className: "pb-5 border-b border-muted",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+						className: "p-6 md:p-8 flex-1 flex flex-col gap-6",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "space-y-6",
 							children: [
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "flex items-center gap-2 text-primary mb-2",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sparkles, { className: "w-5 h-5" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "font-bold text-xs tracking-wider uppercase text-muted-foreground",
-										children: "Simulador de Ganhos"
+									className: "space-y-2.5",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+										htmlFor: "product-name",
+										className: "text-secondary font-semibold",
+										children: "O que você vai simular?"
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+										id: "product-name",
+										placeholder: "Ex: iPhone 15 Pro, Geladeira...",
+										value: productName,
+										onChange: (e) => setProductName(e.target.value),
+										className: "h-12 bg-muted/30 border-muted focus:bg-background transition-colors text-base font-medium shadow-sm"
 									})]
 								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-									className: "text-2xl md:text-3xl text-secondary font-bold tracking-tight",
-									children: "Calculadora Mágica"
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, {
-									className: "text-muted-foreground text-base font-medium",
-									children: "Insira o valor da compra e descubra quantas milhas renderá."
-								})
-							]
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							className: "pt-6 pb-8 flex-1 flex flex-col gap-6",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "space-y-6",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "grid grid-cols-1 sm:grid-cols-2 gap-5",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 										className: "space-y-2.5",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-											htmlFor: "product-name",
+											htmlFor: "product-value",
 											className: "text-secondary font-semibold",
-											children: "O que você vai simular?"
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-											id: "product-name",
-											placeholder: "Ex: iPhone 15 Pro, Geladeira...",
-											value: productName,
-											onChange: (e) => setProductName(e.target.value),
-											className: "h-12 bg-muted/30 border-muted focus:bg-background transition-colors text-base font-medium shadow-sm"
-										})]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										className: "grid grid-cols-1 sm:grid-cols-2 gap-5",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											className: "space-y-2.5",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-												htmlFor: "product-value",
-												className: "text-secondary font-semibold",
-												children: "Valor do produto (R$)"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												className: "relative",
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-													className: "absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold",
-													children: "R$"
-												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-													id: "product-value",
-													type: "number",
-													placeholder: "0.00",
-													value: productValue,
-													onChange: (e) => setProductValue(e.target.value),
-													className: cn("pl-10 h-12 bg-muted/30 border-muted focus:bg-background text-base font-medium transition-colors shadow-sm", productValue ? "border-primary/30 ring-primary/10" : "")
-												})]
-											})]
+											children: "Valor do produto (R$)"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											className: "space-y-2.5",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-												htmlFor: "points-multiplier",
-												className: "text-secondary font-semibold",
-												children: "Pontos por Real"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												className: "relative",
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-													id: "points-multiplier",
-													type: "number",
-													placeholder: "Ex: 10",
-													value: pointsPerReal,
-													onChange: (e) => setPointsPerReal(e.target.value),
-													className: cn("pr-14 h-12 bg-muted/30 border-muted focus:bg-background text-base font-medium transition-colors shadow-sm", pointsPerReal ? "border-primary/30 ring-primary/10" : "")
-												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-													className: "absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold",
-													children: "pts/R$"
-												})]
+											className: "relative",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold",
+												children: "R$"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+												id: "product-value",
+												type: "number",
+												placeholder: "0.00",
+												value: productValue,
+												onChange: (e) => setProductValue(e.target.value),
+												className: cn("pl-10 h-12 bg-muted/30 border-muted focus:bg-background text-base font-medium transition-colors shadow-sm", productValue ? "border-primary/30 ring-primary/10" : "")
 											})]
 										})]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										className: "space-y-5 pt-5 border-t border-muted/50",
-										children: [
-											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												className: "flex justify-between items-center",
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-													className: "text-secondary font-semibold",
-													children: "Bônus de Transferência"
-												}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-													className: "font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg shadow-sm",
-													children: [transferBonus[0], "%"]
-												})]
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Slider, {
-												value: transferBonus,
-												onValueChange: setTransferBonus,
-												max: 150,
-												step: 10,
-												className: "py-3 cursor-pointer"
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												className: "flex justify-between text-xs text-muted-foreground font-bold",
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "0%" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "150%" })]
-											})
-										]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										className: "pt-2",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-											onClick: handleSaveMiles,
-											disabled: isSaving || !isFormValid || !goal,
-											className: "w-full h-12 text-base font-bold shadow-md hover:shadow-lg transition-all",
-											children: isSaving ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-5 h-5 mr-2 animate-spin" }), "A guardar..."] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaneTakeoff, { className: "w-5 h-5 mr-2" }), "Adicionar à minha Meta"] })
-										})
-									})
-								]
-							})
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: "p-6 md:p-8 bg-muted/30 border-t border-muted rounded-b-xl",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "flex flex-col sm:flex-row items-center justify-between gap-5",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "w-full sm:w-auto",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-										className: "text-muted-foreground font-semibold text-sm mb-1 text-center sm:text-left uppercase tracking-wider",
-										children: "Milhas Geradas"
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										className: "text-5xl md:text-6xl font-extrabold text-secondary tracking-tighter text-center sm:text-left transition-all duration-200",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											className: "bg-clip-text text-transparent bg-gradient-to-br from-primary to-blue-600 drop-shadow-sm",
-											children: new Intl.NumberFormat("pt-BR").format(animatedMiles)
-										})
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "space-y-2.5",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+											htmlFor: "points-multiplier",
+											className: "text-secondary font-semibold",
+											children: "Pontos por Real"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "relative",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+												id: "points-multiplier",
+												type: "number",
+												placeholder: "Ex: 10",
+												value: pointsPerReal,
+												onChange: (e) => setPointsPerReal(e.target.value),
+												className: cn("pr-14 h-12 bg-muted/30 border-muted focus:bg-background text-base font-medium transition-colors shadow-sm", pointsPerReal ? "border-primary/30 ring-primary/10" : "")
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold",
+												children: "pts/R$"
+											})]
+										})]
 									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "space-y-5 pt-5 border-t border-muted/50",
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex justify-between items-center",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+												className: "text-secondary font-semibold",
+												children: "Bônus de Transferência"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+												className: "font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg shadow-sm",
+												children: [transferBonus[0], "%"]
+											})]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Slider, {
+											value: transferBonus,
+											onValueChange: setTransferBonus,
+											max: 150,
+											step: 10,
+											className: "py-3 cursor-pointer"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex justify-between text-xs text-muted-foreground font-bold",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "0%" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "150%" })]
+										})
+									]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "pt-2",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+										onClick: handleSaveMiles,
+										disabled: isSaving || !isFormValid || !goal,
+										className: "w-full h-12 text-base font-bold shadow-md hover:shadow-lg transition-all",
+										children: isSaving ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-5 h-5 mr-2 animate-spin" }), "A guardar..."] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaneTakeoff, { className: "w-5 h-5 mr-2" }), "Adicionar à minha Meta"] })
+									})
+								})
+							]
+						})
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "p-6 md:p-8 bg-muted/30 border-t border-muted rounded-b-xl",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex flex-col sm:flex-row items-center justify-between gap-5",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "w-full sm:w-auto",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-muted-foreground font-semibold text-sm mb-1 text-center sm:text-left uppercase tracking-wider",
+									children: "Milhas Geradas"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									className: cn("p-4 rounded-xl border max-w-[280px] w-full text-center sm:text-left transition-all duration-500", isHighValue ? "bg-emerald-50 border-emerald-200 shadow-[0_4px_20px_rgba(16,185,129,0.15)] scale-105" : "bg-card border-border shadow-sm"),
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-										className: cn("text-sm font-medium leading-relaxed", isHighValue ? "text-emerald-800" : "text-secondary/80"),
-										children: [
-											"Com essa compra, você garante",
-											" ",
-											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("strong", {
-												className: cn("text-xl block mt-1 font-black", isHighValue ? "text-emerald-600" : "text-primary"),
-												children: [percentageOfGoal, "%"]
-											}),
-											" ",
-											"da sua passagem!"
-										]
+									className: "text-5xl md:text-6xl font-extrabold text-secondary tracking-tighter text-center sm:text-left transition-all duration-200",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "bg-clip-text text-transparent bg-gradient-to-br from-primary to-blue-600 drop-shadow-sm",
+										children: new Intl.NumberFormat("pt-BR").format(animatedMiles)
 									})
 								})]
-							})
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: cn("p-4 rounded-xl border max-w-[280px] w-full text-center sm:text-left transition-all duration-500", isHighValue ? "bg-emerald-50 border-emerald-200 shadow-[0_4px_20px_rgba(16,185,129,0.15)] scale-105" : "bg-card border-border shadow-sm"),
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+									className: cn("text-sm font-medium leading-relaxed", isHighValue ? "text-emerald-800" : "text-secondary/80"),
+									children: [
+										"Com essa compra, você garante",
+										" ",
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("strong", {
+											className: cn("text-xl block mt-1 font-black", isHighValue ? "text-emerald-600" : "text-primary"),
+											children: [percentageOfGoal, "%"]
+										}),
+										" ",
+										"da sua passagem!"
+									]
+								})
+							})]
 						})
-					]
+					})]
 				})
 			})
 		})]
@@ -43159,7 +43136,7 @@ function ProgramDetailsPage() {
 		]
 	});
 }
-var livelo_398a4_default = "/assets/livelo-398a4-CqVphfWR.svg";
+var livelo_398a4_default = "/assets/livelo-557eb-CqVphfWR.svg";
 var mockPartners = [
 	{
 		id: "1",
@@ -45217,4 +45194,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-Cf7y7ddp.js.map
+//# sourceMappingURL=index-XNWMR6z0.js.map
