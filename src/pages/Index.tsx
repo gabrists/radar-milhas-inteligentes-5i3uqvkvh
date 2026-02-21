@@ -28,6 +28,9 @@ import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 import { TransactionModal } from '@/components/TransactionModal'
+import azulLogo from '@/assets/azul-39f96.svg'
+import latamLogo from '@/assets/latam-13e30.svg'
+import smilesLogo from '@/assets/smiles-3b02a.svg'
 
 interface TravelGoal {
   id: string
@@ -40,9 +43,9 @@ interface TravelGoal {
 const programsList = [
   { name: 'Livelo', query: 'gift', color: 'rose' },
   { name: 'Esfera', query: 'sphere', color: 'red' },
-  { name: 'Smiles', query: 'smile', color: 'orange' },
-  { name: 'Latam Pass', query: 'plane', color: 'blue' },
-  { name: 'TudoAzul', query: 'plane', color: 'cyan' },
+  { name: 'Smiles', logo: smilesLogo },
+  { name: 'Latam Pass', logo: latamLogo },
+  { name: 'TudoAzul', logo: azulLogo },
 ]
 
 export default function Index() {
@@ -159,13 +162,11 @@ export default function Index() {
           .update({ balance: val, updated_at: new Date().toISOString() })
           .eq('id', existing.id)
       } else {
-        await supabase
-          .from('loyalty_balances')
-          .insert({
-            user_id: user.id,
-            program_name: selectedProgram,
-            balance: val,
-          })
+        await supabase.from('loyalty_balances').insert({
+          user_id: user.id,
+          program_name: selectedProgram,
+          balance: val,
+        })
       }
 
       setBalances((prev) => ({ ...prev, [selectedProgram]: val }))
@@ -235,15 +236,23 @@ export default function Index() {
               }
             >
               <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-muted/50 bg-muted/20 flex items-center justify-center">
-                <img
-                  src={`https://img.usecurling.com/i?q=${prog.name}&color=${prog.color}`}
-                  alt={prog.name}
-                  className="w-8 h-8 object-contain"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none'
-                    e.currentTarget.parentElement!.innerHTML = `<span class="font-bold text-lg text-muted-foreground">${prog.name.charAt(0)}</span>`
-                  }}
-                />
+                {prog.logo ? (
+                  <img
+                    src={prog.logo}
+                    alt={prog.name}
+                    className="w-10 h-10 object-contain"
+                  />
+                ) : (
+                  <img
+                    src={`https://img.usecurling.com/i?q=${prog.query}&color=${prog.color}`}
+                    alt={prog.name}
+                    className="w-8 h-8 object-contain"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none'
+                      e.currentTarget.parentElement!.innerHTML = `<span class="font-bold text-lg text-muted-foreground">${prog.name.charAt(0)}</span>`
+                    }}
+                  />
+                )}
               </div>
 
               <div className="flex-1 min-w-0">

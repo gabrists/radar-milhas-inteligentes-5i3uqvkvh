@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { format } from 'date-fns'
 import {
   Dialog,
   DialogContent,
@@ -27,7 +28,7 @@ import { Calendar } from '@/components/ui/calendar'
 import {
   PlusCircle,
   ArrowRightLeft,
-  CreditCard,
+  ShoppingBag,
   Plane,
   CalendarIcon,
   Loader2,
@@ -50,7 +51,7 @@ const REASONS = [
 const TYPES = [
   { id: 'acumulo', label: 'Acúmulo', icon: PlusCircle },
   { id: 'transferencia', label: 'Transferência', icon: ArrowRightLeft },
-  { id: 'compra', label: 'Compra', icon: CreditCard },
+  { id: 'compra', label: 'Compra', icon: ShoppingBag },
   { id: 'resgate', label: 'Resgate', icon: Plane },
 ] as const
 
@@ -117,6 +118,35 @@ export function TransactionModal({
         await updateBalance(program, amt)
       }
 
+      const txType =
+        type === 'acumulo'
+          ? 'Acúmulo'
+          : type === 'transferencia'
+            ? 'Transferência'
+            : type === 'compra'
+              ? 'Compra'
+              : 'Resgate'
+
+      const transactionData = {
+        user_id: user.id,
+        type: txType,
+        origin_program: isTransfer ? origin : program,
+        destination_program: isTransfer ? destination : null,
+        points_amount: amt,
+        bonus_percentage: isTransfer ? bonus[0] : null,
+        total_received: isTransfer ? destAmt : amt,
+        cost: isPurchase ? Number(amountPaid) : null,
+        description: reason,
+        transaction_date: date
+          ? format(date, 'yyyy-MM-dd')
+          : format(new Date(), 'yyyy-MM-dd'),
+      }
+
+      const { error: txError } = await supabase
+        .from('transactions' as any)
+        .insert(transactionData)
+      if (txError) throw txError
+
       toast({ title: 'Sucesso!', description: 'Saldo atualizado com sucesso!' })
 
       setAmount('')
@@ -136,6 +166,13 @@ export function TransactionModal({
       setIsSaving(false)
     }
   }
+
+  const isValid = Boolean(
+    amount &&
+    Number(amount) > 0 &&
+    (isTransfer ? origin && destination && origin !== destination : program) &&
+    date,
+  )
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
@@ -177,7 +214,7 @@ export function TransactionModal({
             {isTransfer ? (
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Origem</Label>
+                  <Label>Programa de Origem</Label>
                   <Select value={origin} onValueChange={setOrigin}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
@@ -192,7 +229,7 @@ export function TransactionModal({
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Destino</Label>
+                  <Label>Programa de Destino</Label>
                   <Select value={destination} onValueChange={setDestination}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
@@ -227,7 +264,9 @@ export function TransactionModal({
 
             <div className="space-y-2">
               <Label>
-                {isTransfer ? 'Pontos Transferidos' : 'Quantidade de Pontos'}
+                {isTransfer
+                  ? 'Pontos Transferidos da Origem'
+                  : 'Quantidade de Pontos'}
               </Label>
               <Input
                 type="number"
@@ -240,7 +279,7 @@ export function TransactionModal({
             {isTransfer && (
               <div className="space-y-4 pt-2">
                 <div className="flex justify-between items-center">
-                  <Label>Bônus de Transferência</Label>
+                  <Label>Bônus de Transferência (%)</Label>
                   <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded text-sm">
                     {bonus[0]}%
                   </span>
@@ -283,9 +322,7 @@ export function TransactionModal({
 
             {!isTransfer && (
               <div className="space-y-2">
-                <Label>
-                  {isResgate ? 'Motivo do Resgate' : 'Motivo / Origem'}
-                </Label>
+                <Label>{isResgate ? 'Motivo' : 'Motivo / Origem'}</Label>
                 {isResgate ? (
                   <Select value={reason} onValueChange={setReason}>
                     <SelectTrigger>
@@ -353,7 +390,7 @@ export function TransactionModal({
             </Button>
             <Button
               onClick={handleSave}
-              disabled={isSaving || !amount}
+              disabled={isSaving || !isValid}
               className="font-bold shadow-sm"
             >
               {isSaving ? (
