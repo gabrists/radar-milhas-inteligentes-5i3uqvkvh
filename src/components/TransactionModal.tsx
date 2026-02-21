@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -27,7 +27,7 @@ import { Calendar } from '@/components/ui/calendar'
 import {
   PlusCircle,
   ArrowRightLeft,
-  CreditCard,
+  ShoppingBag,
   Plane,
   CalendarIcon,
   Loader2,
@@ -36,6 +36,10 @@ import { cn } from '@/lib/utils'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth'
 import { useToast } from '@/hooks/use-toast'
+
+import azulLogo from '@/assets/azul-05301.svg'
+import latamLogo from '@/assets/latam-28a3c.svg'
+import smilesLogo from '@/assets/smiles-cce56.svg'
 
 type TransactionType = 'acumulo' | 'transferencia' | 'compra' | 'resgate'
 
@@ -50,9 +54,30 @@ const REASONS = [
 const TYPES = [
   { id: 'acumulo', label: 'Acúmulo', icon: PlusCircle },
   { id: 'transferencia', label: 'Transferência', icon: ArrowRightLeft },
-  { id: 'compra', label: 'Compra', icon: CreditCard },
-  { id: 'resgate', label: 'Resgate', icon: Plane },
+  { id: 'compra', label: 'Compra de Pontos', icon: ShoppingBag },
+  { id: 'resgate', label: 'Resgate / Dedução', icon: Plane },
 ] as const
+
+const ProgramOption = ({ name }: { name: string }) => {
+  let logo = null
+  if (name === 'TudoAzul') logo = azulLogo
+  if (name === 'Latam Pass') logo = latamLogo
+  if (name === 'Smiles') logo = smilesLogo
+
+  return (
+    <div className="flex items-center gap-2 h-5">
+      {logo ? (
+        <img
+          src={logo}
+          alt={name}
+          className="h-full w-auto object-contain max-w-[80px]"
+        />
+      ) : (
+        <span className="font-medium">{name}</span>
+      )}
+    </div>
+  )
+}
 
 export function TransactionModal({
   isOpen,
@@ -77,6 +102,20 @@ export function TransactionModal({
   const [amountPaid, setAmountPaid] = useState('')
   const [date, setDate] = useState<Date | undefined>(new Date())
 
+  useEffect(() => {
+    if (isOpen) {
+      setType('acumulo')
+      setProgram('')
+      setOrigin('')
+      setDestination('')
+      setAmount('')
+      setBonus([0])
+      setReason('')
+      setAmountPaid('')
+      setDate(new Date())
+    }
+  }, [isOpen])
+
   const isTransfer = type === 'transferencia'
   const isPurchase = type === 'compra'
   const isResgate = type === 'resgate'
@@ -98,7 +137,7 @@ export function TransactionModal({
         if (existing) {
           await supabase
             .from('loyalty_balances')
-            .update({ balance: newBal })
+            .update({ balance: newBal, updated_at: new Date().toISOString() })
             .eq('id', existing.id)
         } else {
           await supabase
@@ -109,27 +148,26 @@ export function TransactionModal({
 
       const amt = Number(amount)
       if (isTransfer) {
+        if (!origin || !destination)
+          throw new Error('Selecione os programas de origem e destino.')
         await updateBalance(origin, -amt)
         await updateBalance(destination, destAmt)
       } else if (isResgate) {
+        if (!program) throw new Error('Selecione o programa.')
         await updateBalance(program, -amt)
       } else {
+        if (!program) throw new Error('Selecione o programa.')
         await updateBalance(program, amt)
       }
 
       toast({ title: 'Sucesso!', description: 'Saldo atualizado com sucesso!' })
 
-      setAmount('')
-      setReason('')
-      setAmountPaid('')
-      setBonus([0])
-
       onSuccess()
       onClose()
-    } catch (err) {
+    } catch (err: any) {
       toast({
         title: 'Erro',
-        description: 'Erro ao salvar movimentação.',
+        description: err.message || 'Erro ao salvar movimentação.',
         variant: 'destructive',
       })
     } finally {
@@ -139,7 +177,7 @@ export function TransactionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden gap-0 rounded-2xl">
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden gap-0 rounded-2xl">
         <div className="p-6 pb-4">
           <DialogHeader>
             <DialogTitle className="text-xl">
@@ -151,7 +189,7 @@ export function TransactionModal({
           </DialogHeader>
         </div>
 
-        <div className="px-6 py-2 overflow-y-auto max-h-[60vh] space-y-5">
+        <div className="px-6 py-2 overflow-y-auto max-h-[65vh] space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {TYPES.map((t) => (
               <button
@@ -166,7 +204,7 @@ export function TransactionModal({
                 )}
               >
                 <t.icon className="w-5 h-5" />
-                <span className="text-[10px] font-bold uppercase tracking-wider">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-center leading-tight">
                   {t.label}
                 </span>
               </button>
@@ -177,7 +215,7 @@ export function TransactionModal({
             {isTransfer ? (
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Origem</Label>
+                  <Label>Programa de Origem</Label>
                   <Select value={origin} onValueChange={setOrigin}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
@@ -185,14 +223,14 @@ export function TransactionModal({
                     <SelectContent>
                       {PROGRAMS.map((p) => (
                         <SelectItem key={p} value={p}>
-                          {p}
+                          <ProgramOption name={p} />
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Destino</Label>
+                  <Label>Programa de Destino</Label>
                   <Select value={destination} onValueChange={setDestination}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
@@ -200,7 +238,7 @@ export function TransactionModal({
                     <SelectContent>
                       {PROGRAMS.map((p) => (
                         <SelectItem key={p} value={p}>
-                          {p}
+                          <ProgramOption name={p} />
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -217,7 +255,7 @@ export function TransactionModal({
                   <SelectContent>
                     {PROGRAMS.map((p) => (
                       <SelectItem key={p} value={p}>
-                        {p}
+                        <ProgramOption name={p} />
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -227,7 +265,9 @@ export function TransactionModal({
 
             <div className="space-y-2">
               <Label>
-                {isTransfer ? 'Pontos Transferidos' : 'Quantidade de Pontos'}
+                {isTransfer
+                  ? 'Pontos Transferidos da Origem'
+                  : 'Quantidade de Pontos'}
               </Label>
               <Input
                 type="number"
@@ -240,7 +280,7 @@ export function TransactionModal({
             {isTransfer && (
               <div className="space-y-4 pt-2">
                 <div className="flex justify-between items-center">
-                  <Label>Bônus de Transferência</Label>
+                  <Label>Bônus de Transferência (%)</Label>
                   <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded text-sm">
                     {bonus[0]}%
                   </span>
@@ -283,9 +323,7 @@ export function TransactionModal({
 
             {!isTransfer && (
               <div className="space-y-2">
-                <Label>
-                  {isResgate ? 'Motivo do Resgate' : 'Motivo / Origem'}
-                </Label>
+                <Label>{isResgate ? 'Motivo' : 'Motivo/Origem'}</Label>
                 {isResgate ? (
                   <Select value={reason} onValueChange={setReason}>
                     <SelectTrigger>
