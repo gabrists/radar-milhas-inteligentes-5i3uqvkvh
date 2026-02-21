@@ -39474,10 +39474,14 @@ var azul_39f96_default = "data:image/svg+xml,%3csvg%20width='287'%20height='80'%
 var latam_13e30_default = "/assets/latam-13e30-3rzc6oft.svg";
 var smiles_3b02a_default = "/assets/smiles-3b02a-BxaDhO8p.svg";
 var esfera_1668b_default = "/assets/esfera-1668b-DMm9LNXp.png";
+var livelo_557eb_default = "/assets/livelo-398a4-CqVphfWR.svg";
+var capa_latam_5ab79_default = "/assets/capa-latam-5ab79-Bb7Ro3pO.png";
+var capa_smiles_ae370_default = "/assets/capa-smiles-ae370-DxPWnK9n.png";
+var capa_tudo_azul_4e5d4_default = "/assets/capa-tudo-azul-4e5d4-Nl5_aw4A.png";
 var programsList = [
 	{
 		name: "Livelo",
-		logo: "/assets/livelo-557eb-CqVphfWR.svg"
+		logo: livelo_557eb_default
 	},
 	{
 		name: "Esfera",
@@ -39545,7 +39549,15 @@ function Index() {
 	const currentMiles = goal?.current_miles || totalBalance;
 	const currentPercentage = goalTotal > 0 ? currentMiles / goalTotal * 100 : 0;
 	const goalImage = goal?.image_url || `https://img.usecurling.com/p/800/600?q=${encodeURIComponent(goal?.destination_name || "vacation")}&dpr=2`;
-	const promoImage = promo ? `https://img.usecurling.com/p/400/300?q=${encodeURIComponent(promo.destination)}&dpr=2` : `https://img.usecurling.com/p/400/300?q=airport&dpr=2`;
+	let promoImage = `https://img.usecurling.com/p/400/300?q=airport&dpr=2`;
+	if (promo) {
+		const dest = promo.destination?.toLowerCase() || "";
+		const orig = promo.origin?.toLowerCase() || "";
+		if (dest.includes("smiles") || orig.includes("smiles")) promoImage = capa_smiles_ae370_default;
+		else if (dest.includes("latam") || orig.includes("latam")) promoImage = capa_latam_5ab79_default;
+		else if (dest.includes("azul") || orig.includes("azul")) promoImage = capa_tudo_azul_4e5d4_default;
+		else promoImage = `https://img.usecurling.com/p/400/300?q=${encodeURIComponent(promo.destination)}&dpr=2`;
+	}
 	const handleOpenModal = (program) => {
 		setSelectedProgram(program);
 		setNewBalance(balances[program]?.toString() || "0");
@@ -43265,7 +43277,7 @@ function ProgramDetailsPage() {
 		]
 	});
 }
-var livelo_398a4_default = "/assets/livelo-557eb-CqVphfWR.svg";
+var livelo_398a4_default = "/assets/livelo-398a4-CqVphfWR.svg";
 var mockPartners = [
 	{
 		id: "1",
@@ -45323,4 +45335,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-CeJlpxfK.js.map
+//# sourceMappingURL=index-CK5gahX-.js.map

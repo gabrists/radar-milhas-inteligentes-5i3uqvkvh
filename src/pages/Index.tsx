@@ -38,6 +38,10 @@ import smilesLogo from '@/assets/smiles-3b02a.svg'
 import esferaLogo from '@/assets/esfera-1668b.png'
 import liveloLogo from '@/assets/livelo-557eb.svg'
 
+import capaLatam from '@/assets/capa-latam-5ab79.png'
+import capaSmiles from '@/assets/capa-smiles-ae370.png'
+import capaTudoAzul from '@/assets/capa-tudo-azul-4e5d4.png'
+
 interface TravelGoal {
   id: string
   destination_name: string
@@ -131,12 +135,26 @@ export default function Index() {
   const goalTotal = goal?.target_miles || 100000
   const currentMiles = goal?.current_miles || totalBalance
   const currentPercentage = goalTotal > 0 ? (currentMiles / goalTotal) * 100 : 0
+
   const goalImage =
     goal?.image_url ||
     `https://img.usecurling.com/p/800/600?q=${encodeURIComponent(goal?.destination_name || 'vacation')}&dpr=2`
-  const promoImage = promo
-    ? `https://img.usecurling.com/p/400/300?q=${encodeURIComponent(promo.destination)}&dpr=2`
-    : `https://img.usecurling.com/p/400/300?q=airport&dpr=2`
+
+  let promoImage = `https://img.usecurling.com/p/400/300?q=airport&dpr=2`
+  if (promo) {
+    const dest = promo.destination?.toLowerCase() || ''
+    const orig = promo.origin?.toLowerCase() || ''
+
+    if (dest.includes('smiles') || orig.includes('smiles')) {
+      promoImage = capaSmiles
+    } else if (dest.includes('latam') || orig.includes('latam')) {
+      promoImage = capaLatam
+    } else if (dest.includes('azul') || orig.includes('azul')) {
+      promoImage = capaTudoAzul
+    } else {
+      promoImage = `https://img.usecurling.com/p/400/300?q=${encodeURIComponent(promo.destination)}&dpr=2`
+    }
+  }
 
   const handleOpenModal = (program: string) => {
     setSelectedProgram(program)
