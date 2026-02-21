@@ -32538,11 +32538,14 @@ const AuthProvider = ({ children }) => {
 		});
 		return () => subscription.unsubscribe();
 	}, []);
-	const signUp = async (email, password) => {
+	const signUp = async (email, password, fullName) => {
 		const { error } = await supabase.auth.signUp({
 			email,
 			password,
-			options: { emailRedirectTo: `${window.location.origin}/` }
+			options: {
+				emailRedirectTo: `${window.location.origin}/`,
+				data: { full_name: fullName }
+			}
 		});
 		return { error };
 	};
@@ -32550,6 +32553,13 @@ const AuthProvider = ({ children }) => {
 		const { error } = await supabase.auth.signInWithPassword({
 			email,
 			password
+		});
+		return { error };
+	};
+	const signInWithGoogle = async () => {
+		const { error } = await supabase.auth.signInWithOAuth({
+			provider: "google",
+			options: { redirectTo: `${window.location.origin}/` }
 		});
 		return { error };
 	};
@@ -32563,6 +32573,7 @@ const AuthProvider = ({ children }) => {
 			session,
 			signUp,
 			signIn,
+			signInWithGoogle,
 			signOut,
 			loading
 		},
@@ -36445,10 +36456,12 @@ var Switch = import_react.forwardRef(({ className, ...props }, ref) => /* @__PUR
 Switch.displayName = Root$2.displayName;
 function SettingsPage() {
 	const { toast: toast$2 } = useToast();
+	const { user } = useAuth();
 	const [isSaving, setIsSaving] = (0, import_react.useState)(false);
+	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [profile, setProfile] = (0, import_react.useState)({
-		name: "Viajante Premium",
-		email: "viajante@example.com"
+		name: "",
+		email: ""
 	});
 	const [programs, setPrograms] = (0, import_react.useState)({
 		livelo: true,
@@ -36457,15 +36470,46 @@ function SettingsPage() {
 		latampass: true,
 		tudoazul: false
 	});
-	const handleSave = () => {
+	(0, import_react.useEffect)(() => {
+		async function loadProfile() {
+			if (!user) return;
+			try {
+				setProfile((prev) => ({
+					...prev,
+					email: user.email || ""
+				}));
+				const { data, error } = await supabase.from("profiles").select("full_name").eq("id", user.id).single();
+				if (data && !error) setProfile((prev) => ({
+					...prev,
+					name: data.full_name
+				}));
+			} catch (err) {
+				console.error(err);
+			} finally {
+				setLoading(false);
+			}
+		}
+		loadProfile();
+	}, [user]);
+	const handleSave = async () => {
+		if (!user) return;
 		setIsSaving(true);
-		setTimeout(() => {
-			setIsSaving(false);
+		try {
+			const { error } = await supabase.from("profiles").update({ full_name: profile.name }).eq("id", user.id);
+			if (error) throw error;
 			toast$2({
 				title: "Configurações salvas",
-				description: "Seu perfil e programas de fidelidade foram atualizados com sucesso."
+				description: "Seu perfil e programas foram atualizados com sucesso."
 			});
-		}, 800);
+		} catch (err) {
+			toast$2({
+				title: "Erro ao salvar",
+				description: "Ocorreu um erro ao atualizar os seus dados. Tente novamente.",
+				variant: "destructive"
+			});
+		} finally {
+			setIsSaving(false);
+		}
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "space-y-6 md:space-y-8 pb-4 animate-fade-in-up",
@@ -36490,9 +36534,18 @@ function SettingsPage() {
 							})]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, { children: "Atualize suas informações pessoais." })]
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
 						className: "pt-6 space-y-5",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "space-y-5",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-2.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-4 w-32" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-11 w-full" })]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-2.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-4 w-20" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-11 w-full" })]
+							})]
+						}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "space-y-2.5",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
 								htmlFor: "name",
@@ -36509,29 +36562,33 @@ function SettingsPage() {
 							})]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "space-y-2.5",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-								htmlFor: "email",
-								className: "text-secondary font-semibold",
-								children: "E-mail"
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-								id: "email",
-								type: "email",
-								value: profile.email,
-								onChange: (e) => setProfile({
-									...profile,
-									email: e.target.value
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+									htmlFor: "email",
+									className: "text-secondary font-semibold",
+									children: "E-mail"
 								}),
-								className: "h-11 bg-muted/30 focus:bg-background transition-colors"
-							})]
-						})]
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									id: "email",
+									type: "email",
+									value: profile.email,
+									disabled: true,
+									className: "h-11 bg-muted/10 cursor-not-allowed opacity-70"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-xs text-muted-foreground mt-1.5",
+									children: "O e-mail é utilizado para o login e não pode ser alterado por aqui."
+								})
+							]
+						})] })
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardFooter, {
 						className: "pt-2 pb-6 px-6",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 							onClick: handleSave,
-							disabled: isSaving,
+							disabled: isSaving || loading,
 							className: "w-full sm:w-auto font-semibold",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Save, { className: "w-4 h-4 mr-2" }), isSaving ? "Salvando..." : "Salvar Alterações"]
+							children: isSaving ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-4 h-4 mr-2 animate-spin" }), " Salvando..."] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Save, { className: "w-4 h-4 mr-2" }), " Salvar Alterações"] })
 						})
 					})
 				]
@@ -38649,7 +38706,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				var cachedValue = getSnapshot();
 				objectIs(value, cachedValue) || (console.error("The result of getSnapshot should be cached to avoid an infinite loop"), didWarnUncachedGetSnapshot = !0);
 			}
-			cachedValue = useState$9({ inst: {
+			cachedValue = useState$10({ inst: {
 				value,
 				getSnapshot
 			} });
@@ -38663,7 +38720,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				value,
 				getSnapshot
 			]);
-			useEffect$7(function() {
+			useEffect$8(function() {
 				checkIfSnapshotChanged(inst) && forceUpdate({ inst });
 				return subscribe$1(function() {
 					checkIfSnapshotChanged(inst) && forceUpdate({ inst });
@@ -38686,7 +38743,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 			return getSnapshot();
 		}
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-		var React$2 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$9 = React$2.useState, useEffect$7 = React$2.useEffect, useLayoutEffect$1 = React$2.useLayoutEffect, useDebugValue = React$2.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
+		var React$2 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$10 = React$2.useState, useEffect$8 = React$2.useEffect, useLayoutEffect$1 = React$2.useLayoutEffect, useDebugValue = React$2.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
 		exports.useSyncExternalStore = void 0 !== React$2.useSyncExternalStore ? React$2.useSyncExternalStore : shim;
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
 	})();
@@ -39066,6 +39123,7 @@ function Layout() {
 	const location = useLocation();
 	const { signOut, user } = useAuth();
 	const [recentPromos, setRecentPromos] = (0, import_react.useState)([]);
+	const [profile, setProfile] = (0, import_react.useState)(null);
 	(0, import_react.useEffect)(() => {
 		const fetchPromos = async () => {
 			const { data } = await supabase.from("active_promotions").select("*").order("created_at", { ascending: false }).limit(3);
@@ -39073,6 +39131,15 @@ function Layout() {
 		};
 		fetchPromos();
 	}, []);
+	(0, import_react.useEffect)(() => {
+		const fetchProfile = async () => {
+			if (!user) return;
+			const { data } = await supabase.from("profiles").select("full_name, plan_type").eq("id", user.id).single();
+			if (data) setProfile(data);
+		};
+		fetchProfile();
+	}, [user]);
+	const userInitials = profile?.full_name ? profile.full_name.substring(0, 2).toUpperCase() : "RM";
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(SidebarProvider, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Sidebar, {
 		className: "hidden md:flex border-r-0 shadow-sm z-20",
 		children: [
@@ -39141,18 +39208,18 @@ function Layout() {
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "flex items-center justify-between gap-2",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex items-center gap-3",
+						className: "flex items-center gap-3 w-[140px]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Avatar, {
-							className: "h-10 w-10 border border-primary/20",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarImage, { src: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=1" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarFallback, { children: "VT" })]
+							className: "h-10 w-10 border border-primary/20 shrink-0",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarImage, { src: `https://img.usecurling.com/ppl/thumbnail?gender=male&seed=${user?.id || 1}` }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarFallback, { children: userInitials })]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex flex-col",
+							className: "flex flex-col truncate",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "text-sm font-semibold text-secondary",
-								children: "Viajante"
+								className: "text-sm font-semibold text-secondary truncate",
+								children: profile?.full_name || "Viajante"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "text-xs text-muted-foreground font-medium",
-								children: "Premium"
+								className: "text-xs text-muted-foreground font-medium capitalize",
+								children: profile?.plan_type || "Premium"
 							})]
 						})]
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
@@ -39301,87 +39368,406 @@ function Layout() {
 		]
 	})] });
 }
-function AuthPage() {
-	const { signIn } = useAuth();
+var getErrorMessage$1 = (error) => {
+	if (!error) return "Ocorreu um erro desconhecido.";
+	const msg = error.message || "";
+	if (msg.includes("Invalid login credentials")) return "E-mail ou senha incorretos.";
+	if (msg.includes("User already registered")) return "Este e-mail já está em uso.";
+	if (msg.includes("Email not confirmed")) return "Por favor, confirme seu e-mail.";
+	return msg;
+};
+function LoginPage() {
+	const { signIn, signInWithGoogle } = useAuth();
 	const { toast: toast$2 } = useToast();
-	const [email, setEmail] = (0, import_react.useState)("viajante@example.com");
-	const [password, setPassword] = (0, import_react.useState)("Viajante123!");
+	const [email, setEmail] = (0, import_react.useState)("");
+	const [password, setPassword] = (0, import_react.useState)("");
 	const [loading, setLoading] = (0, import_react.useState)(false);
+	const [googleLoading, setGoogleLoading] = (0, import_react.useState)(false);
 	const handleSignIn = async (e) => {
 		e.preventDefault();
+		if (!email || !password) return;
 		setLoading(true);
 		const { error } = await signIn(email, password);
 		if (error) toast$2({
-			title: "Erro ao fazer login",
-			description: error.message,
+			title: "Erro ao entrar",
+			description: getErrorMessage$1(error),
 			variant: "destructive"
 		});
 		setLoading(false);
 	};
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: "min-h-screen flex items-center justify-center bg-muted/30 p-4",
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-			className: "w-full max-w-md shadow-elevation border-none",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
-				className: "space-y-2 text-center pb-6",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "flex justify-center mb-2",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: "bg-primary/10 p-3 rounded-full text-primary",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plane, { className: "w-8 h-8" })
+	const handleGoogleSignIn = async () => {
+		setGoogleLoading(true);
+		const { error } = await signInWithGoogle();
+		if (error) {
+			toast$2({
+				title: "Erro",
+				description: "Não foi possível conectar com o Google.",
+				variant: "destructive"
+			});
+			setGoogleLoading(false);
+		}
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "min-h-screen flex flex-col md:flex-row",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "md:w-1/2 w-full h-[35vh] md:h-screen relative flex-shrink-0",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 z-10 mix-blend-overlay" }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-primary/20 z-10 mix-blend-multiply" }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+					src: "https://img.usecurling.com/p/800/1200?q=modern airport terminal",
+					alt: "Aeroporto Moderno",
+					className: "w-full h-full object-cover"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "absolute inset-0 z-20 flex flex-col items-center justify-center text-white p-8",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "bg-white/10 backdrop-blur-md p-4 rounded-full mb-6 shadow-elevation border border-white/10",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plane, { className: "w-10 h-10 md:w-14 md:h-14" })
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
+							className: "text-3xl md:text-5xl font-bold tracking-tight text-center drop-shadow-lg mb-4",
+							children: "Radar Milhas"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "text-base md:text-xl text-center text-white/90 font-medium max-w-md drop-shadow-md",
+							children: "O seu painel inteligente para gerenciar, simular e acelerar suas metas de viagem."
 						})
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-						className: "text-2xl font-bold tracking-tight text-secondary",
-						children: "Radar Milhas"
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, {
-						className: "text-base font-medium",
-						children: "Faça login para acessar seu painel"
-					})
-				]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
-				onSubmit: handleSignIn,
-				className: "space-y-5",
+					]
+				})
+			]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "md:w-1/2 w-full flex items-center justify-center p-6 md:p-12 bg-background flex-1",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "w-full max-w-md space-y-8 animate-fade-in-up",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "space-y-2.5",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-							htmlFor: "email",
-							children: "E-mail"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-							id: "email",
-							type: "email",
-							value: email,
-							onChange: (e) => setEmail(e.target.value),
-							required: true,
-							className: "h-12"
+						className: "text-center md:text-left",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+							className: "text-3xl font-bold text-secondary tracking-tight",
+							children: "Bem-vindo de volta"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "text-muted-foreground mt-2 font-medium text-sm md:text-base",
+							children: "Acesse sua conta para continuar acumulando milhas e alcançando seus destinos."
 						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+						onSubmit: handleSignIn,
+						className: "space-y-5 mt-8",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-2.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+									htmlFor: "email",
+									className: "font-semibold",
+									children: "E-mail"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									id: "email",
+									type: "email",
+									placeholder: "seu@email.com",
+									value: email,
+									onChange: (e) => setEmail(e.target.value),
+									required: true,
+									className: "h-12 focus-visible:ring-primary/20 transition-all bg-muted/20"
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-2.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "flex justify-between items-center",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+										htmlFor: "password",
+										className: "font-semibold",
+										children: "Senha"
+									})
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									id: "password",
+									type: "password",
+									placeholder: "••••••••",
+									value: password,
+									onChange: (e) => setPassword(e.target.value),
+									required: true,
+									className: "h-12 focus-visible:ring-primary/20 transition-all bg-muted/20"
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+								type: "submit",
+								className: "w-full h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all mt-2",
+								disabled: loading || googleLoading,
+								children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-5 h-5 mr-2 animate-spin" }), " Entrando..."] }) : "Entrar"
+							})
+						]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "space-y-2.5",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-							htmlFor: "password",
-							children: "Senha"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-							id: "password",
-							type: "password",
-							value: password,
-							onChange: (e) => setPassword(e.target.value),
-							required: true,
-							className: "h-12"
+						className: "relative my-6",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "absolute inset-0 flex items-center",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "w-full border-t border-muted" })
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "relative flex justify-center text-xs uppercase",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "bg-background px-3 text-muted-foreground font-bold tracking-wider",
+								children: "Ou continue com"
+							})
 						})]
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						type: "submit",
-						className: "w-full h-12 text-base font-semibold",
-						disabled: loading,
-						children: loading ? "Entrando..." : "Entrar"
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+						type: "button",
+						variant: "outline",
+						className: "w-full h-12 text-base font-semibold bg-background hover:bg-muted/30 transition-colors",
+						onClick: handleGoogleSignIn,
+						disabled: loading || googleLoading,
+						children: [googleLoading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-5 h-5 mr-2 animate-spin" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
+							className: "w-5 h-5 mr-2",
+							viewBox: "0 0 24 24",
+							fill: "none",
+							xmlns: "http://www.w3.org/2000/svg",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+									d: "M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z",
+									fill: "#4285F4"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+									d: "M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.16v2.84C3.99 20.53 7.7 23 12 23z",
+									fill: "#34A853"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+									d: "M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.16C1.43 8.55 1 10.22 1 12s.43 3.45 1.16 4.93l3.68-2.84z",
+									fill: "#FBBC05"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+									d: "M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.16 7.07l3.68 2.84c.87-2.6 3.3-4.53 6.16-4.53z",
+									fill: "#EA4335"
+								})
+							]
+						}), "Continuar com o Google"]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+						className: "text-center text-sm font-medium text-muted-foreground mt-8",
+						children: [
+							"Não tem conta?",
+							" ",
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+								to: "/cadastro",
+								className: "text-primary hover:text-primary/80 font-bold transition-colors underline-offset-4 hover:underline",
+								children: "Cadastre-se"
+							})
+						]
 					})
 				]
-			}) })]
-		})
+			})
+		})]
+	});
+}
+var getErrorMessage = (error) => {
+	if (!error) return "Ocorreu um erro desconhecido.";
+	const msg = error.message || "";
+	if (msg.includes("already registered")) return "Este e-mail já está em uso.";
+	if (msg.includes("Password should be at least")) return "A senha deve ter pelo menos 6 caracteres.";
+	return msg;
+};
+function RegisterPage() {
+	const { signUp, signInWithGoogle } = useAuth();
+	const { toast: toast$2 } = useToast();
+	const [fullName, setFullName] = (0, import_react.useState)("");
+	const [email, setEmail] = (0, import_react.useState)("");
+	const [password, setPassword] = (0, import_react.useState)("");
+	const [loading, setLoading] = (0, import_react.useState)(false);
+	const [googleLoading, setGoogleLoading] = (0, import_react.useState)(false);
+	const handleSignUp = async (e) => {
+		e.preventDefault();
+		if (!fullName || !email || !password) return;
+		setLoading(true);
+		const { error } = await signUp(email, password, fullName);
+		if (error) toast$2({
+			title: "Erro ao criar conta",
+			description: getErrorMessage(error),
+			variant: "destructive"
+		});
+		else toast$2({
+			title: "Conta criada com sucesso!",
+			description: "Seja bem-vindo ao Radar Milhas."
+		});
+		setLoading(false);
+	};
+	const handleGoogleSignIn = async () => {
+		setGoogleLoading(true);
+		const { error } = await signInWithGoogle();
+		if (error) {
+			toast$2({
+				title: "Erro",
+				description: "Não foi possível conectar com o Google.",
+				variant: "destructive"
+			});
+			setGoogleLoading(false);
+		}
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "min-h-screen flex flex-col md:flex-row-reverse",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "md:w-1/2 w-full h-[35vh] md:h-screen relative flex-shrink-0",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/60 z-10 mix-blend-overlay" }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-blue-900/20 z-10 mix-blend-multiply" }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+					src: "https://img.usecurling.com/p/800/1200?q=aircraft window view",
+					alt: "Viagem de Avião",
+					className: "w-full h-full object-cover"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "absolute inset-0 z-20 flex flex-col items-center justify-center text-white p-8",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "bg-white/10 backdrop-blur-md p-4 rounded-full mb-6 shadow-elevation border border-white/10",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaneTakeoff, { className: "w-10 h-10 md:w-14 md:h-14" })
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
+							className: "text-3xl md:text-5xl font-bold tracking-tight text-center drop-shadow-lg mb-4",
+							children: "Embarque Conosco"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "text-base md:text-xl text-center text-white/90 font-medium max-w-md drop-shadow-md",
+							children: "Crie sua conta gratuitamente e comece a transformar seus gastos diários na sua próxima viagem."
+						})
+					]
+				})
+			]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "md:w-1/2 w-full flex items-center justify-center p-6 md:p-12 bg-background flex-1",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "w-full max-w-md space-y-8 animate-fade-in-up",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "text-center md:text-left",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+							className: "text-3xl font-bold text-secondary tracking-tight",
+							children: "Crie sua conta"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "text-muted-foreground mt-2 font-medium text-sm md:text-base",
+							children: "Preencha os dados abaixo para dar o primeiro passo."
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+						onSubmit: handleSignUp,
+						className: "space-y-4 mt-8",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-2.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+									htmlFor: "fullName",
+									className: "font-semibold",
+									children: "Nome Completo"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									id: "fullName",
+									type: "text",
+									placeholder: "Ex: Maria da Silva",
+									value: fullName,
+									onChange: (e) => setFullName(e.target.value),
+									required: true,
+									className: "h-12 focus-visible:ring-primary/20 transition-all bg-muted/20"
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-2.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+									htmlFor: "email",
+									className: "font-semibold",
+									children: "E-mail"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									id: "email",
+									type: "email",
+									placeholder: "seu@email.com",
+									value: email,
+									onChange: (e) => setEmail(e.target.value),
+									required: true,
+									className: "h-12 focus-visible:ring-primary/20 transition-all bg-muted/20"
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "space-y-2.5",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+									htmlFor: "password",
+									className: "font-semibold",
+									children: "Senha"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+									id: "password",
+									type: "password",
+									placeholder: "Mínimo de 6 caracteres",
+									value: password,
+									onChange: (e) => setPassword(e.target.value),
+									required: true,
+									minLength: 6,
+									className: "h-12 focus-visible:ring-primary/20 transition-all bg-muted/20"
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+								type: "submit",
+								className: "w-full h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all mt-4",
+								disabled: loading || googleLoading,
+								children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-5 h-5 mr-2 animate-spin" }), " Criando..."] }) : "Criar Conta"
+							})
+						]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "relative my-6",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "absolute inset-0 flex items-center",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "w-full border-t border-muted" })
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "relative flex justify-center text-xs uppercase",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "bg-background px-3 text-muted-foreground font-bold tracking-wider",
+								children: "Ou continue com"
+							})
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+						type: "button",
+						variant: "outline",
+						className: "w-full h-12 text-base font-semibold bg-background hover:bg-muted/30 transition-colors",
+						onClick: handleGoogleSignIn,
+						disabled: loading || googleLoading,
+						children: [googleLoading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-5 h-5 mr-2 animate-spin" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
+							className: "w-5 h-5 mr-2",
+							viewBox: "0 0 24 24",
+							fill: "none",
+							xmlns: "http://www.w3.org/2000/svg",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+									d: "M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z",
+									fill: "#4285F4"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+									d: "M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.16v2.84C3.99 20.53 7.7 23 12 23z",
+									fill: "#34A853"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+									d: "M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.16C1.43 8.55 1 10.22 1 12s.43 3.45 1.16 4.93l3.68-2.84z",
+									fill: "#FBBC05"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+									d: "M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.16 7.07l3.68 2.84c.87-2.6 3.3-4.53 6.16-4.53z",
+									fill: "#EA4335"
+								})
+							]
+						}), "Continuar com o Google"]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+						className: "text-center text-sm font-medium text-muted-foreground mt-8",
+						children: [
+							"Já tem conta?",
+							" ",
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+								to: "/login",
+								className: "text-primary hover:text-primary/80 font-bold transition-colors underline-offset-4 hover:underline",
+								children: "Faça login"
+							})
+						]
+					})
+				]
+			})
+		})]
 	});
 }
 var ProtectedRoute = ({ children }) => {
@@ -39396,8 +39782,8 @@ var ProtectedRoute = ({ children }) => {
 var AppRoutes = () => {
 	const { user, loading } = useAuth();
 	if (loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: "min-h-screen flex items-center justify-center",
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "animate-spin rounded-full h-8 w-8 border-b-2 border-primary" })
+		className: "min-h-screen flex items-center justify-center bg-background",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "animate-spin rounded-full h-10 w-10 border-b-2 border-primary" })
 	});
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Routes, { children: [
 		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
@@ -39405,7 +39791,14 @@ var AppRoutes = () => {
 			element: user ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
 				to: "/",
 				replace: true
-			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthPage, {})
+			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoginPage, {})
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+			path: "/cadastro",
+			element: user ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
+				to: "/",
+				replace: true
+			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RegisterPage, {})
 		}),
 		/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Route, {
 			element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProtectedRoute, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Layout, {}) }),
@@ -39456,4 +39849,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-8p6bVOU1.js.map
+//# sourceMappingURL=index-BRLBorB5.js.map

@@ -37,6 +37,10 @@ export default function Layout() {
   const location = useLocation()
   const { signOut, user } = useAuth()
   const [recentPromos, setRecentPromos] = useState<any[]>([])
+  const [profile, setProfile] = useState<{
+    full_name: string
+    plan_type?: string | null
+  } | null>(null)
 
   useEffect(() => {
     const fetchPromos = async () => {
@@ -49,6 +53,23 @@ export default function Layout() {
     }
     fetchPromos()
   }, [])
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return
+      const { data } = await supabase
+        .from('profiles')
+        .select('full_name, plan_type')
+        .eq('id', user.id)
+        .single()
+      if (data) setProfile(data)
+    }
+    fetchProfile()
+  }, [user])
+
+  const userInitials = profile?.full_name
+    ? profile.full_name.substring(0, 2).toUpperCase()
+    : 'RM'
 
   return (
     <SidebarProvider>
@@ -128,17 +149,19 @@ export default function Layout() {
         </SidebarContent>
         <SidebarFooter className="p-4 border-t border-border/50">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10 border border-primary/20">
-                <AvatarImage src="https://img.usecurling.com/ppl/thumbnail?gender=male&seed=1" />
-                <AvatarFallback>VT</AvatarFallback>
+            <div className="flex items-center gap-3 w-[140px]">
+              <Avatar className="h-10 w-10 border border-primary/20 shrink-0">
+                <AvatarImage
+                  src={`https://img.usecurling.com/ppl/thumbnail?gender=male&seed=${user?.id || 1}`}
+                />
+                <AvatarFallback>{userInitials}</AvatarFallback>
               </Avatar>
-              <div className="flex flex-col">
-                <span className="text-sm font-semibold text-secondary">
-                  Viajante
+              <div className="flex flex-col truncate">
+                <span className="text-sm font-semibold text-secondary truncate">
+                  {profile?.full_name || 'Viajante'}
                 </span>
-                <span className="text-xs text-muted-foreground font-medium">
-                  Premium
+                <span className="text-xs text-muted-foreground font-medium capitalize">
+                  {profile?.plan_type || 'Premium'}
                 </span>
               </div>
             </div>
@@ -244,7 +267,6 @@ export default function Layout() {
           </div>
         </main>
 
-        {/* Mobile Bottom Navigation */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t flex justify-around items-center h-16 z-50 px-1 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)] overflow-x-auto">
           <Link
             to="/"

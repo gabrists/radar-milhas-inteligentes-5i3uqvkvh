@@ -10,7 +10,8 @@ import PromotionsPage from './pages/PromotionsPage'
 import AdminPromotionsPage from './pages/admin/AdminPromotionsPage'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
-import AuthPage from './pages/AuthPage'
+import LoginPage from './pages/auth/LoginPage'
+import RegisterPage from './pages/auth/RegisterPage'
 import { AuthProvider, useAuth } from './hooks/use-auth'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -25,8 +26,8 @@ const AppRoutes = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
       </div>
     )
   }
@@ -35,7 +36,11 @@ const AppRoutes = () => {
     <Routes>
       <Route
         path="/login"
-        element={user ? <Navigate to="/" replace /> : <AuthPage />}
+        element={user ? <Navigate to="/" replace /> : <LoginPage />}
+      />
+      <Route
+        path="/cadastro"
+        element={user ? <Navigate to="/" replace /> : <RegisterPage />}
       />
       <Route
         element={

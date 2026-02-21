@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Card,
   CardContent,
@@ -11,15 +11,22 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
-import { Settings, User, CreditCard, Save } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Settings, User, CreditCard, Save, Loader2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { useAuth } from '@/hooks/use-auth'
+import { supabase } from '@/lib/supabase/client'
 
 export default function SettingsPage() {
   const { toast } = useToast()
+  const { user } = useAuth()
+
   const [isSaving, setIsSaving] = useState(false)
+  const [loading, setLoading] = useState(true)
+
   const [profile, setProfile] = useState({
-    name: 'Viajante Premium',
-    email: 'viajante@example.com',
+    name: '',
+    email: '',
   })
 
   const [programs, setPrograms] = useState({
@@ -30,16 +37,57 @@ export default function SettingsPage() {
     tudoazul: false,
   })
 
-  const handleSave = () => {
+  useEffect(() => {
+    async function loadProfile() {
+      if (!user) return
+
+      try {
+        setProfile((prev) => ({ ...prev, email: user.email || '' }))
+
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single()
+
+        if (data && !error) {
+          setProfile((prev) => ({ ...prev, name: data.full_name }))
+        }
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadProfile()
+  }, [user])
+
+  const handleSave = async () => {
+    if (!user) return
     setIsSaving(true)
-    setTimeout(() => {
-      setIsSaving(false)
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ full_name: profile.name })
+        .eq('id', user.id)
+
+      if (error) throw error
+
       toast({
         title: 'Configurações salvas',
-        description:
-          'Seu perfil e programas de fidelidade foram atualizados com sucesso.',
+        description: 'Seu perfil e programas foram atualizados com sucesso.',
       })
-    }, 800)
+    } catch (err: any) {
+      toast({
+        title: 'Erro ao salvar',
+        description:
+          'Ocorreu um erro ao atualizar os seus dados. Tente novamente.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -66,42 +114,72 @@ export default function SettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6 space-y-5">
-            <div className="space-y-2.5">
-              <Label htmlFor="name" className="text-secondary font-semibold">
-                Nome Completo
-              </Label>
-              <Input
-                id="name"
-                value={profile.name}
-                onChange={(e) =>
-                  setProfile({ ...profile, name: e.target.value })
-                }
-                className="h-11 bg-muted/30 focus:bg-background transition-colors"
-              />
-            </div>
-            <div className="space-y-2.5">
-              <Label htmlFor="email" className="text-secondary font-semibold">
-                E-mail
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={profile.email}
-                onChange={(e) =>
-                  setProfile({ ...profile, email: e.target.value })
-                }
-                className="h-11 bg-muted/30 focus:bg-background transition-colors"
-              />
-            </div>
+            {loading ? (
+              <div className="space-y-5">
+                <div className="space-y-2.5">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-11 w-full" />
+                </div>
+                <div className="space-y-2.5">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-11 w-full" />
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-2.5">
+                  <Label
+                    htmlFor="name"
+                    className="text-secondary font-semibold"
+                  >
+                    Nome Completo
+                  </Label>
+                  <Input
+                    id="name"
+                    value={profile.name}
+                    onChange={(e) =>
+                      setProfile({ ...profile, name: e.target.value })
+                    }
+                    className="h-11 bg-muted/30 focus:bg-background transition-colors"
+                  />
+                </div>
+                <div className="space-y-2.5">
+                  <Label
+                    htmlFor="email"
+                    className="text-secondary font-semibold"
+                  >
+                    E-mail
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={profile.email}
+                    disabled
+                    className="h-11 bg-muted/10 cursor-not-allowed opacity-70"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    O e-mail é utilizado para o login e não pode ser alterado
+                    por aqui.
+                  </p>
+                </div>
+              </>
+            )}
           </CardContent>
           <CardFooter className="pt-2 pb-6 px-6">
             <Button
               onClick={handleSave}
-              disabled={isSaving}
+              disabled={isSaving || loading}
               className="w-full sm:w-auto font-semibold"
             >
-              <Save className="w-4 h-4 mr-2" />
-              {isSaving ? 'Salvando...' : 'Salvar Alterações'}
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Salvando...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" /> Salvar Alterações
+                </>
+              )}
             </Button>
           </CardFooter>
         </Card>

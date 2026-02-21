@@ -256,6 +256,12 @@ export const Constants = {
 // Table: active_promotions
 //   Policy "Anyone can view active promotions" (SELECT, PERMISSIVE) roles={public}
 //     USING: true
+//   Policy "Authenticated users can delete active promotions" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Authenticated users can insert active promotions" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "Authenticated users can update active promotions" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
 // Table: profiles
 //   Policy "Users can update own profile." (UPDATE, PERMISSIVE) roles={public}
 //     USING: (auth.uid() = id)
