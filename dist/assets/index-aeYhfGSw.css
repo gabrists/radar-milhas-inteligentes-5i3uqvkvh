@@ -1889,8 +1889,8 @@ section[aria-label='Notifications alt+T'] {
   height: 460px;
 }
 
-.h-\[85vh\]{
-  height: 85vh;
+.h-\[70vh\]{
+  height: 70vh;
 }
 
 .h-\[var\(--radix-navigation-menu-viewport-height\)\]{
@@ -5587,10 +5587,6 @@ section[aria-label='Notifications alt+T'] {
 
   .sm\:flex{
     display: flex;
-  }
-
-  .sm\:h-\[600px\]{
-    height: 600px;
   }
 
   .sm\:w-auto{
