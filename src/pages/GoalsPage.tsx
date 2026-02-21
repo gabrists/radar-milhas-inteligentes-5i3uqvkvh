@@ -1,8 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { MapPin, Target, CheckCircle2, PlaneTakeoff, Plus } from 'lucide-react'
+import {
+  MapPin,
+  Target,
+  CheckCircle2,
+  PlaneTakeoff,
+  Plus,
+  MoreVertical,
+  Edit2,
+  Trash2,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   Dialog,
@@ -10,191 +19,249 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
+import { useAuth } from '@/hooks/use-auth'
+import { supabase } from '@/lib/supabase/client'
 
-const initialGoals = [
-  {
-    id: 1,
-    title: 'Orlando (Disney/Universal)',
-    current: 85000,
-    target: 120000,
-    image: 'orlando disney',
-    active: true,
-  },
-  {
-    id: 2,
-    title: 'Canadá (Toronto, Montreal e Quebec)',
-    current: 45000,
-    target: 180000,
-    image: 'canada toronto',
-    active: false,
-  },
-  {
-    id: 3,
-    title: 'Hungria',
-    current: 15000,
-    target: 200000,
-    image: 'budapest hungary',
-    active: false,
-  },
-]
+type Goal = {
+  id: string
+  destination_name: string
+  target_miles: number
+  current_miles: number
+  image_url: string | null
+  is_active: boolean
+}
 
 export default function GoalsPage() {
-  const [goals, setGoals] = useState(initialGoals)
+  const { user } = useAuth()
+  const [goals, setGoals] = useState<Goal[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [newGoal, setNewGoal] = useState({
-    title: '',
-    target: '',
-    image: '',
-  })
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [deletingGoal, setDeletingGoal] = useState<Goal | null>(null)
+  const [formData, setFormData] = useState({ title: '', target: '', image: '' })
   const { toast } = useToast()
 
-  const handleSetActive = (id: number) => {
-    setGoals(goals.map((g) => ({ ...g, active: g.id === id })))
-  }
-
-  const handleSaveGoal = () => {
-    if (!newGoal.title || !newGoal.target) return
-
-    const newGoalObj = {
-      id: Date.now(),
-      title: newGoal.title,
-      current: 0,
-      target: parseInt(newGoal.target) || 0,
-      image: newGoal.image || newGoal.title,
-      active: goals.length === 0,
+  useEffect(() => {
+    if (user) {
+      supabase
+        .from('travel_goals')
+        .select('*')
+        .then(({ data }) => {
+          if (data)
+            setGoals(
+              (data as unknown as Goal[]).sort((a, b) =>
+                a.destination_name.localeCompare(b.destination_name),
+              ),
+            )
+        })
     }
+  }, [user])
 
-    setGoals([...goals, newGoalObj])
-    setIsModalOpen(false)
-    setNewGoal({ title: '', target: '', image: '' })
-
-    toast({
-      title: 'Sucesso!',
-      description: 'Objetivo criado com sucesso!',
-    })
+  const handleSetActive = async (id: string) => {
+    if (!user) return
+    setGoals(goals.map((g) => ({ ...g, is_active: g.id === id })))
+    await supabase
+      .from('travel_goals')
+      .update({ is_active: false })
+      .eq('user_id', user.id)
+      .neq('id', id)
+    await supabase.from('travel_goals').update({ is_active: true }).eq('id', id)
   }
 
-  const isExternalUrl = (url: string) =>
-    url.startsWith('http://') || url.startsWith('https://')
+  const openCreate = () => {
+    setEditingId(null)
+    setFormData({ title: '', target: '', image: '' })
+    setIsModalOpen(true)
+  }
+
+  const openEdit = (goal: Goal) => {
+    setEditingId(goal.id)
+    setFormData({
+      title: goal.destination_name,
+      target: goal.target_miles.toString(),
+      image: goal.image_url || '',
+    })
+    setIsModalOpen(true)
+  }
+
+  const handleSave = async () => {
+    if (!formData.title || !formData.target || !user) return
+    const target_miles = parseInt(formData.target) || 0
+    if (editingId) {
+      const { error } = await supabase
+        .from('travel_goals')
+        .update({
+          destination_name: formData.title,
+          target_miles,
+          image_url: formData.image || null,
+        })
+        .eq('id', editingId)
+      if (!error) {
+        setGoals(
+          goals.map((g) =>
+            g.id === editingId
+              ? {
+                  ...g,
+                  destination_name: formData.title,
+                  target_miles,
+                  image_url: formData.image || null,
+                }
+              : g,
+          ),
+        )
+        toast({
+          title: 'Sucesso!',
+          description: 'Objetivo atualizado com sucesso!',
+        })
+      }
+    } else {
+      const { data, error } = await supabase
+        .from('travel_goals')
+        .insert({
+          user_id: user.id,
+          destination_name: formData.title,
+          target_miles,
+          image_url: formData.image || null,
+          is_active: goals.length === 0,
+        })
+        .select()
+        .single()
+      if (!error && data) {
+        setGoals([...goals, data as unknown as Goal])
+        toast({
+          title: 'Sucesso!',
+          description: 'Objetivo criado com sucesso!',
+        })
+      }
+    }
+    setIsModalOpen(false)
+  }
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (!deletingGoal) return
+    const { error } = await supabase
+      .from('travel_goals')
+      .delete()
+      .eq('id', deletingGoal.id)
+    if (!error) {
+      setGoals(goals.filter((g) => g.id !== deletingGoal.id))
+      toast({
+        title: 'Sucesso!',
+        description: 'Objetivo excluído com sucesso!',
+      })
+    }
+    setDeletingGoal(null)
+  }
+
+  const getImageUrl = (url: string | null, fallback: string) => {
+    if (!url)
+      return `https://img.usecurling.com/p/600/300?q=${encodeURIComponent(fallback)}&dpr=2`
+    return url.startsWith('http')
+      ? url
+      : `https://img.usecurling.com/p/600/300?q=${encodeURIComponent(url)}&dpr=2`
+  }
 
   return (
     <div className="space-y-6 md:space-y-8 pb-4 animate-fade-in-up">
       <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold text-secondary tracking-tight flex items-center gap-2">
-            <Target className="w-8 h-8 text-primary" />
-            Meus Objetivos
+            <Target className="w-8 h-8 text-primary" /> Meus Objetivos
           </h2>
           <p className="text-muted-foreground mt-1 text-sm md:text-base font-medium">
             Gerencie suas metas de viagem e defina qual é a sua prioridade.
           </p>
         </div>
-
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger asChild>
-            <Button className="w-full sm:w-auto font-semibold shadow-sm">
-              <Plus className="w-5 h-5 mr-2" />
-              Criar Novo Objetivo
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Qual é o seu próximo destino?</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-5 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="destination">Nome do Destino</Label>
-                <Input
-                  id="destination"
-                  placeholder="Ex: Paris, França"
-                  value={newGoal.title}
-                  onChange={(e) =>
-                    setNewGoal({ ...newGoal, title: e.target.value })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="target">Meta de Milhas</Label>
-                <Input
-                  id="target"
-                  type="number"
-                  placeholder="Ex: 150000"
-                  value={newGoal.target}
-                  onChange={(e) =>
-                    setNewGoal({ ...newGoal, target: e.target.value })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem de Fundo (Opcional)</Label>
-                <Input
-                  id="image"
-                  placeholder="https://exemplo.com/imagem.jpg"
-                  value={newGoal.image}
-                  onChange={(e) =>
-                    setNewGoal({ ...newGoal, image: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-            <DialogFooter className="gap-2 sm:gap-0">
-              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleSaveGoal}
-                disabled={!newGoal.title || !newGoal.target}
-              >
-                Salvar Objetivo
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Button
+          className="w-full sm:w-auto font-semibold shadow-sm"
+          onClick={openCreate}
+        >
+          <Plus className="w-5 h-5 mr-2" /> Criar Novo Objetivo
+        </Button>
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {goals.map((goal, index) => {
+        {goals.map((goal, i) => {
           const percentage =
-            goal.target > 0
-              ? Math.min((goal.current / goal.target) * 100, 100)
+            goal.target_miles > 0
+              ? Math.min((goal.current_miles / goal.target_miles) * 100, 100)
               : 0
-
           return (
             <Card
               key={goal.id}
               className={cn(
                 'overflow-hidden flex flex-col transition-all duration-300 shadow-sm hover:shadow-md animate-fade-in-up',
-                goal.active
+                goal.is_active
                   ? 'border-primary ring-1 ring-primary/20'
                   : 'border-muted',
               )}
-              style={{ animationDelay: `${index * 100}ms` }}
+              style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="h-36 relative w-full overflow-hidden bg-muted">
                 <img
-                  src={
-                    isExternalUrl(goal.image)
-                      ? goal.image
-                      : `https://img.usecurling.com/p/600/300?q=${encodeURIComponent(goal.image)}&dpr=2`
-                  }
-                  alt={goal.title}
+                  src={getImageUrl(goal.image_url, goal.destination_name)}
+                  alt={goal.destination_name}
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                {goal.active && (
-                  <div className="absolute top-3 right-3 bg-primary text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                {goal.is_active && (
+                  <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Principal
                   </div>
                 )}
+
+                <div className="absolute top-2 right-2 z-10">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-white hover:bg-black/20 focus-visible:ring-0 focus-visible:ring-offset-0 bg-black/20 backdrop-blur-sm rounded-full"
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => openEdit(goal)}>
+                        <Edit2 className="w-4 h-4 mr-2" /> Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive focus:bg-destructive focus:text-destructive-foreground"
+                        onClick={() => setDeletingGoal(goal)}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" /> Excluir
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
                 <div className="absolute bottom-3 left-3 right-3">
                   <h3 className="text-white font-bold text-lg leading-tight flex items-start gap-1.5 drop-shadow-md">
-                    <MapPin className="w-4 h-4 mt-1 shrink-0 text-primary" />
-                    <span className="line-clamp-2">{goal.title}</span>
+                    <MapPin className="w-4 h-4 mt-1 shrink-0 text-primary" />{' '}
+                    <span className="line-clamp-2">
+                      {goal.destination_name}
+                    </span>
                   </h3>
                 </div>
               </div>
@@ -204,7 +271,7 @@ export default function GoalsPage() {
                   <div className="flex justify-between items-end text-sm">
                     <span className="font-semibold text-secondary">
                       Progresso
-                    </span>
+                    </span>{' '}
                     <span className="font-bold text-primary">
                       {percentage.toFixed(1)}%
                     </span>
@@ -212,35 +279,116 @@ export default function GoalsPage() {
                   <Progress value={percentage} className="h-2.5" />
                   <div className="flex justify-between text-xs font-medium text-muted-foreground pt-1">
                     <span>
-                      {new Intl.NumberFormat('pt-BR').format(goal.current)} mi
-                    </span>
+                      {new Intl.NumberFormat('pt-BR').format(
+                        goal.current_miles,
+                      )}{' '}
+                      mi
+                    </span>{' '}
                     <span>
-                      {new Intl.NumberFormat('pt-BR').format(goal.target)} mi
+                      {new Intl.NumberFormat('pt-BR').format(goal.target_miles)}{' '}
+                      mi
                     </span>
                   </div>
                 </div>
               </CardContent>
-
               <CardFooter className="pt-0 pb-5 px-5">
                 <Button
-                  variant={goal.active ? 'secondary' : 'outline'}
+                  variant={goal.is_active ? 'secondary' : 'outline'}
                   className={cn(
                     'w-full font-semibold',
-                    goal.active
-                      ? 'bg-secondary/10 text-secondary hover:bg-secondary/20'
-                      : '',
+                    goal.is_active &&
+                      'bg-secondary/10 text-secondary hover:bg-secondary/20',
                   )}
-                  disabled={goal.active}
+                  disabled={goal.is_active}
                   onClick={() => handleSetActive(goal.id)}
                 >
-                  {goal.active ? 'Meta Ativa' : 'Tornar Meta Principal'}
-                  {!goal.active && <PlaneTakeoff className="w-4 h-4 ml-2" />}
+                  {goal.is_active ? 'Meta Ativa' : 'Tornar Meta Principal'}{' '}
+                  {!goal.is_active && <PlaneTakeoff className="w-4 h-4 ml-2" />}
                 </Button>
               </CardFooter>
             </Card>
           )
         })}
       </div>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {editingId ? 'Editar Objetivo' : 'Qual é o seu próximo destino?'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-5 py-4">
+            <div className="space-y-2">
+              <Label>Nome do Destino</Label>
+              <Input
+                placeholder="Ex: Paris, França"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Meta de Milhas</Label>
+              <Input
+                type="number"
+                placeholder="Ex: 150000"
+                value={formData.target}
+                onChange={(e) =>
+                  setFormData({ ...formData, target: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>URL da Imagem de Fundo (Opcional)</Label>
+              <Input
+                placeholder="https://exemplo.com/imagem.jpg"
+                value={formData.image}
+                onChange={(e) =>
+                  setFormData({ ...formData, image: e.target.value })
+                }
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={!formData.title || !formData.target}
+            >
+              {editingId ? 'Salvar Alterações' : 'Salvar Objetivo'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog
+        open={!!deletingGoal}
+        onOpenChange={(open) => !open && setDeletingGoal(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Objetivo</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir o objetivo '
+              {deletingGoal?.destination_name}'? Esta ação não pode ser
+              desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

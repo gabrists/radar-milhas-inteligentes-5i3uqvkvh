@@ -1,0 +1,3 @@
+ALTER TABLE public.travel_goals 
+ADD COLUMN IF NOT EXISTS image_url TEXT,
+ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT false;
