@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import {
   Dialog,
@@ -40,7 +40,6 @@ import { useToast } from '@/hooks/use-toast'
 
 type TransactionType = 'acumulo' | 'transferencia' | 'compra' | 'resgate'
 
-const PROGRAMS = ['Livelo', 'Esfera', 'Smiles', 'Latam Pass', 'TudoAzul']
 const REASONS = [
   'Emissão de Passagem',
   'Hospedagem',
@@ -77,6 +76,30 @@ export function TransactionModal({
   const [reason, setReason] = useState('')
   const [amountPaid, setAmountPaid] = useState('')
   const [date, setDate] = useState<Date | undefined>(new Date())
+
+  const [userPrograms, setUserPrograms] = useState<string[]>([
+    'Livelo',
+    'Esfera',
+    'Smiles',
+    'Latam Pass',
+    'TudoAzul',
+  ])
+
+  useEffect(() => {
+    if (!user || !isOpen) return
+    supabase
+      .from('loyalty_balances')
+      .select('program_name')
+      .eq('user_id', user.id)
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          const names = Array.from(
+            new Set([...userPrograms, ...data.map((d) => d.program_name)]),
+          )
+          setUserPrograms(names)
+        }
+      })
+  }, [user, isOpen])
 
   const isTransfer = type === 'transferencia'
   const isPurchase = type === 'compra'
@@ -220,7 +243,7 @@ export function TransactionModal({
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      {PROGRAMS.map((p) => (
+                      {userPrograms.map((p) => (
                         <SelectItem key={p} value={p}>
                           {p}
                         </SelectItem>
@@ -235,7 +258,7 @@ export function TransactionModal({
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      {PROGRAMS.map((p) => (
+                      {userPrograms.map((p) => (
                         <SelectItem key={p} value={p}>
                           {p}
                         </SelectItem>
@@ -252,7 +275,7 @@ export function TransactionModal({
                     <SelectValue placeholder="Selecione o programa" />
                   </SelectTrigger>
                   <SelectContent>
-                    {PROGRAMS.map((p) => (
+                    {userPrograms.map((p) => (
                       <SelectItem key={p} value={p}>
                         {p}
                       </SelectItem>

@@ -1921,6 +1921,10 @@ section[aria-label='Notifications alt+T'] {
   max-height: 320px;
 }
 
+.max-h-\[50vh\]{
+  max-height: 50vh;
+}
+
 .max-h-\[60vh\]{
   max-height: 60vh;
 }
@@ -1939,6 +1943,10 @@ section[aria-label='Notifications alt+T'] {
 
 .min-h-0{
   min-height: 0px;
+}
+
+.min-h-\[104px\]{
+  min-height: 104px;
 }
 
 .min-h-\[320px\]{
@@ -2758,6 +2766,14 @@ section[aria-label='Notifications alt+T'] {
   border-color: hsl(var(--muted));
 }
 
+.border-muted-foreground\/20{
+  border-color: hsl(var(--muted-foreground) / 0.2);
+}
+
+.border-muted-foreground\/30{
+  border-color: hsl(var(--muted-foreground) / 0.3);
+}
+
 .border-muted\/50{
   border-color: hsl(var(--muted) / 0.5);
 }
@@ -2821,6 +2837,10 @@ section[aria-label='Notifications alt+T'] {
 
 .bg-background{
   background-color: hsl(var(--background));
+}
+
+.bg-background\/50{
+  background-color: hsl(var(--background) / 0.5);
 }
 
 .bg-background\/60{
@@ -3248,6 +3268,10 @@ section[aria-label='Notifications alt+T'] {
 .py-6{
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
+}
+
+.pb-1{
+  padding-bottom: 0.25rem;
 }
 
 .pb-16{
@@ -4688,6 +4712,10 @@ section[aria-label='Notifications alt+T'] {
   --tw-scale-x: 1.5;
   --tw-scale-y: 1.5;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.group:hover .group-hover\:border-primary\/30{
+  border-color: hsl(var(--primary) / 0.3);
 }
 
 .group:hover .group-hover\:bg-primary\/10{

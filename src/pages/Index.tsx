@@ -23,11 +23,15 @@ import {
   Percent,
   ArrowRight,
   PlusCircle,
+  Plus,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 import { TransactionModal } from '@/components/TransactionModal'
+import { AddWalletModal } from '@/components/AddWalletModal'
+import { AIRLINE_PROGRAMS } from '@/lib/constants'
+
 import azulLogo from '@/assets/azul-39f96.svg'
 import latamLogo from '@/assets/latam-13e30.svg'
 import smilesLogo from '@/assets/smiles-3b02a.svg'
@@ -62,6 +66,7 @@ export default function Index() {
 
   const [refreshKey, setRefreshKey] = useState(0)
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false)
+  const [isAddWalletModalOpen, setIsAddWalletModalOpen] = useState(false)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProgram, setSelectedProgram] = useState('')
@@ -178,6 +183,16 @@ export default function Index() {
     }
   }
 
+  const displayPrograms = Object.keys(balances).map((progName) => {
+    const defaultProg = programsList.find((p) => p.name === progName)
+    if (defaultProg) return { name: progName, logo: defaultProg.logo }
+
+    const airlineProg = AIRLINE_PROGRAMS.find((p) => p.name === progName)
+    if (airlineProg) return { name: progName, logo: airlineProg.logoUrl }
+
+    return { name: progName, logo: null }
+  })
+
   if (loading) {
     return (
       <div className="space-y-10 md:space-y-12 pb-8">
@@ -211,10 +226,10 @@ export default function Index() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {programsList.map((prog) => (
+          {displayPrograms.map((prog) => (
             <Card
               key={prog.name}
-              className="flex items-center p-4 gap-4 group hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 cursor-pointer rounded-2xl bg-white"
+              className="flex items-center p-4 gap-4 group hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 cursor-pointer rounded-2xl bg-white min-h-[104px]"
               onClick={() =>
                 navigate(
                   `/programa/${prog.name.toLowerCase().replace(/\s+/g, '')}`,
@@ -257,6 +272,18 @@ export default function Index() {
               </div>
             </Card>
           ))}
+
+          <button
+            onClick={() => setIsAddWalletModalOpen(true)}
+            className="flex flex-col items-center justify-center p-4 gap-3 h-full group hover:shadow-md transition-all duration-200 border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 rounded-2xl bg-transparent min-h-[104px]"
+          >
+            <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-muted/10 border border-muted-foreground/20 flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 group-hover:border-primary/30 transition-colors">
+              <Plus className="w-5 h-5" />
+            </div>
+            <span className="text-sm font-semibold text-muted-foreground group-hover:text-primary transition-colors">
+              Adicionar Programa
+            </span>
+          </button>
         </div>
       </section>
 
@@ -422,6 +449,12 @@ export default function Index() {
       <TransactionModal
         isOpen={isTransactionModalOpen}
         onClose={() => setIsTransactionModalOpen(false)}
+        onSuccess={() => setRefreshKey((k) => k + 1)}
+      />
+
+      <AddWalletModal
+        isOpen={isAddWalletModalOpen}
+        onClose={() => setIsAddWalletModalOpen(false)}
         onSuccess={() => setRefreshKey((k) => k + 1)}
       />
     </div>

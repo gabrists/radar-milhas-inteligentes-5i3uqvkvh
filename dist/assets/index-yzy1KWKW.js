@@ -38878,13 +38878,6 @@ function CalendarDayButton({ className, day, modifiers, ...props }) {
 		...props
 	});
 }
-var PROGRAMS = [
-	"Livelo",
-	"Esfera",
-	"Smiles",
-	"Latam Pass",
-	"TudoAzul"
-];
 var REASONS = [
 	"Emissão de Passagem",
 	"Hospedagem",
@@ -38927,6 +38920,19 @@ function TransactionModal({ isOpen, onClose, onSuccess }) {
 	const [reason, setReason] = (0, import_react.useState)("");
 	const [amountPaid, setAmountPaid] = (0, import_react.useState)("");
 	const [date, setDate] = (0, import_react.useState)(/* @__PURE__ */ new Date());
+	const [userPrograms, setUserPrograms] = (0, import_react.useState)([
+		"Livelo",
+		"Esfera",
+		"Smiles",
+		"Latam Pass",
+		"TudoAzul"
+	]);
+	(0, import_react.useEffect)(() => {
+		if (!user || !isOpen) return;
+		supabase.from("loyalty_balances").select("program_name").eq("user_id", user.id).then(({ data }) => {
+			if (data && data.length > 0) setUserPrograms(Array.from(new Set([...userPrograms, ...data.map((d) => d.program_name)])));
+		});
+	}, [user, isOpen]);
 	const isTransfer = type === "transferencia";
 	const isPurchase = type === "compra";
 	const isResgate = type === "resgate";
@@ -39024,7 +39030,7 @@ function TransactionModal({ isOpen, onClose, onSuccess }) {
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, { children: "Programa de Origem" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Select, {
 										value: origin,
 										onValueChange: setOrigin,
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectTrigger, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectValue, { placeholder: "Selecione" }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectContent, { children: PROGRAMS.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectItem, {
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectTrigger, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectValue, { placeholder: "Selecione" }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectContent, { children: userPrograms.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectItem, {
 											value: p,
 											children: p
 										}, p)) })]
@@ -39034,7 +39040,7 @@ function TransactionModal({ isOpen, onClose, onSuccess }) {
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, { children: "Programa de Destino" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Select, {
 										value: destination,
 										onValueChange: setDestination,
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectTrigger, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectValue, { placeholder: "Selecione" }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectContent, { children: PROGRAMS.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectItem, {
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectTrigger, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectValue, { placeholder: "Selecione" }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectContent, { children: userPrograms.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectItem, {
 											value: p,
 											children: p
 										}, p)) })]
@@ -39045,7 +39051,7 @@ function TransactionModal({ isOpen, onClose, onSuccess }) {
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, { children: "Programa" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Select, {
 									value: program,
 									onValueChange: setProgram,
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectTrigger, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectValue, { placeholder: "Selecione o programa" }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectContent, { children: PROGRAMS.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectItem, {
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectTrigger, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectValue, { placeholder: "Selecione o programa" }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectContent, { children: userPrograms.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectItem, {
 										value: p,
 										children: p
 									}, p)) })]
@@ -39169,6 +39175,241 @@ function TransactionModal({ isOpen, onClose, onSuccess }) {
 		})
 	});
 }
+const AIRLINE_PROGRAMS = [
+	{
+		id: "aadvantage",
+		name: "AAdvantage",
+		airline: "American Airlines",
+		continent: "América do Norte",
+		logoUrl: "https://img.usecurling.com/i?q=american-airlines&shape=fill&color=blue"
+	},
+	{
+		id: "miles-and-more",
+		name: "Miles & More",
+		airline: "Lufthansa",
+		continent: "Europa",
+		logoUrl: "https://img.usecurling.com/i?q=lufthansa&shape=fill&color=blue"
+	},
+	{
+		id: "privilege-club",
+		name: "Privilege Club",
+		airline: "Qatar Airways",
+		continent: "Oriente Médio",
+		logoUrl: "https://img.usecurling.com/i?q=qatar-airways&shape=fill&color=violet"
+	},
+	{
+		id: "krisflyer",
+		name: "KrisFlyer",
+		airline: "Singapore Airlines",
+		continent: "Ásia",
+		logoUrl: "https://img.usecurling.com/i?q=singapore-airlines&shape=fill&color=yellow"
+	},
+	{
+		id: "skymiles",
+		name: "SkyMiles",
+		airline: "Delta Air Lines",
+		continent: "América do Norte",
+		logoUrl: "https://img.usecurling.com/i?q=delta-airlines&shape=fill&color=red"
+	},
+	{
+		id: "mileageplus",
+		name: "MileagePlus",
+		airline: "United Airlines",
+		continent: "América do Norte",
+		logoUrl: "https://img.usecurling.com/i?q=united-airlines&shape=fill&color=blue"
+	},
+	{
+		id: "flyingblue",
+		name: "Flying Blue",
+		airline: "Air France / KLM",
+		continent: "Europa",
+		logoUrl: "https://img.usecurling.com/i?q=air-france&shape=fill&color=blue"
+	},
+	{
+		id: "executiveclub",
+		name: "Executive Club",
+		airline: "British Airways",
+		continent: "Europa",
+		logoUrl: "https://img.usecurling.com/i?q=british-airways&shape=fill&color=blue"
+	},
+	{
+		id: "connectmiles",
+		name: "ConnectMiles",
+		airline: "Copa Airlines",
+		continent: "América Central",
+		logoUrl: "https://img.usecurling.com/i?q=copa-airlines&shape=fill&color=blue"
+	},
+	{
+		id: "tapmilesgo",
+		name: "TAP Miles&Go",
+		airline: "TAP Air Portugal",
+		continent: "Europa",
+		logoUrl: "https://img.usecurling.com/i?q=tap-portugal&shape=fill&color=green"
+	},
+	{
+		id: "emirates",
+		name: "Emirates Skywards",
+		airline: "Emirates",
+		continent: "Oriente Médio",
+		logoUrl: "https://img.usecurling.com/i?q=emirates&shape=fill&color=red"
+	},
+	{
+		id: "latampass",
+		name: "Latam Pass",
+		airline: "LATAM",
+		continent: "América do Sul",
+		logoUrl: "https://img.usecurling.com/i?q=latam&shape=fill&color=blue"
+	},
+	{
+		id: "smiles",
+		name: "Smiles",
+		airline: "GOL",
+		continent: "América do Sul",
+		logoUrl: "https://img.usecurling.com/i?q=gol-airlines&shape=fill&color=orange"
+	},
+	{
+		id: "tudoazul",
+		name: "TudoAzul",
+		airline: "Azul",
+		continent: "América do Sul",
+		logoUrl: "https://img.usecurling.com/i?q=azul-airlines&shape=fill&color=blue"
+	},
+	{
+		id: "aeroplan",
+		name: "Aeroplan",
+		airline: "Air Canada",
+		continent: "América do Norte",
+		logoUrl: "https://img.usecurling.com/i?q=air-canada&shape=fill&color=red"
+	},
+	{
+		id: "lifemiles",
+		name: "LifeMiles",
+		airline: "Avianca",
+		continent: "América do Sul",
+		logoUrl: "https://img.usecurling.com/i?q=avianca&shape=fill&color=red"
+	},
+	{
+		id: "iberiaplus",
+		name: "Iberia Plus",
+		airline: "Iberia",
+		continent: "Europa",
+		logoUrl: "https://img.usecurling.com/i?q=iberia&shape=fill&color=red"
+	},
+	{
+		id: "safarflyer",
+		name: "Safar Flyer",
+		airline: "Royal Air Maroc",
+		continent: "África",
+		logoUrl: "https://img.usecurling.com/i?q=royal-air-maroc&shape=fill&color=red"
+	}
+];
+var CONTINENTS = [
+	"Todos",
+	"América do Norte",
+	"América Central",
+	"América do Sul",
+	"Europa",
+	"Oriente Médio",
+	"Ásia",
+	"África"
+];
+function AddWalletModal({ isOpen, onClose, onSuccess }) {
+	const { user } = useAuth();
+	const { toast: toast$2 } = useToast();
+	const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
+	const [selectedContinent, setSelectedContinent] = (0, import_react.useState)("Todos");
+	const [isSaving, setIsSaving] = (0, import_react.useState)(false);
+	const filteredPrograms = AIRLINE_PROGRAMS.filter((p) => {
+		const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.airline.toLowerCase().includes(searchQuery.toLowerCase());
+		const matchesContinent = selectedContinent === "Todos" || p.continent === selectedContinent;
+		return matchesSearch && matchesContinent;
+	});
+	const handleSelect = async (program) => {
+		if (!user) return;
+		setIsSaving(true);
+		try {
+			const { data: existing } = await supabase.from("loyalty_balances").select("id").eq("user_id", user.id).eq("program_name", program.name).maybeSingle();
+			if (!existing) {
+				const { error } = await supabase.from("loyalty_balances").insert({
+					user_id: user.id,
+					program_name: program.name,
+					balance: 0
+				});
+				if (error) throw error;
+			}
+			toast$2({
+				title: "Sucesso!",
+				description: `${program.name} adicionado à sua carteira.`
+			});
+			onSuccess();
+			onClose();
+		} catch (err) {
+			toast$2({
+				title: "Erro",
+				description: "Não foi possível adicionar o programa.",
+				variant: "destructive"
+			});
+		} finally {
+			setIsSaving(false);
+		}
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
+		open: isOpen,
+		onOpenChange: (o) => !o && onClose(),
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogContent, {
+			className: "sm:max-w-[480px] p-0 overflow-hidden gap-0 rounded-2xl",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "p-4 border-b space-y-4 bg-muted/10",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "relative",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+						value: searchQuery,
+						onChange: (e) => setSearchQuery(e.target.value),
+						placeholder: "Buscar programa ou companhia...",
+						className: "pl-10 h-12 bg-background border-muted-foreground/20 rounded-xl text-base focus-visible:ring-primary/20"
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+					children: CONTINENTS.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						onClick: () => setSelectedContinent(c),
+						className: cn("px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors border", selectedContinent === c ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-border hover:bg-muted"),
+						children: c
+					}, c))
+				})]
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "overflow-y-auto max-h-[50vh] p-2 relative",
+				children: [isSaving && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, { className: "w-8 h-8 animate-spin text-primary" })
+				}), filteredPrograms.length > 0 ? filteredPrograms.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+					onClick: () => handleSelect(p),
+					disabled: isSaving,
+					className: "w-full flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors text-left disabled:opacity-50",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "w-12 h-12 rounded-full border border-muted-foreground/20 bg-background flex items-center justify-center shrink-0 overflow-hidden shadow-sm",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+							src: p.logoUrl,
+							alt: p.name,
+							className: "w-8 h-8 object-contain"
+						})
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex-1 min-w-0",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "font-bold text-secondary truncate",
+							children: p.name
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "text-sm font-medium text-muted-foreground truncate",
+							children: p.airline
+						})]
+					})]
+				}, p.id)) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "p-8 text-center text-muted-foreground font-medium",
+					children: "Nenhum programa encontrado."
+				})]
+			})]
+		})
+	});
+}
 var azul_39f96_default = "data:image/svg+xml,%3csvg%20width='287'%20height='80'%20viewBox='0%200%20287%2080'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20clip-path='url(%23clip0_1455_258)'%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M0%2074.318H18.3721L22.7545%2062.1055H46.6888L50.9025%2074.318H69.6119L43.8235%206.06018H25.6197L0%2074.318ZM173.777%2074.318H190.126V6.06018H173.777V74.318ZM169.9%2024.7984H153.55V51.3984C153.55%2060.265%20148.157%2062.4396%20144.617%2062.4396C139.392%2062.4396%20136.526%2060.0976%20136.526%2053.5729V24.7981H120.177V54.5765C120.177%2067.6256%20124.391%2075.823%20138.718%2075.823C144.449%2075.823%20150.853%2072.6442%20153.887%2067.6256H154.056V74.3173H169.9V24.7984ZM118.322%2074.318H70.7897L70.621%2061.6037L95.5665%2037.0113H72.6437V24.6314H116.468V37.0113L91.5221%2061.9381H118.322L118.322%2074.318ZM34.8908%2024.9668H34.7221L26.8003%2048.8901H42.4754L34.8908%2024.9668Z'%20fill='%233CB4E5'/%3e%3cpath%20d='M257.013%207.68433H261.748V11.3828H257.013V7.68433Z'%20fill='%235162AA'/%3e%3cpath%20d='M239.823%2047.3071H254.028V62.6291H239.823V47.3071Z'%20fill='%238C338A'/%3e%3cpath%20d='M249.293%2065.8014H258.588V71.437H249.293V65.8014Z'%20fill='%235D81C1'/%3e%3cpath%20d='M243.683%2068.4406H254.907V79.712H243.683V68.4406Z'%20fill='%23E75027'/%3e%3cpath%20d='M257.713%2058.2294H267.358V62.4561H257.713V58.2294Z'%20fill='%23D5292A'/%3e%3cpath%20d='M254.202%2050.4791H264.022V53.1211H254.202V50.4791Z'%20fill='%23F6A124'/%3e%3cpath%20d='M267.355%2058.2294H274.195V60.1668H267.355V58.2294Z'%20fill='%236A95CD'/%3e%3cpath%20d='M254.202%2038.3264H263.672V50.4784L254.202%2050.4791V38.3264Z'%20fill='%233370B6'/%3e%3cpath%20d='M235.614%2028.9941H254.028V47.1337H235.614V28.9941Z'%20fill='%2374C7DC'/%3e%3cpath%20d='M224.916%2028.9941H237.192V39.0324H224.916V28.9941Z'%20fill='%2392C144'/%3e%3cpath%20d='M240.876%2012.0862H261.744V29.1692H240.876V12.0862Z'%20fill='%235162AA'/%3e%3cpath%20d='M263.498%2031.283H278.756V49.9511H263.498V31.283Z'%20fill='%23199BD6'/%3e%3cpath%20d='M261.219%2041.8524H274.196V58.4072H261.219V41.8524Z'%20fill='%23F6A124'/%3e%3cpath%20d='M254.202%2053.1226H263.847V62.6326H254.202V53.1226Z'%20fill='%23D5292A'/%3e%3cpath%20d='M248.416%2058.9343H260.867V65.8027H248.416V58.9343Z'%20fill='%231F9AA7'/%3e%3cpath%20d='M274.196%2048.3655H276.827V56.6427H274.196V48.3655Z'%20fill='%23A5BFDF'/%3e%3cpath%20d='M278.755%2030.7544H285.77V35.1571H278.755V30.7544Z'%20fill='%233FB6AF'/%3e%3cpath%20d='M278.227%2034.9786H283.313V37.7962H278.227V34.9786Z'%20fill='%23AF2458'/%3e%3cpath%20d='M254.202%2021.7731H263.672V38.5038H254.202V21.7731Z'%20fill='%237AC19A'/%3e%3cpath%20d='M263.498%2015.08H276.3V31.2824L263.498%2031.283V15.08Z'%20fill='%23E5DF22'/%3e%3cpath%20d='M261.918%2012.0862H271.213V27.2321H261.918V12.0862Z'%20fill='%2334BBD0'/%3e%3cpath%20d='M274.372%2026.8811H286.999V31.2838H274.372V26.8811Z'%20fill='%236BA8DB'/%3e%3cpath%20d='M276.297%2017.0184H282.26V26.8808H276.297V17.0184Z'%20fill='%23DF5297'/%3e%3cpath%20d='M280.51%2020.1868H286.121V24.2376H280.51V20.1868Z'%20fill='%23604696'/%3e%3cpath%20d='M279.108%2024.2383H287V28.2891H279.108V24.2383Z'%20fill='%23F9D805'/%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M261.747%207.50671H257.012V11.3812H261.747V7.50671ZM249.471%207.68162H240.878V17.1917H249.471V7.68162Z'%20fill='%235162AA'/%3e%3cpath%20d='M214.396%207.68433H241.052V29.1701H214.396V7.68433Z'%20fill='%2316B9E7'/%3e%3cpath%20d='M228.073%200.286865H237.368V12.4385H228.073V0.286865Z'%20fill='%2342AD4B'/%3e%3cpath%20d='M208.782%2027.4084H225.968V34.1009H208.782V27.4084Z'%20fill='%23E6B722'/%3e%3cpath%20d='M249.469%201.34399H256.133V12.0869H249.469V1.34399Z'%20fill='%23B9CF36'/%3e%3cpath%20d='M258.415%2041.8524H261.045V44.4941H258.415V41.8524Z'%20fill='%2392C144'/%3e%3c/g%3e%3cdefs%3e%3cclipPath%20id='clip0_1455_258'%3e%3crect%20width='287'%20height='80'%20fill='white'/%3e%3c/clipPath%3e%3c/defs%3e%3c/svg%3e";
 var latam_13e30_default = "/assets/latam-13e30-3rzc6oft.svg";
 var smiles_3b02a_default = "/assets/smiles-3b02a-BxaDhO8p.svg";
@@ -39206,6 +39447,7 @@ function Index() {
 	const [balances, setBalances] = (0, import_react.useState)({});
 	const [refreshKey, setRefreshKey] = (0, import_react.useState)(0);
 	const [isTransactionModalOpen, setIsTransactionModalOpen] = (0, import_react.useState)(false);
+	const [isAddWalletModalOpen, setIsAddWalletModalOpen] = (0, import_react.useState)(false);
 	const [isModalOpen, setIsModalOpen] = (0, import_react.useState)(false);
 	const [selectedProgram, setSelectedProgram] = (0, import_react.useState)("");
 	const [newBalance, setNewBalance] = (0, import_react.useState)("");
@@ -39284,6 +39526,22 @@ function Index() {
 			setIsSaving(false);
 		}
 	};
+	const displayPrograms = Object.keys(balances).map((progName) => {
+		const defaultProg = programsList.find((p) => p.name === progName);
+		if (defaultProg) return {
+			name: progName,
+			logo: defaultProg.logo
+		};
+		const airlineProg = AIRLINE_PROGRAMS.find((p) => p.name === progName);
+		if (airlineProg) return {
+			name: progName,
+			logo: airlineProg.logoUrl
+		};
+		return {
+			name: progName,
+			logo: null
+		};
+	});
 	if (loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "space-y-10 md:space-y-12 pb-8",
 		children: [
@@ -39313,10 +39571,10 @@ function Index() {
 						className: "font-bold shadow-sm rounded-full shrink-0 h-10 px-5",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CirclePlus, { className: "w-4 h-4 mr-2" }), " Nova Movimentação"]
 					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4",
-					children: programsList.map((prog) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						className: "flex items-center p-4 gap-4 group hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 cursor-pointer rounded-2xl bg-white",
+					children: [displayPrograms.map((prog) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+						className: "flex items-center p-4 gap-4 group hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 cursor-pointer rounded-2xl bg-white min-h-[104px]",
 						onClick: () => navigate(`/programa/${prog.name.toLowerCase().replace(/\s+/g, "")}`),
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -39349,7 +39607,17 @@ function Index() {
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pen, { className: "w-4 h-4" })
 							})
 						]
-					}, prog.name))
+					}, prog.name)), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						onClick: () => setIsAddWalletModalOpen(true),
+						className: "flex flex-col items-center justify-center p-4 gap-3 h-full group hover:shadow-md transition-all duration-200 border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 rounded-2xl bg-transparent min-h-[104px]",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "w-10 h-10 rounded-full overflow-hidden shrink-0 bg-muted/10 border border-muted-foreground/20 flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 group-hover:border-primary/30 transition-colors",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { className: "w-5 h-5" })
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "text-sm font-semibold text-muted-foreground group-hover:text-primary transition-colors",
+							children: "Adicionar Programa"
+						})]
+					})]
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
@@ -39530,6 +39798,11 @@ function Index() {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TransactionModal, {
 				isOpen: isTransactionModalOpen,
 				onClose: () => setIsTransactionModalOpen(false),
+				onSuccess: () => setRefreshKey((k) => k + 1)
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AddWalletModal, {
+				isOpen: isAddWalletModalOpen,
+				onClose: () => setIsAddWalletModalOpen(false),
 				onSuccess: () => setRefreshKey((k) => k + 1)
 			})
 		]
@@ -44053,7 +44326,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				var cachedValue = getSnapshot();
 				objectIs(value, cachedValue) || (console.error("The result of getSnapshot should be cached to avoid an infinite loop"), didWarnUncachedGetSnapshot = !0);
 			}
-			cachedValue = useState$17({ inst: {
+			cachedValue = useState$18({ inst: {
 				value,
 				getSnapshot
 			} });
@@ -44067,7 +44340,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				value,
 				getSnapshot
 			]);
-			useEffect$13(function() {
+			useEffect$14(function() {
 				checkIfSnapshotChanged(inst) && forceUpdate({ inst });
 				return subscribe$1(function() {
 					checkIfSnapshotChanged(inst) && forceUpdate({ inst });
@@ -44090,7 +44363,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 			return getSnapshot();
 		}
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-		var React$29 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$17 = React$29.useState, useEffect$13 = React$29.useEffect, useLayoutEffect$2 = React$29.useLayoutEffect, useDebugValue = React$29.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
+		var React$29 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$18 = React$29.useState, useEffect$14 = React$29.useEffect, useLayoutEffect$2 = React$29.useLayoutEffect, useDebugValue = React$29.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
 		exports.useSyncExternalStore = void 0 !== React$29.useSyncExternalStore ? React$29.useSyncExternalStore : shim;
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
 	})();
@@ -44990,4 +45263,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-CHP8dPGu.js.map
+//# sourceMappingURL=index-yzy1KWKW.js.map

@@ -1,0 +1,1 @@
+ALTER TABLE public.loyalty_balances DROP CONSTRAINT IF EXISTS loyalty_balances_program_name_check;
