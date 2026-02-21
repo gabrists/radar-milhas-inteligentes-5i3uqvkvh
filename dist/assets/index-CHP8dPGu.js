@@ -19434,6 +19434,15 @@ var Save = createLucideIcon("save", [
 		key: "t51u73"
 	}]
 ]);
+var Search = createLucideIcon("search", [["path", {
+	d: "m21 21-4.34-4.34",
+	key: "14j7rj"
+}], ["circle", {
+	cx: "11",
+	cy: "11",
+	r: "8",
+	key: "4ej97u"
+}]]);
 var Settings = createLucideIcon("settings", [["path", {
 	d: "M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915",
 	key: "1i5ecw"
@@ -19491,6 +19500,10 @@ var Sparkles = createLucideIcon("sparkles", [
 		key: "6kqj1y"
 	}]
 ]);
+var Star = createLucideIcon("star", [["path", {
+	d: "M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z",
+	key: "r04s7s"
+}]]);
 var Tag = createLucideIcon("tag", [["path", {
 	d: "M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z",
 	key: "vktsd0"
@@ -39156,26 +39169,31 @@ function TransactionModal({ isOpen, onClose, onSuccess }) {
 		})
 	});
 }
+var azul_39f96_default = "data:image/svg+xml,%3csvg%20width='287'%20height='80'%20viewBox='0%200%20287%2080'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20clip-path='url(%23clip0_1455_258)'%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M0%2074.318H18.3721L22.7545%2062.1055H46.6888L50.9025%2074.318H69.6119L43.8235%206.06018H25.6197L0%2074.318ZM173.777%2074.318H190.126V6.06018H173.777V74.318ZM169.9%2024.7984H153.55V51.3984C153.55%2060.265%20148.157%2062.4396%20144.617%2062.4396C139.392%2062.4396%20136.526%2060.0976%20136.526%2053.5729V24.7981H120.177V54.5765C120.177%2067.6256%20124.391%2075.823%20138.718%2075.823C144.449%2075.823%20150.853%2072.6442%20153.887%2067.6256H154.056V74.3173H169.9V24.7984ZM118.322%2074.318H70.7897L70.621%2061.6037L95.5665%2037.0113H72.6437V24.6314H116.468V37.0113L91.5221%2061.9381H118.322L118.322%2074.318ZM34.8908%2024.9668H34.7221L26.8003%2048.8901H42.4754L34.8908%2024.9668Z'%20fill='%233CB4E5'/%3e%3cpath%20d='M257.013%207.68433H261.748V11.3828H257.013V7.68433Z'%20fill='%235162AA'/%3e%3cpath%20d='M239.823%2047.3071H254.028V62.6291H239.823V47.3071Z'%20fill='%238C338A'/%3e%3cpath%20d='M249.293%2065.8014H258.588V71.437H249.293V65.8014Z'%20fill='%235D81C1'/%3e%3cpath%20d='M243.683%2068.4406H254.907V79.712H243.683V68.4406Z'%20fill='%23E75027'/%3e%3cpath%20d='M257.713%2058.2294H267.358V62.4561H257.713V58.2294Z'%20fill='%23D5292A'/%3e%3cpath%20d='M254.202%2050.4791H264.022V53.1211H254.202V50.4791Z'%20fill='%23F6A124'/%3e%3cpath%20d='M267.355%2058.2294H274.195V60.1668H267.355V58.2294Z'%20fill='%236A95CD'/%3e%3cpath%20d='M254.202%2038.3264H263.672V50.4784L254.202%2050.4791V38.3264Z'%20fill='%233370B6'/%3e%3cpath%20d='M235.614%2028.9941H254.028V47.1337H235.614V28.9941Z'%20fill='%2374C7DC'/%3e%3cpath%20d='M224.916%2028.9941H237.192V39.0324H224.916V28.9941Z'%20fill='%2392C144'/%3e%3cpath%20d='M240.876%2012.0862H261.744V29.1692H240.876V12.0862Z'%20fill='%235162AA'/%3e%3cpath%20d='M263.498%2031.283H278.756V49.9511H263.498V31.283Z'%20fill='%23199BD6'/%3e%3cpath%20d='M261.219%2041.8524H274.196V58.4072H261.219V41.8524Z'%20fill='%23F6A124'/%3e%3cpath%20d='M254.202%2053.1226H263.847V62.6326H254.202V53.1226Z'%20fill='%23D5292A'/%3e%3cpath%20d='M248.416%2058.9343H260.867V65.8027H248.416V58.9343Z'%20fill='%231F9AA7'/%3e%3cpath%20d='M274.196%2048.3655H276.827V56.6427H274.196V48.3655Z'%20fill='%23A5BFDF'/%3e%3cpath%20d='M278.755%2030.7544H285.77V35.1571H278.755V30.7544Z'%20fill='%233FB6AF'/%3e%3cpath%20d='M278.227%2034.9786H283.313V37.7962H278.227V34.9786Z'%20fill='%23AF2458'/%3e%3cpath%20d='M254.202%2021.7731H263.672V38.5038H254.202V21.7731Z'%20fill='%237AC19A'/%3e%3cpath%20d='M263.498%2015.08H276.3V31.2824L263.498%2031.283V15.08Z'%20fill='%23E5DF22'/%3e%3cpath%20d='M261.918%2012.0862H271.213V27.2321H261.918V12.0862Z'%20fill='%2334BBD0'/%3e%3cpath%20d='M274.372%2026.8811H286.999V31.2838H274.372V26.8811Z'%20fill='%236BA8DB'/%3e%3cpath%20d='M276.297%2017.0184H282.26V26.8808H276.297V17.0184Z'%20fill='%23DF5297'/%3e%3cpath%20d='M280.51%2020.1868H286.121V24.2376H280.51V20.1868Z'%20fill='%23604696'/%3e%3cpath%20d='M279.108%2024.2383H287V28.2891H279.108V24.2383Z'%20fill='%23F9D805'/%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M261.747%207.50671H257.012V11.3812H261.747V7.50671ZM249.471%207.68162H240.878V17.1917H249.471V7.68162Z'%20fill='%235162AA'/%3e%3cpath%20d='M214.396%207.68433H241.052V29.1701H214.396V7.68433Z'%20fill='%2316B9E7'/%3e%3cpath%20d='M228.073%200.286865H237.368V12.4385H228.073V0.286865Z'%20fill='%2342AD4B'/%3e%3cpath%20d='M208.782%2027.4084H225.968V34.1009H208.782V27.4084Z'%20fill='%23E6B722'/%3e%3cpath%20d='M249.469%201.34399H256.133V12.0869H249.469V1.34399Z'%20fill='%23B9CF36'/%3e%3cpath%20d='M258.415%2041.8524H261.045V44.4941H258.415V41.8524Z'%20fill='%2392C144'/%3e%3c/g%3e%3cdefs%3e%3cclipPath%20id='clip0_1455_258'%3e%3crect%20width='287'%20height='80'%20fill='white'/%3e%3c/clipPath%3e%3c/defs%3e%3c/svg%3e";
+var latam_13e30_default = "/assets/latam-13e30-3rzc6oft.svg";
+var smiles_3b02a_default = "/assets/smiles-3b02a-BxaDhO8p.svg";
+var esfera_1668b_default = "/assets/esfera-1668b-DMm9LNXp.png";
+var livelo_398a4_default = "data:image/svg+xml,%3csvg%20width='384'%20height='80'%20viewBox='0%200%20384%2080'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20clip-path='url(%23clip0_1455_312)'%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M238.634%2049.8095C238.537%2049.0515%20238.498%2048.2936%20238.498%2047.5162C238.673%2037.0607%20247.255%2028.6846%20257.72%2028.8401C263.409%2028.9373%20268.497%2031.5414%20271.894%2035.5643L238.634%2049.8095ZM257.953%2015.625C240.187%2015.3335%20225.567%2029.5203%20225.295%2047.3025C225.198%2053.9489%20227.139%2060.1872%20230.518%2065.3567L288.748%2040.4422C285.467%2026.4109%20272.982%2015.8582%20257.953%2015.625ZM343.638%2064.8903C334.221%2060.3621%20330.241%2049.0127%20334.765%2039.6066L322.843%2033.8735C315.154%2049.8872%20321.892%2069.1075%20337.911%2076.8228C350.085%2082.6724%20364.103%2080.1654%20373.501%2071.595L364.608%2061.8197C359.036%2066.8531%20350.803%2068.3301%20343.638%2064.8903ZM365.773%2018.7733C353.599%2012.9431%20339.6%2015.4306%20330.183%2024.001L339.095%2033.7764C344.629%2028.7235%20352.881%2027.266%20360.045%2030.7058C369.462%2035.2339%20373.443%2046.564%20368.899%2055.9895L380.821%2061.7225C388.51%2045.7283%20381.772%2026.4886%20365.773%2018.7733ZM257.157%2066.7754C253.546%2066.7171%20250.206%2065.6288%20247.371%2063.8408L240.304%2075.0543C245.138%2078.1054%20250.847%2079.9128%20256.944%2079.9905C265.856%2080.1265%20274.011%2076.609%20279.933%2070.8371L270.671%2061.3338C267.176%2064.7348%20262.419%2066.8531%20257.157%2066.7754ZM307.019%201.12718H294.748V63.4521C294.748%2066.8337%20295.602%2069.3406%20296.786%2071.148C298.029%2072.9554%20299.641%2074.549%20302.048%2075.579L312.688%2079.9905L317.776%2067.7471L306.999%2063.2772V1.12718H307.019ZM112.271%201.12718H100V63.4521C100%2066.8337%20100.874%2069.3406%20102.058%2071.148C103.281%2072.9554%20104.912%2074.549%20107.301%2075.579L117.941%2079.9905L123.047%2067.7471L112.271%2063.2772V1.12718ZM142.852%2026.3914L132.212%2021.9605L127.125%2034.2039L137.901%2038.6737V78.9022H150.172V38.5183C150.172%2035.1562%20149.318%2032.6298%20148.114%2030.8224C146.871%2029.0345%20145.26%2027.4409%20142.852%2026.3914ZM144.075%200C139.221%200%20135.26%203.94511%20135.26%208.82306C135.26%2013.701%20139.202%2017.6655%20144.075%2017.6655C148.968%2017.6655%20152.91%2013.701%20152.91%208.82306C152.91%203.94511%20148.968%200%20144.075%200ZM192.714%2061.3727L179.608%2026.3526C179.608%2026.3526%20178.093%2022.0576%20173.414%2020.1142L165.239%2016.7133L160.152%2028.9567L168.812%2032.5715L186.17%2078.9022H199.296L222.208%2017.685H209.082L192.714%2061.3727Z'%20fill='%23E50091'/%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M75.516%2029.3576C70.052%2024.9109%2060.684%2024.5948%2057.996%2022.0172C55.42%2019.3276%2055.104%209.95397%2050.66%204.48669C48.484%201.80909%2045.012%200%2040.024%200C35.032%200%2031.564%201.80909%2029.388%204.48669C24.944%209.95397%2024.62%2019.3236%2022.052%2022.0172C20.624%2023.5181%2014.92%2024.8149%2013.768%2025.1511C12.216%2025.6034%207.66%2026.8041%204.488%2029.3576C1.796%2031.5229%200%2035.009%200%2040C0%2044.991%201.808%2048.4651%204.484%2050.6424C9.948%2055.0891%2019.316%2055.4052%2022.004%2057.9828C24.58%2060.6684%2024.896%2070.046%2029.34%2075.5133C31.516%2078.1909%2034.988%2080%2039.976%2080C44.964%2080%2048.436%2078.1909%2050.612%2075.5133C55.056%2070.046%2055.372%2060.6724%2057.948%2057.9828C59.612%2056.3898%2063.832%2055.6534%2068.104%2054.2766C68.112%2054.2726%2072.84%2052.8957%2075.516%2050.6424C78.156%2048.4211%2080%2044.995%2080%2040C80%2035.009%2078.192%2031.5349%2075.516%2029.3576Z'%20fill='%23E50091'/%3e%3c/g%3e%3cdefs%3e%3cclipPath%20id='clip0_1455_312'%3e%3crect%20width='384'%20height='80'%20fill='white'/%3e%3c/clipPath%3e%3c/defs%3e%3c/svg%3e";
 var programsList = [
 	{
 		name: "Livelo",
-		logo: "data:image/svg+xml,%3csvg%20width='384'%20height='80'%20viewBox='0%200%20384%2080'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20clip-path='url(%23clip0_1455_312)'%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M238.634%2049.8095C238.537%2049.0515%20238.498%2048.2936%20238.498%2047.5162C238.673%2037.0607%20247.255%2028.6846%20257.72%2028.8401C263.409%2028.9373%20268.497%2031.5414%20271.894%2035.5643L238.634%2049.8095ZM257.953%2015.625C240.187%2015.3335%20225.567%2029.5203%20225.295%2047.3025C225.198%2053.9489%20227.139%2060.1872%20230.518%2065.3567L288.748%2040.4422C285.467%2026.4109%20272.982%2015.8582%20257.953%2015.625ZM343.638%2064.8903C334.221%2060.3621%20330.241%2049.0127%20334.765%2039.6066L322.843%2033.8735C315.154%2049.8872%20321.892%2069.1075%20337.911%2076.8228C350.085%2082.6724%20364.103%2080.1654%20373.501%2071.595L364.608%2061.8197C359.036%2066.8531%20350.803%2068.3301%20343.638%2064.8903ZM365.773%2018.7733C353.599%2012.9431%20339.6%2015.4306%20330.183%2024.001L339.095%2033.7764C344.629%2028.7235%20352.881%2027.266%20360.045%2030.7058C369.462%2035.2339%20373.443%2046.564%20368.899%2055.9895L380.821%2061.7225C388.51%2045.7283%20381.772%2026.4886%20365.773%2018.7733ZM257.157%2066.7754C253.546%2066.7171%20250.206%2065.6288%20247.371%2063.8408L240.304%2075.0543C245.138%2078.1054%20250.847%2079.9128%20256.944%2079.9905C265.856%2080.1265%20274.011%2076.609%20279.933%2070.8371L270.671%2061.3338C267.176%2064.7348%20262.419%2066.8531%20257.157%2066.7754ZM307.019%201.12718H294.748V63.4521C294.748%2066.8337%20295.602%2069.3406%20296.786%2071.148C298.029%2072.9554%20299.641%2074.549%20302.048%2075.579L312.688%2079.9905L317.776%2067.7471L306.999%2063.2772V1.12718H307.019ZM112.271%201.12718H100V63.4521C100%2066.8337%20100.874%2069.3406%20102.058%2071.148C103.281%2072.9554%20104.912%2074.549%20107.301%2075.579L117.941%2079.9905L123.047%2067.7471L112.271%2063.2772V1.12718ZM142.852%2026.3914L132.212%2021.9605L127.125%2034.2039L137.901%2038.6737V78.9022H150.172V38.5183C150.172%2035.1562%20149.318%2032.6298%20148.114%2030.8224C146.871%2029.0345%20145.26%2027.4409%20142.852%2026.3914ZM144.075%200C139.221%200%20135.26%203.94511%20135.26%208.82306C135.26%2013.701%20139.202%2017.6655%20144.075%2017.6655C148.968%2017.6655%20152.91%2013.701%20152.91%208.82306C152.91%203.94511%20148.968%200%20144.075%200ZM192.714%2061.3727L179.608%2026.3526C179.608%2026.3526%20178.093%2022.0576%20173.414%2020.1142L165.239%2016.7133L160.152%2028.9567L168.812%2032.5715L186.17%2078.9022H199.296L222.208%2017.685H209.082L192.714%2061.3727Z'%20fill='%23E50091'/%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M75.516%2029.3576C70.052%2024.9109%2060.684%2024.5948%2057.996%2022.0172C55.42%2019.3276%2055.104%209.95397%2050.66%204.48669C48.484%201.80909%2045.012%200%2040.024%200C35.032%200%2031.564%201.80909%2029.388%204.48669C24.944%209.95397%2024.62%2019.3236%2022.052%2022.0172C20.624%2023.5181%2014.92%2024.8149%2013.768%2025.1511C12.216%2025.6034%207.66%2026.8041%204.488%2029.3576C1.796%2031.5229%200%2035.009%200%2040C0%2044.991%201.808%2048.4651%204.484%2050.6424C9.948%2055.0891%2019.316%2055.4052%2022.004%2057.9828C24.58%2060.6684%2024.896%2070.046%2029.34%2075.5133C31.516%2078.1909%2034.988%2080%2039.976%2080C44.964%2080%2048.436%2078.1909%2050.612%2075.5133C55.056%2070.046%2055.372%2060.6724%2057.948%2057.9828C59.612%2056.3898%2063.832%2055.6534%2068.104%2054.2766C68.112%2054.2726%2072.84%2052.8957%2075.516%2050.6424C78.156%2048.4211%2080%2044.995%2080%2040C80%2035.009%2078.192%2031.5349%2075.516%2029.3576Z'%20fill='%23E50091'/%3e%3c/g%3e%3cdefs%3e%3cclipPath%20id='clip0_1455_312'%3e%3crect%20width='384'%20height='80'%20fill='white'/%3e%3c/clipPath%3e%3c/defs%3e%3c/svg%3e"
+		logo: livelo_398a4_default
 	},
 	{
 		name: "Esfera",
-		logo: "/assets/esfera-1668b-DMm9LNXp.png"
+		logo: esfera_1668b_default
 	},
 	{
 		name: "Smiles",
-		logo: "/assets/smiles-3b02a-BxaDhO8p.svg"
+		logo: smiles_3b02a_default
 	},
 	{
 		name: "Latam Pass",
-		logo: "/assets/latam-13e30-3rzc6oft.svg"
+		logo: latam_13e30_default
 	},
 	{
 		name: "TudoAzul",
-		logo: "data:image/svg+xml,%3csvg%20width='287'%20height='80'%20viewBox='0%200%20287%2080'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20clip-path='url(%23clip0_1455_258)'%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M0%2074.318H18.3721L22.7545%2062.1055H46.6888L50.9025%2074.318H69.6119L43.8235%206.06018H25.6197L0%2074.318ZM173.777%2074.318H190.126V6.06018H173.777V74.318ZM169.9%2024.7984H153.55V51.3984C153.55%2060.265%20148.157%2062.4396%20144.617%2062.4396C139.392%2062.4396%20136.526%2060.0976%20136.526%2053.5729V24.7981H120.177V54.5765C120.177%2067.6256%20124.391%2075.823%20138.718%2075.823C144.449%2075.823%20150.853%2072.6442%20153.887%2067.6256H154.056V74.3173H169.9V24.7984ZM118.322%2074.318H70.7897L70.621%2061.6037L95.5665%2037.0113H72.6437V24.6314H116.468V37.0113L91.5221%2061.9381H118.322L118.322%2074.318ZM34.8908%2024.9668H34.7221L26.8003%2048.8901H42.4754L34.8908%2024.9668Z'%20fill='%233CB4E5'/%3e%3cpath%20d='M257.013%207.68433H261.748V11.3828H257.013V7.68433Z'%20fill='%235162AA'/%3e%3cpath%20d='M239.823%2047.3071H254.028V62.6291H239.823V47.3071Z'%20fill='%238C338A'/%3e%3cpath%20d='M249.293%2065.8014H258.588V71.437H249.293V65.8014Z'%20fill='%235D81C1'/%3e%3cpath%20d='M243.683%2068.4406H254.907V79.712H243.683V68.4406Z'%20fill='%23E75027'/%3e%3cpath%20d='M257.713%2058.2294H267.358V62.4561H257.713V58.2294Z'%20fill='%23D5292A'/%3e%3cpath%20d='M254.202%2050.4791H264.022V53.1211H254.202V50.4791Z'%20fill='%23F6A124'/%3e%3cpath%20d='M267.355%2058.2294H274.195V60.1668H267.355V58.2294Z'%20fill='%236A95CD'/%3e%3cpath%20d='M254.202%2038.3264H263.672V50.4784L254.202%2050.4791V38.3264Z'%20fill='%233370B6'/%3e%3cpath%20d='M235.614%2028.9941H254.028V47.1337H235.614V28.9941Z'%20fill='%2374C7DC'/%3e%3cpath%20d='M224.916%2028.9941H237.192V39.0324H224.916V28.9941Z'%20fill='%2392C144'/%3e%3cpath%20d='M240.876%2012.0862H261.744V29.1692H240.876V12.0862Z'%20fill='%235162AA'/%3e%3cpath%20d='M263.498%2031.283H278.756V49.9511H263.498V31.283Z'%20fill='%23199BD6'/%3e%3cpath%20d='M261.219%2041.8524H274.196V58.4072H261.219V41.8524Z'%20fill='%23F6A124'/%3e%3cpath%20d='M254.202%2053.1226H263.847V62.6326H254.202V53.1226Z'%20fill='%23D5292A'/%3e%3cpath%20d='M248.416%2058.9343H260.867V65.8027H248.416V58.9343Z'%20fill='%231F9AA7'/%3e%3cpath%20d='M274.196%2048.3655H276.827V56.6427H274.196V48.3655Z'%20fill='%23A5BFDF'/%3e%3cpath%20d='M278.755%2030.7544H285.77V35.1571H278.755V30.7544Z'%20fill='%233FB6AF'/%3e%3cpath%20d='M278.227%2034.9786H283.313V37.7962H278.227V34.9786Z'%20fill='%23AF2458'/%3e%3cpath%20d='M254.202%2021.7731H263.672V38.5038H254.202V21.7731Z'%20fill='%237AC19A'/%3e%3cpath%20d='M263.498%2015.08H276.3V31.2824L263.498%2031.283V15.08Z'%20fill='%23E5DF22'/%3e%3cpath%20d='M261.918%2012.0862H271.213V27.2321H261.918V12.0862Z'%20fill='%2334BBD0'/%3e%3cpath%20d='M274.372%2026.8811H286.999V31.2838H274.372V26.8811Z'%20fill='%236BA8DB'/%3e%3cpath%20d='M276.297%2017.0184H282.26V26.8808H276.297V17.0184Z'%20fill='%23DF5297'/%3e%3cpath%20d='M280.51%2020.1868H286.121V24.2376H280.51V20.1868Z'%20fill='%23604696'/%3e%3cpath%20d='M279.108%2024.2383H287V28.2891H279.108V24.2383Z'%20fill='%23F9D805'/%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M261.747%207.50671H257.012V11.3812H261.747V7.50671ZM249.471%207.68162H240.878V17.1917H249.471V7.68162Z'%20fill='%235162AA'/%3e%3cpath%20d='M214.396%207.68433H241.052V29.1701H214.396V7.68433Z'%20fill='%2316B9E7'/%3e%3cpath%20d='M228.073%200.286865H237.368V12.4385H228.073V0.286865Z'%20fill='%2342AD4B'/%3e%3cpath%20d='M208.782%2027.4084H225.968V34.1009H208.782V27.4084Z'%20fill='%23E6B722'/%3e%3cpath%20d='M249.469%201.34399H256.133V12.0869H249.469V1.34399Z'%20fill='%23B9CF36'/%3e%3cpath%20d='M258.415%2041.8524H261.045V44.4941H258.415V41.8524Z'%20fill='%2392C144'/%3e%3c/g%3e%3cdefs%3e%3cclipPath%20id='clip0_1455_258'%3e%3crect%20width='287'%20height='80'%20fill='white'/%3e%3c/clipPath%3e%3c/defs%3e%3c/svg%3e"
+		logo: azul_39f96_default
 	}
 ];
 function Index() {
@@ -42915,6 +42933,276 @@ function ProgramDetailsPage() {
 		]
 	});
 }
+var mockPartners = [
+	{
+		id: "1",
+		store_name: "Amazon",
+		category: "Eletrônicos",
+		points_per_real: 5,
+		program: "Livelo",
+		link: "#"
+	},
+	{
+		id: "2",
+		store_name: "Amazon",
+		category: "Eletrônicos",
+		points_per_real: 8,
+		program: "Esfera",
+		link: "#"
+	},
+	{
+		id: "3",
+		store_name: "Magalu",
+		category: "Casa",
+		points_per_real: 10,
+		program: "TudoAzul",
+		link: "#"
+	},
+	{
+		id: "4",
+		store_name: "Magalu",
+		category: "Casa",
+		points_per_real: 4,
+		program: "Smiles",
+		link: "#"
+	},
+	{
+		id: "5",
+		store_name: "Renner",
+		category: "Moda",
+		points_per_real: 4,
+		program: "Smiles",
+		link: "#"
+	},
+	{
+		id: "6",
+		store_name: "Renner",
+		category: "Moda",
+		points_per_real: 10,
+		program: "Livelo",
+		link: "#"
+	},
+	{
+		id: "7",
+		store_name: "Dafiti",
+		category: "Moda",
+		points_per_real: 12,
+		program: "Latam Pass",
+		link: "#"
+	},
+	{
+		id: "8",
+		store_name: "Booking.com",
+		category: "Viagens",
+		points_per_real: 6,
+		program: "Livelo",
+		link: "#"
+	},
+	{
+		id: "9",
+		store_name: "Sephora",
+		category: "Beleza",
+		points_per_real: 5,
+		program: "Esfera",
+		link: "#"
+	},
+	{
+		id: "10",
+		store_name: "C&A",
+		category: "Moda",
+		points_per_real: 8,
+		program: "Smiles",
+		link: "#"
+	},
+	{
+		id: "11",
+		store_name: "Fast Shop",
+		category: "Eletrônicos",
+		points_per_real: 3,
+		program: "TudoAzul",
+		link: "#"
+	},
+	{
+		id: "12",
+		store_name: "Casas Bahia",
+		category: "Casa",
+		points_per_real: 7,
+		program: "Livelo",
+		link: "#"
+	}
+];
+var programLogos = {
+	Livelo: livelo_398a4_default,
+	Esfera: esfera_1668b_default,
+	Smiles: smiles_3b02a_default,
+	"Latam Pass": latam_13e30_default,
+	TudoAzul: azul_39f96_default
+};
+var categories = [
+	"Todos",
+	"Eletrônicos",
+	"Moda",
+	"Viagens",
+	"Casa",
+	"Beleza"
+];
+function PartnersPage() {
+	const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
+	const [selectedCategory, setSelectedCategory] = (0, import_react.useState)("Todos");
+	const [partners, setPartners] = (0, import_react.useState)([]);
+	const [loading, setLoading] = (0, import_react.useState)(true);
+	(0, import_react.useEffect)(() => {
+		const fetchPartners = async () => {
+			setTimeout(() => {
+				setPartners(mockPartners);
+				setLoading(false);
+			}, 500);
+		};
+		fetchPartners();
+	}, []);
+	const filteredPartners = (0, import_react.useMemo)(() => {
+		return partners.filter((p) => {
+			const matchSearch = p.store_name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase());
+			const matchCategory = selectedCategory === "Todos" || p.category === selectedCategory;
+			return matchSearch && matchCategory;
+		}).sort((a, b$1) => b$1.points_per_real - a.points_per_real);
+	}, [
+		partners,
+		searchQuery,
+		selectedCategory
+	]);
+	const maxPointsByStore = (0, import_react.useMemo)(() => {
+		const map = {};
+		partners.forEach((p) => {
+			if (!map[p.store_name] || p.points_per_real > map[p.store_name]) map[p.store_name] = p.points_per_real;
+		});
+		return map;
+	}, [partners]);
+	const storeOfferCounts = (0, import_react.useMemo)(() => {
+		const counts = {};
+		partners.forEach((p) => {
+			counts[p.store_name] = (counts[p.store_name] || 0) + 1;
+		});
+		return counts;
+	}, [partners]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "space-y-6 md:space-y-8 pb-4 animate-fade-in-up",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+				className: "text-2xl md:text-3xl font-bold text-secondary tracking-tight flex items-center gap-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShoppingBag, { className: "w-8 h-8 text-primary" }), "Onde Comprar"]
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+				className: "text-muted-foreground mt-1 text-sm md:text-base font-medium",
+				children: "Encontre a melhor pontuação para sua próxima compra."
+			})] }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "space-y-4",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "relative",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Search, { className: "absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+						value: searchQuery,
+						onChange: (e) => setSearchQuery(e.target.value),
+						placeholder: "Busque por loja ou produto (ex: Amazon, iPhone...)",
+						className: "pl-11 h-12 text-base shadow-sm bg-background border-muted focus-visible:ring-primary/20 rounded-xl"
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+					children: categories.map((cat) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						variant: selectedCategory === cat ? "default" : "outline",
+						className: cn("rounded-full px-5 font-semibold shrink-0 shadow-sm transition-colors", selectedCategory === cat ? "shadow-md" : "bg-background hover:bg-muted/50"),
+						onClick: () => setSelectedCategory(cat),
+						children: cat
+					}, cat))
+				})]
+			}),
+			loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6",
+				children: [...Array(8)].map((_$1, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[210px] w-full rounded-2xl" }, i))
+			}) : filteredPartners.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "text-center py-16 px-4 bg-muted/10 border border-dashed border-muted rounded-2xl",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Search, { className: "w-12 h-12 text-muted-foreground/30 mx-auto mb-4" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "text-lg font-bold text-secondary",
+						children: "Nenhum parceiro encontrado"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "text-muted-foreground text-sm mt-1",
+						children: "Tente buscar por outro termo ou categoria."
+					})
+				]
+			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6",
+				children: filteredPartners.map((p) => {
+					return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+						className: "relative overflow-hidden hover:shadow-elevation transition-all duration-300 bg-white border-muted rounded-2xl flex flex-col group",
+						children: [storeOfferCounts[p.store_name] > 1 && p.points_per_real === maxPointsByStore[p.store_name] && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "absolute top-0 left-0 bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 text-[10px] font-black px-2.5 py-1 rounded-br-lg z-10 flex items-center gap-1 shadow-sm uppercase tracking-wide",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Star, { className: "w-3 h-3 fill-amber-950" }), " Melhor Oferta"]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+							className: "p-5 flex flex-col flex-1 pt-6",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex justify-between items-start gap-3 mb-4",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "w-14 h-14 rounded-xl border border-muted/50 bg-muted/20 flex items-center justify-center p-2.5 shrink-0 group-hover:scale-105 transition-transform duration-300",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+											src: `https://img.usecurling.com/i?q=${encodeURIComponent(p.store_name.toLowerCase())}&shape=outline&color=solid-black`,
+											alt: p.store_name,
+											className: "w-full h-full object-contain mix-blend-multiply opacity-80"
+										})
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex flex-col items-end gap-1.5",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
+											className: "bg-primary/10 text-primary border-primary/20 font-extrabold text-sm px-2.5 py-1 flex items-center gap-1.5 whitespace-nowrap shadow-sm",
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+													src: programLogos[p.program],
+													alt: p.program,
+													className: "w-3.5 h-3.5 object-contain"
+												}),
+												p.points_per_real,
+												" pts / R$"
+											]
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-[11px] font-bold text-muted-foreground uppercase tracking-wider",
+											children: p.program
+										})]
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex-1",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+										className: "font-bold text-lg text-secondary line-clamp-1 group-hover:text-primary transition-colors",
+										children: p.store_name
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+										className: "text-sm font-medium text-muted-foreground mt-0.5",
+										children: p.category
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+									variant: "outline",
+									className: "w-full font-bold shadow-sm mt-5 group/btn",
+									asChild: true,
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+										href: p.link,
+										target: "_blank",
+										rel: "noopener noreferrer",
+										children: [
+											"Ir para a Loja",
+											" ",
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ExternalLink, { className: "w-4 h-4 ml-2 text-muted-foreground group-hover/btn:text-primary transition-colors" })
+										]
+									})
+								})
+							]
+						})]
+					}, p.id);
+				})
+			})
+		]
+	});
+}
 var Textarea = import_react.forwardRef(({ className, ...props }, ref) => {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", {
 		className: cn("flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm", className),
@@ -43765,7 +44053,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				var cachedValue = getSnapshot();
 				objectIs(value, cachedValue) || (console.error("The result of getSnapshot should be cached to avoid an infinite loop"), didWarnUncachedGetSnapshot = !0);
 			}
-			cachedValue = useState$16({ inst: {
+			cachedValue = useState$17({ inst: {
 				value,
 				getSnapshot
 			} });
@@ -43779,7 +44067,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 				value,
 				getSnapshot
 			]);
-			useEffect$12(function() {
+			useEffect$13(function() {
 				checkIfSnapshotChanged(inst) && forceUpdate({ inst });
 				return subscribe$1(function() {
 					checkIfSnapshotChanged(inst) && forceUpdate({ inst });
@@ -43802,7 +44090,7 @@ var require_use_sync_external_store_shim_development = /* @__PURE__ */ __commonJ
 			return getSnapshot();
 		}
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-		var React$29 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$16 = React$29.useState, useEffect$12 = React$29.useEffect, useLayoutEffect$2 = React$29.useLayoutEffect, useDebugValue = React$29.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
+		var React$29 = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState$17 = React$29.useState, useEffect$13 = React$29.useEffect, useLayoutEffect$2 = React$29.useLayoutEffect, useDebugValue = React$29.useDebugValue, didWarnOld18Alpha = !1, didWarnUncachedGetSnapshot = !1, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
 		exports.useSyncExternalStore = void 0 !== React$29.useSyncExternalStore ? React$29.useSyncExternalStore : shim;
 		"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
 	})();
@@ -43990,6 +44278,14 @@ function Layout() {
 					}) }),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SidebarMenuItem, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SidebarMenuButton, {
 						asChild: true,
+						isActive: location.pathname === "/parceiros",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
+							to: "/parceiros",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShoppingBag, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Onde Comprar" })]
+						})
+					}) }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SidebarMenuItem, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SidebarMenuButton, {
+						asChild: true,
 						isActive: location.pathname === "/historico",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
 							to: "/historico",
@@ -44171,6 +44467,11 @@ function Layout() {
 						to: "/objetivos",
 						className: cn("flex flex-col items-center justify-center min-w-[64px] h-full space-y-1 text-[10px] font-medium transition-colors", location.pathname === "/objetivos" ? "text-primary" : "text-muted-foreground"),
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Target, { className: cn("h-5 w-5", location.pathname === "/objetivos" && "fill-primary/20") }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Objetivos" })]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
+						to: "/parceiros",
+						className: cn("flex flex-col items-center justify-center min-w-[64px] h-full space-y-1 text-[10px] font-medium transition-colors", location.pathname === "/parceiros" ? "text-primary" : "text-muted-foreground"),
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShoppingBag, { className: cn("h-5 w-5", location.pathname === "/parceiros" && "fill-primary/20") }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Comprar" })]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
 						to: "/promocoes",
@@ -44648,6 +44949,10 @@ var AppRoutes = () => {
 					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PromotionsPage, {})
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+					path: "/parceiros",
+					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PartnersPage, {})
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
 					path: "/promocoes/:id",
 					element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PromotionDetailsPage, {})
 				}),
@@ -44685,4 +44990,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-DDpcvL7L.js.map
+//# sourceMappingURL=index-CHP8dPGu.js.map

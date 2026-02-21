@@ -11,6 +11,7 @@ import {
   Tag,
   ShieldAlert,
   Calculator,
+  ShoppingBag,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -110,6 +111,17 @@ export default function Layout() {
                 <Link to="/objetivos">
                   <Target />
                   <span>Meus Objetivos</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={location.pathname === '/parceiros'}
+              >
+                <Link to="/parceiros">
+                  <ShoppingBag />
+                  <span>Onde Comprar</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -330,6 +342,23 @@ export default function Layout() {
               )}
             />
             <span>Objetivos</span>
+          </Link>
+          <Link
+            to="/parceiros"
+            className={cn(
+              'flex flex-col items-center justify-center min-w-[64px] h-full space-y-1 text-[10px] font-medium transition-colors',
+              location.pathname === '/parceiros'
+                ? 'text-primary'
+                : 'text-muted-foreground',
+            )}
+          >
+            <ShoppingBag
+              className={cn(
+                'h-5 w-5',
+                location.pathname === '/parceiros' && 'fill-primary/20',
+              )}
+            />
+            <span>Comprar</span>
           </Link>
           <Link
             to="/promocoes"
