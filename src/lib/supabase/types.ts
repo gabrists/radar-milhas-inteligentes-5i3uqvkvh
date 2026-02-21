@@ -23,7 +23,9 @@ export type Database = {
           id: string
           link: string
           origin: string
+          rules_summary: string | null
           title: string
+          valid_until: string | null
         }
         Insert: {
           bonus_percentage: number
@@ -32,7 +34,9 @@ export type Database = {
           id?: string
           link: string
           origin: string
+          rules_summary?: string | null
           title: string
+          valid_until?: string | null
         }
         Update: {
           bonus_percentage?: number
@@ -41,7 +45,33 @@ export type Database = {
           id?: string
           link?: string
           origin?: string
+          rules_summary?: string | null
           title?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
+      loyalty_balances: {
+        Row: {
+          balance: number
+          id: string
+          program_name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          id?: string
+          program_name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          id?: string
+          program_name?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -245,6 +275,11 @@ export const Constants = {
 // --- CONSTRAINTS ---
 // Table: active_promotions
 //   PRIMARY KEY active_promotions_pkey: PRIMARY KEY (id)
+// Table: loyalty_balances
+//   PRIMARY KEY loyalty_balances_pkey: PRIMARY KEY (id)
+//   CHECK loyalty_balances_program_name_check: CHECK ((program_name = ANY (ARRAY['Livelo'::text, 'Esfera'::text, 'Smiles'::text, 'Latam Pass'::text, 'TudoAzul'::text])))
+//   FOREIGN KEY loyalty_balances_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+//   UNIQUE loyalty_balances_user_id_program_name_key: UNIQUE (user_id, program_name)
 // Table: profiles
 //   FOREIGN KEY profiles_id_fkey: FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE
 //   PRIMARY KEY profiles_pkey: PRIMARY KEY (id)
@@ -262,6 +297,10 @@ export const Constants = {
 //     WITH CHECK: true
 //   Policy "Authenticated users can update active promotions" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: true
+// Table: loyalty_balances
+//   Policy "Users can manage own loyalty balances" (ALL, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = user_id)
+//     WITH CHECK: (auth.uid() = user_id)
 // Table: profiles
 //   Policy "Users can update own profile." (UPDATE, PERMISSIVE) roles={public}
 //     USING: (auth.uid() = id)
@@ -298,3 +337,7 @@ export const Constants = {
 //   END;
 //   $function$
 //
+
+// --- INDEXES ---
+// Table: loyalty_balances
+//   CREATE UNIQUE INDEX loyalty_balances_user_id_program_name_key ON public.loyalty_balances USING btree (user_id, program_name)

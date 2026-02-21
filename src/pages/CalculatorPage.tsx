@@ -201,17 +201,17 @@ export default function CalculatorPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6 md:space-y-8 pb-4">
+      <div className="max-w-3xl mx-auto space-y-6 md:space-y-8 pb-4">
         <div className="space-y-2">
           <Skeleton className="h-10 w-64" />
           <Skeleton className="h-5 w-48" />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-          <div className="lg:col-span-5 flex flex-col gap-6">
+        <div className="flex flex-col gap-6 md:gap-8">
+          <div className="flex flex-col gap-6">
             <Skeleton className="h-[160px] w-full rounded-xl" />
             <Skeleton className="h-[140px] w-full rounded-xl" />
           </div>
-          <div className="lg:col-span-7">
+          <div>
             <Skeleton className="h-[460px] w-full rounded-xl" />
           </div>
         </div>
@@ -223,7 +223,7 @@ export default function CalculatorPage() {
   const isFormValid = numericValue > 0 && numericMultiplier > 0
 
   return (
-    <div className="space-y-6 md:space-y-8 pb-4">
+    <div className="max-w-3xl mx-auto space-y-6 md:space-y-8 pb-4">
       <section className="animate-fade-in-up">
         <h2 className="text-2xl md:text-3xl font-bold text-secondary tracking-tight flex items-center gap-2">
           <Calculator className="w-8 h-8 text-primary" />
@@ -235,9 +235,9 @@ export default function CalculatorPage() {
         </p>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+      <div className="flex flex-col gap-6 md:gap-8">
         <div
-          className="lg:col-span-5 flex flex-col gap-6 animate-fade-in-up"
+          className="flex flex-col gap-6 animate-fade-in-up"
           style={{ animationDelay: '100ms' }}
         >
           {goal && topPromos.length > 0 && (
@@ -252,7 +252,7 @@ export default function CalculatorPage() {
                 {topPromos.map((promo) => (
                   <Card
                     key={promo.id}
-                    className="min-w-[260px] md:min-w-[280px] shrink-0 snap-start shadow-sm border-muted transition-all hover:shadow-md hover:border-primary/30"
+                    className="flex-1 min-w-[260px] md:min-w-[280px] shrink-0 snap-start shadow-sm border-muted transition-all hover:shadow-md hover:border-primary/30"
                   >
                     <CardContent className="p-4 flex flex-col gap-3.5">
                       <div className="flex justify-between items-start">
@@ -312,7 +312,7 @@ export default function CalculatorPage() {
 
         <div
           ref={calculatorRef}
-          className="lg:col-span-7 animate-fade-in-up"
+          className="animate-fade-in-up"
           style={{ animationDelay: '200ms' }}
         >
           <Card className="shadow-elevation border-muted h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/20 scroll-mt-24">

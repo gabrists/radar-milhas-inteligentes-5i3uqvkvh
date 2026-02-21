@@ -34372,25 +34372,22 @@ function CalculatorPage() {
 		applyPromo
 	]);
 	if (loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "space-y-6 md:space-y-8 pb-4",
+		className: "max-w-3xl mx-auto space-y-6 md:space-y-8 pb-4",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			className: "space-y-2",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 w-64" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-5 w-48" })]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8",
+			className: "flex flex-col gap-6 md:gap-8",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "lg:col-span-5 flex flex-col gap-6",
+				className: "flex flex-col gap-6",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[160px] w-full rounded-xl" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[140px] w-full rounded-xl" })]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "lg:col-span-7",
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[460px] w-full rounded-xl" })
-			})]
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-[460px] w-full rounded-xl" }) })]
 		})]
 	});
 	const isHighValue = parseFloat(percentageOfGoal) >= 10;
 	const isFormValid = numericValue > 0 && numericMultiplier > 0;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "space-y-6 md:space-y-8 pb-4",
+		className: "max-w-3xl mx-auto space-y-6 md:space-y-8 pb-4",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 			className: "animate-fade-in-up",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
@@ -34401,9 +34398,9 @@ function CalculatorPage() {
 				children: "Simule quantas milhas a sua próxima compra pode render e projete na sua meta."
 			})]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8",
+			className: "flex flex-col gap-6 md:gap-8",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "lg:col-span-5 flex flex-col gap-6 animate-fade-in-up",
+				className: "flex flex-col gap-6 animate-fade-in-up",
 				style: { animationDelay: "100ms" },
 				children: [goal && topPromos.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "space-y-3.5",
@@ -34420,7 +34417,7 @@ function CalculatorPage() {
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 						className: "flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x",
 						children: topPromos.map((promo) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
-							className: "min-w-[260px] md:min-w-[280px] shrink-0 snap-start shadow-sm border-muted transition-all hover:shadow-md hover:border-primary/30",
+							className: "flex-1 min-w-[260px] md:min-w-[280px] shrink-0 snap-start shadow-sm border-muted transition-all hover:shadow-md hover:border-primary/30",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
 								className: "p-4 flex flex-col gap-3.5",
 								children: [
@@ -34489,7 +34486,7 @@ function CalculatorPage() {
 				})]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				ref: calculatorRef,
-				className: "lg:col-span-7 animate-fade-in-up",
+				className: "animate-fade-in-up",
 				style: { animationDelay: "200ms" },
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
 					className: "shadow-elevation border-muted h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/20 scroll-mt-24",
@@ -40682,4 +40679,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, { chil
 var App_default = App;
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App_default, {}));
 
-//# sourceMappingURL=index-BKFM4zlJ.js.map
+//# sourceMappingURL=index-BmZMhEIQ.js.map
