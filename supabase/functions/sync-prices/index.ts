@@ -2,17 +2,16 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
 
-interface Promotion {
-  title: string;
-  origin: string;
-  destination: string;
-  bonus_percentage: number;
-  link: string;
+interface PricePayload {
+  program_name: string;
+  base_price: number;
+  discount_percentage: number;
+  promotion_link?: string;
 }
 
 interface SyncRequest {
   secret: string;
-  promotions: Promotion[];
+  prices: PricePayload[];
 }
 
 Deno.serve(async (req: Request) => {
@@ -23,7 +22,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body: SyncRequest = await req.json();
-    const { secret, promotions } = body;
+    const { secret, prices } = body;
 
     const cronSecret = Deno.env.get('CRON_SECRET');
 
@@ -35,34 +34,31 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // Initialize Supabase Client with Service Role Key to bypass RLS for inserts/deletes
+    // Initialize Supabase Client with Service Role Key to bypass RLS
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // 1. Delete all existing records
-    const { error: deleteError } = await supabase
-      .from('active_promotions')
-      .delete()
-      .not('id', 'is', null);
+    if (prices && prices.length > 0) {
+      const upsertData = prices.map(p => ({
+        program_name: p.program_name,
+        best_price_milheiro: p.base_price * (1 - p.discount_percentage / 100),
+        discount_percentage: p.discount_percentage,
+        promotion_link: p.promotion_link || null,
+        updated_at: new Date().toISOString()
+      }));
 
-    if (deleteError) {
-      throw deleteError;
-    }
+      const { error } = await supabase
+        .from('program_prices')
+        .upsert(upsertData, { onConflict: 'program_name' });
 
-    // 2. Insert new records
-    if (promotions && promotions.length > 0) {
-      const { error: insertError } = await supabase
-        .from('active_promotions')
-        .insert(promotions);
-
-      if (insertError) {
-        throw insertError;
+      if (error) {
+        throw error;
       }
     }
 
-    return new Response(JSON.stringify({ message: 'Promoções sincronizadas com sucesso!' }), {
+    return new Response(JSON.stringify({ message: 'Preços sincronizados com sucesso!' }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

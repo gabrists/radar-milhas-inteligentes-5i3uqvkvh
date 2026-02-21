@@ -1,5 +1,9 @@
 {
   "_versions": {
-    "sync-promotions": 1
+    "sync-promotions": 1,
+    "sync-prices": 1
+  }
+}
+functions": 1
   }
 }
