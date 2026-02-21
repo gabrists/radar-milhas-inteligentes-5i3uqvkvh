@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@/components/ui/badge'
 import {
   Wallet,
   MapPin,
@@ -23,6 +24,9 @@ import {
   Percent,
   ArrowRight,
   PlusCircle,
+  TrendingUp,
+  Clock,
+  ExternalLink,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
@@ -35,6 +39,15 @@ interface TravelGoal {
   target_miles: number
   current_miles: number
   image_url: string | null
+}
+
+interface ProgramPrice {
+  id: string
+  program_name: string
+  best_price_milheiro: number
+  discount_percentage: number | null
+  promotion_link: string | null
+  updated_at: string
 }
 
 const programsList = [
@@ -55,6 +68,7 @@ export default function Index() {
   const [promo, setPromo] = useState<any>(null)
   const [goal, setGoal] = useState<TravelGoal | null>(null)
   const [balances, setBalances] = useState<Record<string, number>>({})
+  const [prices, setPrices] = useState<ProgramPrice[]>([])
 
   const [refreshKey, setRefreshKey] = useState(0)
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false)
@@ -68,29 +82,35 @@ export default function Index() {
     async function fetchData() {
       if (!user) return
       try {
-        const [profileRes, promoRes, goalRes, balancesRes] = await Promise.all([
-          supabase
-            .from('profiles')
-            .select('full_name')
-            .eq('id', user.id)
-            .single(),
-          supabase
-            .from('active_promotions')
-            .select('*')
-            .order('bonus_percentage', { ascending: false })
-            .limit(1)
-            .maybeSingle(),
-          supabase
-            .from('travel_goals')
-            .select('*')
-            .eq('user_id', user.id)
-            .eq('is_active', true)
-            .maybeSingle(),
-          supabase.from('loyalty_balances').select('*').eq('user_id', user.id),
-        ])
+        const [profileRes, promoRes, goalRes, balancesRes, pricesRes] =
+          await Promise.all([
+            supabase
+              .from('profiles')
+              .select('full_name')
+              .eq('id', user.id)
+              .single(),
+            supabase
+              .from('active_promotions')
+              .select('*')
+              .order('bonus_percentage', { ascending: false })
+              .limit(1)
+              .maybeSingle(),
+            supabase
+              .from('travel_goals')
+              .select('*')
+              .eq('user_id', user.id)
+              .eq('is_active', true)
+              .maybeSingle(),
+            supabase
+              .from('loyalty_balances')
+              .select('*')
+              .eq('user_id', user.id),
+            supabase.from('program_prices').select('*').order('program_name'),
+          ])
 
         if (profileRes.data) setProfile(profileRes.data)
         if (promoRes.data) setPromo(promoRes.data)
+        if (pricesRes.data) setPrices(pricesRes.data)
 
         if (goalRes.data) {
           setGoal(goalRes.data)
@@ -192,6 +212,14 @@ export default function Index() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Skeleton className="h-[360px] w-full rounded-2xl lg:col-span-2" />
           <Skeleton className="h-[360px] w-full rounded-2xl lg:col-span-1" />
+        </div>
+        <div className="space-y-4 mt-8">
+          <Skeleton className="h-8 w-48 rounded-md" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {[...Array(5)].map((_, i) => (
+              <Skeleton key={i} className="h-32 w-full rounded-xl" />
+            ))}
+          </div>
         </div>
       </div>
     )
@@ -372,6 +400,114 @@ export default function Index() {
             </CardContent>
           </Card>
         </div>
+      </section>
+
+      <section
+        className="animate-fade-in-up"
+        style={{ animationDelay: '150ms' }}
+      >
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+          <h2 className="text-xl font-bold text-secondary flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-primary" /> Cotações do Milheiro
+          </h2>
+        </div>
+
+        {prices.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {prices.map((price) => {
+              const progInfo = programsList.find(
+                (p) =>
+                  p.name.toLowerCase() === price.program_name.toLowerCase(),
+              ) || {
+                name: price.program_name,
+                query: price.program_name,
+                color: 'gray',
+              }
+
+              return (
+                <Card
+                  key={price.id}
+                  className="flex flex-col p-4 gap-4 hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 rounded-2xl bg-white group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-full border border-muted/50 bg-muted/20 flex items-center justify-center overflow-hidden shrink-0">
+                        <img
+                          src={`https://img.usecurling.com/i?q=${progInfo.query}&color=${progInfo.color}`}
+                          alt={price.program_name}
+                          className="w-6 h-6 object-contain"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none'
+                            e.currentTarget.parentElement!.innerHTML = `<span class="font-bold text-sm text-muted-foreground">${price.program_name.charAt(0)}</span>`
+                          }}
+                        />
+                      </div>
+                      <h3 className="font-semibold text-secondary truncate">
+                        {price.program_name}
+                      </h3>
+                    </div>
+                    {price.discount_percentage &&
+                    price.discount_percentage > 0 ? (
+                      <Badge
+                        variant="secondary"
+                        className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none font-bold shrink-0 ml-2"
+                      >
+                        -{price.discount_percentage}%
+                      </Badge>
+                    ) : null}
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground font-medium mb-1 uppercase tracking-wider">
+                      Melhor Preço / 1k
+                    </p>
+                    <p className="text-2xl font-black text-secondary truncate">
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      }).format(price.best_price_milheiro)}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/50">
+                    <div
+                      className="flex items-center text-[11px] text-muted-foreground font-medium"
+                      title={`Atualizado em ${new Date(price.updated_at).toLocaleString('pt-BR')}`}
+                    >
+                      <Clock className="w-3 h-3 mr-1 shrink-0" />
+                      <span className="truncate max-w-[90px]">
+                        {new Date(price.updated_at).toLocaleDateString('pt-BR')}
+                      </span>
+                    </div>
+                    {price.promotion_link ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 text-xs font-bold text-primary hover:text-primary hover:bg-primary/10 shrink-0"
+                        asChild
+                      >
+                        <a
+                          href={price.promotion_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Ver Link <ExternalLink className="w-3 h-3 ml-1" />
+                        </a>
+                      </Button>
+                    ) : null}
+                  </div>
+                </Card>
+              )
+            })}
+          </div>
+        ) : (
+          <Card className="p-8 text-center border-dashed rounded-2xl bg-muted/10">
+            <TrendingUp className="w-8 h-8 text-muted-foreground mx-auto mb-3 opacity-50" />
+            <p className="text-muted-foreground font-medium">
+              Nenhuma cotação disponível no momento.
+            </p>
+          </Card>
+        )}
       </section>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
