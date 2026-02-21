@@ -36,7 +36,7 @@ import azulLogo from '@/assets/azul-39f96.svg'
 import latamLogo from '@/assets/latam-13e30.svg'
 import smilesLogo from '@/assets/smiles-3b02a.svg'
 import esferaLogo from '@/assets/esfera-1668b.png'
-import liveloLogo from '@/assets/livelo-398a4.svg'
+import liveloLogo from '@/assets/livelo-557eb.svg'
 
 interface TravelGoal {
   id: string

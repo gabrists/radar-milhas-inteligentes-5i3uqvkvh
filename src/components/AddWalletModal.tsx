@@ -124,7 +124,7 @@ export function AddWalletModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-[520px] flex flex-col h-[85vh] sm:h-[600px] p-0 overflow-hidden gap-0 rounded-2xl border-none shadow-elevation">
+      <DialogContent className="sm:max-w-[520px] flex flex-col h-[70vh] max-h-[90vh] p-0 overflow-hidden gap-0 rounded-2xl border-none shadow-elevation">
         <DialogHeader className="p-6 pb-4 text-left shrink-0">
           <DialogTitle className="text-lg font-semibold text-foreground">
             Adicionar Programa
