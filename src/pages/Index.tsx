@@ -1,143 +1,145 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Card, CardContent, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardTitle,
+  CardHeader,
+  CardDescription,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
 import {
-  Wallet,
-  MapPin,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart'
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
+import {
   Target,
-  Loader2,
-  Edit2,
-  Sparkles,
-  Percent,
-  ArrowRight,
   PlusCircle,
-  Clock,
-  ExternalLink,
-  Tag,
   ArrowRightLeft,
+  AlertTriangle,
+  TrendingUp,
+  Calendar,
+  AlertCircle,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
-import type { Database } from '@/lib/supabase/types'
-import { useToast } from '@/hooks/use-toast'
-import { TransactionModal } from '@/components/TransactionModal'
+import {
+  TransactionModal,
+  TransactionType,
+} from '@/components/TransactionModal'
+import { cn } from '@/lib/utils'
 
-type ActivePromotion = Database['public']['Tables']['active_promotions']['Row']
+const PROGRAMS = ['Livelo', 'Esfera', 'Smiles', 'Latam Pass', 'TudoAzul']
 
-interface TravelGoal {
-  id: string
-  destination_name: string
-  target_miles: number
-  current_miles: number
-  image_url: string | null
+const programColors: Record<string, string> = {
+  Livelo: '#e11d48',
+  Esfera: '#dc2626',
+  Smiles: '#f97316',
+  'Latam Pass': '#2563eb',
+  TudoAzul: '#0891b2',
 }
 
-const programsList = [
-  { name: 'Livelo', query: 'gift', color: 'rose' },
-  { name: 'Esfera', query: 'sphere', color: 'red' },
-  { name: 'Smiles', query: 'smile', color: 'orange' },
-  { name: 'Latam Pass', query: 'plane', color: 'blue' },
-  { name: 'TudoAzul', query: 'plane', color: 'cyan' },
-]
+const chartConfig = {
+  value: { label: 'Milhas' },
+  Livelo: { label: 'Livelo', color: '#e11d48' },
+  Esfera: { label: 'Esfera', color: '#dc2626' },
+  Smiles: { label: 'Smiles', color: '#f97316' },
+  'Latam Pass': { label: 'Latam Pass', color: '#2563eb' },
+  TudoAzul: { label: 'TudoAzul', color: '#0891b2' },
+}
 
 export default function Index() {
   const { user } = useAuth()
-  const { toast } = useToast()
-  const navigate = useNavigate()
 
-  const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<any>(null)
-  const [promo, setPromo] = useState<ActivePromotion | null>(null)
-  const [goal, setGoal] = useState<TravelGoal | null>(null)
-  const [balances, setBalances] = useState<Record<string, number>>({})
-  const [allPromotions, setAllPromotions] = useState<ActivePromotion[]>([])
-
+  const [balances, setBalances] = useState<any[]>([])
+  const [totalBalance, setTotalBalance] = useState(0)
+  const [expiringPoints, setExpiringPoints] = useState<any[]>([])
+  const [transactions, setTransactions] = useState<any[]>([])
+  const [goal, setGoal] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const [refreshKey, setRefreshKey] = useState(0)
-  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false)
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedProgram, setSelectedProgram] = useState('')
-  const [newBalance, setNewBalance] = useState('')
-  const [isSaving, setIsSaving] = useState(false)
+  const [transactionModalOpen, setTransactionModalOpen] = useState(false)
+  const [defaultTxProgram, setDefaultTxProgram] = useState<string>('')
+  const [defaultTxType, setDefaultTxType] = useState<TransactionType>('acumulo')
+
+  const [txFilterProgram, setTxFilterProgram] = useState('all')
+  const [txFilterType, setTxFilterType] = useState('all')
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       if (!user) return
       try {
-        const [profileRes, promosRes, goalRes, balancesRes] = await Promise.all(
-          [
+        const [profileRes, balancesRes, expRes, txRes, goalRes] =
+          await Promise.all([
             supabase
               .from('profiles')
               .select('full_name')
               .eq('id', user.id)
               .single(),
             supabase
-              .from('active_promotions')
+              .from('loyalty_balances')
               .select('*')
-              .order('created_at', { ascending: false }),
+              .eq('user_id', user.id),
+            supabase
+              .from('expiring_points' as any)
+              .select('*, loyalty_balances(program_name, user_id)'),
+            supabase
+              .from('transactions')
+              .select('*')
+              .eq('user_id', user.id)
+              .order('transaction_date', { ascending: false }),
             supabase
               .from('travel_goals')
               .select('*')
               .eq('user_id', user.id)
               .eq('is_active', true)
               .maybeSingle(),
-            supabase
-              .from('loyalty_balances')
-              .select('*')
-              .eq('user_id', user.id),
-          ],
-        )
+          ])
 
         if (profileRes.data) setProfile(profileRes.data)
-        if (promosRes.data) {
-          setAllPromotions(promosRes.data)
-          if (promosRes.data.length > 0) {
-            const bestPromo = promosRes.data.reduce(
-              (prev, current) =>
-                prev.bonus_percentage > current.bonus_percentage
-                  ? prev
-                  : current,
-              promosRes.data[0],
-            )
-            setPromo(bestPromo)
-          }
+
+        if (balancesRes.data) {
+          setBalances(balancesRes.data)
+          setTotalBalance(
+            balancesRes.data.reduce((acc, curr) => acc + curr.balance, 0),
+          )
         }
+
+        if (expRes.data) {
+          const userExp = expRes.data.filter(
+            (e: any) => e.loyalty_balances?.user_id === user.id,
+          )
+          setExpiringPoints(userExp)
+        }
+
+        if (txRes.data) setTransactions(txRes.data)
 
         if (goalRes.data) {
           setGoal(goalRes.data)
         } else {
-          const fallbackGoal = await supabase
+          const fallback = await supabase
             .from('travel_goals')
             .select('*')
             .eq('user_id', user.id)
             .limit(1)
             .maybeSingle()
-          if (fallbackGoal.data) setGoal(fallbackGoal.data)
+          if (fallback.data) setGoal(fallback.data)
         }
-
-        const newBalances: Record<string, number> = {}
-        programsList.forEach((p) => (newBalances[p.name] = 0))
-        if (balancesRes.data) {
-          balancesRes.data.forEach((b: any) => {
-            newBalances[b.program_name] = b.balance
-          })
-        }
-        setBalances(newBalances)
-      } catch (err) {
-        console.error('Error fetching dashboard data:', err)
+      } catch (error) {
+        console.error(error)
       } finally {
         setLoading(false)
       }
@@ -145,409 +147,402 @@ export default function Index() {
     fetchData()
   }, [user, refreshKey])
 
-  const totalBalance = Object.values(balances).reduce(
-    (acc, curr) => acc + curr,
-    0,
-  )
-  const goalTotal = goal?.target_miles || 100000
-  const currentMiles = goal?.current_miles || totalBalance
-  const currentPercentage = goalTotal > 0 ? (currentMiles / goalTotal) * 100 : 0
-  const goalImage =
-    goal?.image_url ||
-    `https://img.usecurling.com/p/800/600?q=${encodeURIComponent(goal?.destination_name || 'vacation')}&dpr=2`
-  const promoImage = promo
-    ? `https://img.usecurling.com/p/400/300?q=${encodeURIComponent(promo.destination)}&dpr=2`
-    : `https://img.usecurling.com/p/400/300?q=airport&dpr=2`
+  const next60Days = new Date()
+  next60Days.setDate(next60Days.getDate() + 60)
 
-  const handleOpenModal = (program: string) => {
-    setSelectedProgram(program)
-    setNewBalance(balances[program]?.toString() || '0')
-    setIsModalOpen(true)
-  }
+  const expiringSoon = expiringPoints.filter((ep) => {
+    const expDate = new Date(ep.expiration_date)
+    return expDate <= next60Days && expDate >= new Date()
+  })
 
-  const handleSaveBalance = async () => {
-    if (!user) return
-    setIsSaving(true)
-    try {
-      const val = parseInt(newBalance, 10) || 0
-      const { data: existing } = await supabase
-        .from('loyalty_balances')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('program_name', selectedProgram)
-        .maybeSingle()
+  const chartData = balances.map((b) => ({
+    name: b.program_name,
+    value: b.balance,
+    fill: programColors[b.program_name] || '#94a3b8',
+  }))
 
-      if (existing) {
-        await supabase
-          .from('loyalty_balances')
-          .update({ balance: val, updated_at: new Date().toISOString() })
-          .eq('id', existing.id)
-      } else {
-        await supabase.from('loyalty_balances').insert({
-          user_id: user.id,
-          program_name: selectedProgram,
-          balance: val,
-        })
-      }
+  const goalTotal = goal?.target_miles || 120000
+  const currentMiles = goal?.current_miles || 0
+  const goalPercentage = goalTotal > 0 ? (currentMiles / goalTotal) * 100 : 0
 
-      setBalances((prev) => ({ ...prev, [selectedProgram]: val }))
-      setIsModalOpen(false)
-      toast({ title: 'Sucesso!', description: 'Saldo atualizado com sucesso.' })
-    } catch (err) {
-      toast({
-        title: 'Erro',
-        description: 'Ocorreu um erro ao tentar atualizar o saldo.',
-        variant: 'destructive',
-      })
-    } finally {
-      setIsSaving(false)
-    }
+  const filteredTx = transactions.filter((tx) => {
+    if (
+      txFilterProgram !== 'all' &&
+      tx.origin_program !== txFilterProgram &&
+      tx.destination_program !== txFilterProgram
+    )
+      return false
+    if (txFilterType !== 'all' && tx.type !== txFilterType) return false
+    return true
+  })
+
+  const handleOpenTransaction = (prog: string, type: TransactionType) => {
+    setDefaultTxProgram(prog)
+    setDefaultTxType(type)
+    setTransactionModalOpen(true)
   }
 
   if (loading) {
     return (
-      <div className="space-y-10 md:space-y-12 pb-8">
-        <Skeleton className="h-8 w-48 rounded-md" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="space-y-6 md:space-y-8 pb-8">
+        <Skeleton className="h-10 w-64" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Skeleton className="h-[200px] w-full rounded-xl" />
+          <Skeleton className="h-[200px] w-full rounded-xl" />
+          <Skeleton className="h-[200px] w-full rounded-xl" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-24 w-full rounded-xl" />
+            <Skeleton key={i} className="h-[180px] w-full rounded-xl" />
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Skeleton className="h-[360px] w-full rounded-2xl lg:col-span-2" />
-          <Skeleton className="h-[360px] w-full rounded-2xl lg:col-span-1" />
-        </div>
-        <div className="space-y-4 mt-8">
-          <Skeleton className="h-8 w-48 rounded-md" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className="h-48 w-full rounded-xl" />
-            ))}
-          </div>
-        </div>
+        <Skeleton className="h-[400px] w-full rounded-xl" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-10 md:space-y-12 pb-8">
+    <div className="space-y-6 md:space-y-8 pb-8">
+      {expiringSoon.length > 0 && (
+        <Alert
+          variant="destructive"
+          className="mb-6 animate-in slide-in-from-top-4 border-red-200 bg-red-50 text-red-800 shadow-sm"
+        >
+          <AlertCircle className="h-5 w-5" />
+          <AlertTitle className="font-bold text-lg">Atenção!</AlertTitle>
+          <AlertDescription className="font-medium mt-1">
+            Você tem pontos expirando nos próximos 60 dias! Revise suas
+            carteiras para não perder suas milhas.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <section className="animate-fade-in-up">
-        <h1 className="text-xl md:text-2xl font-bold text-secondary tracking-tight">
-          Olá, {profile?.full_name?.split(' ')[0] || 'Viajante'}
+        <h1 className="text-2xl md:text-3xl font-bold text-secondary tracking-tight">
+          Carteira de Milhas
         </h1>
+        <p className="text-muted-foreground mt-1 text-sm md:text-base font-medium">
+          Olá, {profile?.full_name?.split(' ')[0] || 'Viajante'}. Acompanhe seu
+          portfólio de pontos, metas e movimentações.
+        </p>
       </section>
 
-      <section
-        className="animate-fade-in-up"
+      <div
+        className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up"
         style={{ animationDelay: '50ms' }}
       >
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-          <h2 className="text-xl font-bold text-secondary flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-primary" /> Minha Carteira
-          </h2>
-          <Button
-            onClick={() => setIsTransactionModalOpen(true)}
-            className="font-bold shadow-sm rounded-full shrink-0 h-10 px-5"
-          >
-            <PlusCircle className="w-4 h-4 mr-2" /> Nova Movimentação
-          </Button>
-        </div>
+        <Card className="col-span-1 shadow-elevation border-muted">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg text-secondary">
+              Saldo Consolidado
+            </CardTitle>
+            <CardDescription>
+              Total de pontos em todos os programas
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center py-6">
+            <div className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-primary to-blue-600 tracking-tighter">
+              {new Intl.NumberFormat('pt-BR').format(totalBalance)}
+            </div>
+            <p className="text-sm font-semibold text-muted-foreground mt-2 uppercase tracking-widest">
+              Milhas Totais
+            </p>
+          </CardContent>
+        </Card>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {programsList.map((prog) => (
-            <Card
-              key={prog.name}
-              className="flex items-center p-4 gap-4 group hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 cursor-pointer rounded-2xl bg-white"
-              onClick={() =>
-                navigate(
-                  `/programa/${prog.name.toLowerCase().replace(/\s+/g, '')}`,
-                )
-              }
-            >
-              <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-muted/50 bg-muted/20 flex items-center justify-center">
-                <img
-                  src={`https://img.usecurling.com/i?q=${prog.name}&color=${prog.color}`}
-                  alt={prog.name}
-                  className="w-8 h-8 object-contain"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none'
-                    e.currentTarget.parentElement!.innerHTML = `<span class="font-bold text-lg text-muted-foreground">${prog.name.charAt(0)}</span>`
-                  }}
-                />
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-muted-foreground truncate">
-                  {prog.name}
-                </h3>
-                <p className="text-xl font-bold text-secondary truncate mt-0.5">
-                  {new Intl.NumberFormat('pt-BR').format(
-                    balances[prog.name] || 0,
-                  )}
-                </p>
-              </div>
-
-              <div
-                className="w-8 h-8 rounded-full bg-muted/30 flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0 z-10"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleOpenModal(prog.name)
-                }}
+        <Card className="col-span-1 shadow-elevation border-muted">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg text-secondary">
+              Distribuição
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="h-[180px] pb-4 relative flex items-center justify-center">
+            {balances.filter((b) => b.balance > 0).length > 0 ? (
+              <ChartContainer
+                config={chartConfig}
+                className="h-full w-full max-h-full"
               >
-                <Edit2 className="w-4 h-4" />
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={chartData.filter((d) => d.value > 0)}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={2}
+                      dataKey="value"
+                      stroke="none"
+                    >
+                      {chartData
+                        .filter((d) => d.value > 0)
+                        .map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                    </Pie>
+                    <ChartTooltip
+                      content={<ChartTooltipContent nameKey="name" />}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            ) : (
+              <div className="text-muted-foreground text-sm font-medium">
+                Nenhum saldo registrado
               </div>
-            </Card>
-          ))}
-        </div>
-      </section>
+            )}
+          </CardContent>
+        </Card>
 
-      <section
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 animate-fade-in-up"
+        <Card className="col-span-1 shadow-sm border-muted flex flex-col justify-center bg-gradient-to-br from-primary/5 to-primary/10">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2 text-secondary">
+              <Target className="w-5 h-5 text-primary" /> Progresso de Meta
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="font-bold text-secondary text-xl leading-tight mb-1 line-clamp-2">
+                {goal?.destination_name || 'Nenhuma meta definida'}
+              </h3>
+              <p className="text-sm font-medium text-muted-foreground">
+                Acompanhe a sua próxima grande aventura!
+              </p>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between items-end">
+                <span className="text-2xl font-black text-primary">
+                  {new Intl.NumberFormat('pt-BR').format(currentMiles)}{' '}
+                  <span className="text-sm font-semibold text-muted-foreground">
+                    / {new Intl.NumberFormat('pt-BR').format(goalTotal)} mi
+                  </span>
+                </span>
+                <span className="font-bold text-secondary bg-background px-2 py-0.5 rounded shadow-sm border">
+                  {goalPercentage.toFixed(1)}%
+                </span>
+              </div>
+              <Progress value={goalPercentage} className="h-3" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 animate-fade-in-up"
         style={{ animationDelay: '100ms' }}
       >
-        <div className="lg:col-span-2 flex flex-col h-full">
-          <h2 className="text-xl font-bold text-secondary mb-4 flex items-center gap-2">
-            <Target className="w-5 h-5 text-primary" /> Meta Principal
-          </h2>
-          <Card
-            className="flex-1 overflow-hidden border-none shadow-elevation relative group min-h-[320px] rounded-2xl cursor-pointer"
-            onClick={() => navigate('/objetivos')}
-          >
-            <div className="absolute inset-0 bg-gradient-to-t from-secondary via-secondary/60 to-transparent z-10 transition-opacity duration-300 group-hover:opacity-90"></div>
-            <img
-              src={goalImage}
-              alt={goal?.destination_name}
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
+        {PROGRAMS.map((progName) => {
+          const balanceRecord = balances.find(
+            (b) => b.program_name === progName,
+          )
+          const balance = balanceRecord?.balance || 0
+          const progExp = expiringPoints.filter(
+            (ep) => ep.loyalty_balances?.program_name === progName,
+          )
+          const nextExp = progExp.sort(
+            (a, b) =>
+              new Date(a.expiration_date).getTime() -
+              new Date(b.expiration_date).getTime(),
+          )[0]
 
-            <div className="absolute top-4 left-4 z-20">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold text-white shadow-sm border border-white/20">
-                <MapPin className="w-3.5 h-3.5" /> Destino Ativo
-              </span>
-            </div>
-
-            <CardContent className="absolute bottom-0 left-0 right-0 z-20 p-6 md:p-8 text-white">
-              <CardTitle className="text-3xl md:text-4xl font-black leading-tight drop-shadow-md mb-6">
-                {goal?.destination_name || 'Nenhuma meta definida'}
-              </CardTitle>
-
-              <div className="space-y-3">
-                <div className="flex justify-between items-end">
-                  <div className="font-medium text-white/90">
-                    <span className="text-2xl font-bold text-white mr-1">
-                      {new Intl.NumberFormat('pt-BR').format(currentMiles)}
-                    </span>
-                    <span className="text-sm">
-                      / {new Intl.NumberFormat('pt-BR').format(goalTotal)} mi
-                    </span>
-                  </div>
-                  <div className="text-xl font-bold text-primary-foreground drop-shadow-sm bg-primary/20 px-2 py-0.5 rounded backdrop-blur-sm">
-                    {currentPercentage.toFixed(1)}%
-                  </div>
-                </div>
-
-                <div className="relative h-3 bg-black/40 rounded-full overflow-hidden backdrop-blur-md border border-white/10 shadow-inner">
-                  <div
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-blue-400 rounded-full transition-all duration-1000 ease-out"
-                    style={{ width: `${Math.min(currentPercentage, 100)}%` }}
-                  ></div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="lg:col-span-1 flex flex-col h-full">
-          <h2 className="text-xl font-bold text-secondary mb-4 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-accent" /> Oportunidade do Dia
-          </h2>
-          <Card className="flex-1 flex flex-col overflow-hidden shadow-sm border-muted transition-all duration-300 hover:shadow-elevation hover:border-primary/30 rounded-2xl group">
-            <div className="h-40 relative overflow-hidden shrink-0 bg-muted">
-              <img
-                src={promoImage}
-                alt="Promoção"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent"></div>
-              {promo && (
-                <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-accent text-accent-foreground text-xs font-black shadow-sm">
-                    <Percent className="w-3.5 h-3.5" /> {promo.bonus_percentage}
-                    % BÔNUS
+          return (
+            <Card
+              key={progName}
+              className="flex flex-col shadow-sm border-muted hover:shadow-md hover:border-primary/20 transition-all"
+            >
+              <CardHeader className="p-4 pb-2 flex flex-row items-center gap-3 space-y-0">
+                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-muted bg-muted/20 flex items-center justify-center shadow-inner">
+                  <span
+                    className="font-bold text-lg drop-shadow-sm"
+                    style={{ color: programColors[progName] }}
+                  >
+                    {progName.charAt(0)}
                   </span>
                 </div>
-              )}
-            </div>
-            <CardContent className="p-5 flex flex-col flex-1 gap-4">
-              <div className="flex-1">
-                <h3 className="font-bold text-secondary text-lg leading-tight mb-2 line-clamp-2">
-                  {promo
-                    ? promo.title
-                    : 'Fique por dentro das melhores ofertas!'}
-                </h3>
-                <p className="text-sm font-medium text-muted-foreground line-clamp-2">
-                  {promo
-                    ? `Transfira de ${promo.origin} para ${promo.destination} e ganhe bônus exclusivos.`
-                    : 'Aproveite bônus de transferência para acelerar sua viagem.'}
-                </p>
+                <CardTitle className="text-base truncate">{progName}</CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 pt-2 pb-3 flex-1 flex flex-col justify-center">
+                <div className="text-2xl font-black text-secondary tracking-tight">
+                  {new Intl.NumberFormat('pt-BR').format(balance)}
+                </div>
+                {nextExp ? (
+                  <div className="mt-1.5 text-xs font-semibold text-destructive flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <span className="truncate">
+                      {new Intl.NumberFormat('pt-BR').format(nextExp.amount)} em{' '}
+                      {new Date(nextExp.expiration_date).toLocaleDateString(
+                        'pt-BR',
+                        { day: '2-digit', month: '2-digit' },
+                      )}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="mt-1.5 text-xs font-medium text-muted-foreground flex items-center gap-1.5 opacity-70">
+                    <Calendar className="w-3.5 h-3.5" />
+                    Sem expirações próximas
+                  </div>
+                )}
+              </CardContent>
+              <div className="p-3 border-t border-muted/50 bg-muted/10 grid grid-cols-3 gap-1.5 rounded-b-xl">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-[11px] font-bold text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 px-0 shadow-sm bg-background"
+                  onClick={() => handleOpenTransaction(progName, 'acumulo')}
+                >
+                  Adicionar
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-[11px] font-bold text-blue-700 hover:bg-blue-100 hover:text-blue-800 px-0 shadow-sm bg-background"
+                  onClick={() =>
+                    handleOpenTransaction(progName, 'transferencia')
+                  }
+                >
+                  Transferir
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-[11px] font-bold text-red-700 hover:bg-red-100 hover:text-red-800 px-0 shadow-sm bg-background"
+                  onClick={() => handleOpenTransaction(progName, 'resgate')}
+                >
+                  Resgatar
+                </Button>
               </div>
-              <Button
-                asChild
-                className="w-full font-bold shadow-sm"
-                variant={promo ? 'default' : 'outline'}
-              >
-                <Link to={promo ? `/promocoes/${promo.id}` : '/promocoes'}>
-                  {promo ? 'Ver Promoção' : 'Ver Promoções'}{' '}
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+            </Card>
+          )
+        })}
+      </div>
 
-      <section
-        className="animate-fade-in-up"
+      <Card
+        className="shadow-elevation border-muted mt-8 animate-fade-in-up"
         style={{ animationDelay: '150ms' }}
       >
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-          <h2 className="text-xl font-bold text-secondary flex items-center gap-2">
-            <Tag className="w-5 h-5 text-primary" /> Promoções Ativas
-          </h2>
-        </div>
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-4 border-b border-muted/50">
+          <div>
+            <CardTitle className="text-xl text-secondary">
+              Extrato Dinâmico
+            </CardTitle>
+            <CardDescription>
+              Todas as suas entradas e saídas de milhas
+            </CardDescription>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Select value={txFilterProgram} onValueChange={setTxFilterProgram}>
+              <SelectTrigger className="w-[160px] bg-muted/20">
+                <SelectValue placeholder="Programa" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos Programas</SelectItem>
+                {PROGRAMS.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    {p}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={txFilterType} onValueChange={setTxFilterType}>
+              <SelectTrigger className="w-[160px] bg-muted/20">
+                <SelectValue placeholder="Tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos Tipos</SelectItem>
+                <SelectItem value="Acúmulo">Acúmulo</SelectItem>
+                <SelectItem value="Compra">Compra</SelectItem>
+                <SelectItem value="Resgate">Resgate</SelectItem>
+                <SelectItem value="Transferência">Transferência</SelectItem>
+                <SelectItem value="Expiração">Expiração</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="divide-y divide-border">
+            {filteredTx.length > 0 ? (
+              filteredTx.map((tx) => {
+                let color = 'text-primary'
+                let icon = <PlusCircle className="w-5 h-5" />
+                let bg = 'bg-primary/10'
+                let sign = '+'
 
-        {allPromotions.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {allPromotions.map((p) => (
-              <Card
-                key={p.id}
-                className="flex flex-col p-5 gap-4 hover:shadow-md transition-all duration-200 border-muted hover:border-primary/20 rounded-2xl bg-white group"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <h3
-                    className="font-bold text-secondary line-clamp-2"
-                    title={p.title}
-                  >
-                    {p.title}
-                  </h3>
-                  <Badge
-                    variant="secondary"
-                    className="bg-primary/10 text-primary hover:bg-primary/10 border-none font-bold shrink-0"
-                  >
-                    {p.bonus_percentage}% Bônus
-                  </Badge>
-                </div>
+                if (tx.type === 'Resgate' || tx.type === 'Expiração') {
+                  color = 'text-destructive'
+                  icon = <AlertTriangle className="w-5 h-5" />
+                  bg = 'bg-destructive/10'
+                  sign = '-'
+                } else if (tx.type === 'Transferência') {
+                  color = 'text-blue-600'
+                  icon = <ArrowRightLeft className="w-5 h-5" />
+                  bg = 'bg-blue-100'
+                  sign = '-'
+                } else if (tx.type === 'Acúmulo' || tx.type === 'Compra') {
+                  color = 'text-emerald-600'
+                  icon = <TrendingUp className="w-5 h-5" />
+                  bg = 'bg-emerald-100'
+                  sign = '+'
+                }
 
-                <div className="flex items-center gap-2 text-sm font-semibold text-secondary bg-muted/40 p-2.5 rounded-lg border border-muted/50">
-                  <span
-                    className="truncate flex-1 text-center"
-                    title={p.origin}
+                return (
+                  <div
+                    key={tx.id}
+                    className="flex items-center justify-between p-4 sm:px-6 hover:bg-muted/10 transition-colors"
                   >
-                    {p.origin}
-                  </span>
-                  <ArrowRightLeft className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                  <span
-                    className="truncate flex-1 text-center"
-                    title={p.destination}
-                  >
-                    {p.destination}
-                  </span>
-                </div>
-
-                {p.rules_summary && (
-                  <p
-                    className="text-sm text-muted-foreground line-clamp-2"
-                    title={p.rules_summary}
-                  >
-                    {p.rules_summary}
-                  </p>
-                )}
-
-                <div className="mt-auto pt-4 flex items-center justify-between border-t border-border/50">
-                  <div className="flex items-center text-xs text-muted-foreground font-medium">
-                    <Clock className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-                    {p.valid_until
-                      ? new Date(p.valid_until).toLocaleDateString('pt-BR')
-                      : 'Sem validade informada'}
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div
+                        className={cn('p-2.5 rounded-full shrink-0', bg, color)}
+                      >
+                        {icon}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold text-secondary text-sm md:text-base truncate">
+                          {tx.description || tx.type}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-1.5 mt-0.5 text-xs font-medium text-muted-foreground">
+                          <Calendar className="w-3 h-3 shrink-0" />
+                          <span>
+                            {new Date(tx.transaction_date).toLocaleDateString(
+                              'pt-BR',
+                            )}
+                          </span>
+                          <span className="hidden sm:inline">•</span>
+                          <span className="truncate">
+                            {tx.origin_program}{' '}
+                            {tx.destination_program
+                              ? `→ ${tx.destination_program}`
+                              : ''}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className={cn(
+                        'font-black text-base md:text-lg whitespace-nowrap pl-4',
+                        color,
+                      )}
+                    >
+                      {sign}{' '}
+                      {new Intl.NumberFormat('pt-BR').format(tx.points_amount)}
+                    </div>
                   </div>
-                  <Button asChild size="sm" className="font-bold shadow-sm">
-                    <a href={p.link} target="_blank" rel="noopener noreferrer">
-                      Ver Promoção{' '}
-                      <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
-                    </a>
-                  </Button>
-                </div>
-              </Card>
-            ))}
+                )
+              })
+            ) : (
+              <div className="p-8 text-center text-muted-foreground font-medium">
+                Nenhuma movimentação encontrada.
+              </div>
+            )}
           </div>
-        ) : (
-          <Card className="p-8 text-center border-dashed rounded-2xl bg-muted/10">
-            <Tag className="w-8 h-8 text-muted-foreground mx-auto mb-3 opacity-50" />
-            <p className="text-muted-foreground font-medium">
-              Nenhuma promoção ativa no momento.
-            </p>
-          </Card>
-        )}
-      </section>
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[400px] rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Wallet className="w-5 h-5 text-primary" />
-              Atualizar Saldo
-            </DialogTitle>
-            <DialogDescription className="text-base font-medium mt-2">
-              Insira o saldo atual consolidado que você possui no{' '}
-              <strong className="text-secondary">{selectedProgram}</strong>.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4 space-y-3">
-            <Label htmlFor="balance" className="font-semibold text-secondary">
-              Saldo de Milhas / Pontos
-            </Label>
-            <div className="relative">
-              <Input
-                id="balance"
-                type="number"
-                value={newBalance}
-                onChange={(e) => setNewBalance(e.target.value)}
-                className="h-14 text-lg focus-visible:ring-primary/20 bg-muted/20 font-semibold pl-4"
-                placeholder="0"
-              />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold text-sm">
-                pts
-              </span>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="ghost"
-              onClick={() => setIsModalOpen(false)}
-              className="font-semibold"
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleSaveBalance}
-              disabled={isSaving}
-              className="font-bold shadow-sm"
-            >
-              {isSaving ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Wallet className="w-4 h-4 mr-2" />
-              )}
-              Salvar Saldo
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </CardContent>
+      </Card>
 
       <TransactionModal
-        isOpen={isTransactionModalOpen}
-        onClose={() => setIsTransactionModalOpen(false)}
+        isOpen={transactionModalOpen}
+        onClose={() => setTransactionModalOpen(false)}
         onSuccess={() => setRefreshKey((k) => k + 1)}
+        defaultProgram={defaultTxProgram}
+        defaultType={defaultTxType}
       />
     </div>
   )

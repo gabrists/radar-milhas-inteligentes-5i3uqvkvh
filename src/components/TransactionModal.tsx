@@ -41,7 +41,7 @@ import azulLogo from '@/assets/azul-05301.svg'
 import latamLogo from '@/assets/latam-28a3c.svg'
 import smilesLogo from '@/assets/smiles-cce56.svg'
 
-type TransactionType = 'acumulo' | 'transferencia' | 'compra' | 'resgate'
+export type TransactionType = 'acumulo' | 'transferencia' | 'compra' | 'resgate'
 
 const PROGRAMS = ['Livelo', 'Esfera', 'Smiles', 'Latam Pass', 'TudoAzul']
 const REASONS = [
@@ -83,10 +83,14 @@ export function TransactionModal({
   isOpen,
   onClose,
   onSuccess,
+  defaultProgram,
+  defaultType,
 }: {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
+  defaultProgram?: string
+  defaultType?: TransactionType
 }) {
   const { user } = useAuth()
   const { toast } = useToast()
@@ -104,9 +108,9 @@ export function TransactionModal({
 
   useEffect(() => {
     if (isOpen) {
-      setType('acumulo')
-      setProgram('')
-      setOrigin('')
+      setType(defaultType || 'acumulo')
+      setProgram(defaultType !== 'transferencia' ? defaultProgram || '' : '')
+      setOrigin(defaultType === 'transferencia' ? defaultProgram || '' : '')
       setDestination('')
       setAmount('')
       setBonus([0])
@@ -114,7 +118,7 @@ export function TransactionModal({
       setAmountPaid('')
       setDate(new Date())
     }
-  }, [isOpen])
+  }, [isOpen, defaultType, defaultProgram])
 
   const isTransfer = type === 'transferencia'
   const isPurchase = type === 'compra'
@@ -126,41 +130,87 @@ export function TransactionModal({
     setIsSaving(true)
     try {
       const updateBalance = async (prog: string, diff: number) => {
-        if (!prog) return
+        if (!prog) return null
         const { data: existing } = await supabase
           .from('loyalty_balances')
           .select('id, balance')
           .eq('user_id', user.id)
           .eq('program_name', prog)
           .maybeSingle()
+
         const newBal = (existing?.balance || 0) + diff
+        let returnedId = existing?.id
+
         if (existing) {
           await supabase
             .from('loyalty_balances')
             .update({ balance: newBal, updated_at: new Date().toISOString() })
             .eq('id', existing.id)
         } else {
-          await supabase
+          const { data: inserted } = await supabase
             .from('loyalty_balances')
             .insert({ user_id: user.id, program_name: prog, balance: newBal })
+            .select('id')
+            .single()
+          returnedId = inserted?.id
         }
+        return returnedId
       }
 
       const amt = Number(amount)
+
       if (isTransfer) {
         if (!origin || !destination)
           throw new Error('Selecione os programas de origem e destino.')
-        await updateBalance(origin, -amt)
-        await updateBalance(destination, destAmt)
+        const wIdOrigin = await updateBalance(origin, -amt)
+        const wIdDest = await updateBalance(destination, destAmt)
+
+        await supabase.from('transactions').insert({
+          user_id: user.id,
+          wallet_id: wIdOrigin,
+          type: 'Transferência',
+          points_amount: amt,
+          origin_program: origin,
+          destination_program: destination,
+          transaction_date: date?.toISOString() || new Date().toISOString(),
+          description: reason || 'Transferência entre programas',
+          bonus_percentage: bonus[0],
+          total_received: destAmt,
+        })
       } else if (isResgate) {
         if (!program) throw new Error('Selecione o programa.')
-        await updateBalance(program, -amt)
+        const wId = await updateBalance(program, -amt)
+
+        await supabase.from('transactions').insert({
+          user_id: user.id,
+          wallet_id: wId,
+          type: 'Resgate',
+          points_amount: amt,
+          origin_program: program,
+          transaction_date: date?.toISOString() || new Date().toISOString(),
+          description: reason || 'Resgate de pontos',
+        })
       } else {
         if (!program) throw new Error('Selecione o programa.')
-        await updateBalance(program, amt)
+        const wId = await updateBalance(program, amt)
+
+        await supabase.from('transactions').insert({
+          user_id: user.id,
+          wallet_id: wId,
+          type: isPurchase ? 'Compra' : 'Acúmulo',
+          points_amount: amt,
+          origin_program: program,
+          transaction_date: date?.toISOString() || new Date().toISOString(),
+          description:
+            reason || (isPurchase ? 'Compra de pontos' : 'Acúmulo de pontos'),
+          cost: isPurchase ? Number(amountPaid) : null,
+        })
       }
 
-      toast({ title: 'Sucesso!', description: 'Saldo atualizado com sucesso!' })
+      toast({
+        title: 'Sucesso!',
+        description: 'Movimentação registrada com sucesso!',
+      })
 
       onSuccess()
       onClose()
