@@ -178,10 +178,10 @@ export default function Layout() {
               </div>
             </div>
             <Button
-              variant="ghost"
+              variant="destructive"
               size="icon"
               onClick={() => signOut()}
-              className="text-muted-foreground hover:text-destructive shrink-0"
+              className="shrink-0 shadow-sm"
               title="Sair"
             >
               <LogOut className="h-4 w-4" />
@@ -264,10 +264,11 @@ export default function Layout() {
             </Popover>
 
             <Button
-              variant="ghost"
+              variant="destructive"
               size="icon"
               onClick={() => signOut()}
-              className="md:hidden text-muted-foreground hover:text-destructive"
+              className="md:hidden shadow-sm"
+              title="Sair"
             >
               <LogOut className="h-5 w-5" />
             </Button>
