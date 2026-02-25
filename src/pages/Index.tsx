@@ -191,8 +191,8 @@ export default function Index() {
           <Skeleton className="h-[200px] w-full rounded-xl" />
           <Skeleton className="h-[200px] w-full rounded-xl" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(5)].map((_, i) => (
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(350px,1fr))]">
+          {[...Array(6)].map((_, i) => (
             <Skeleton key={i} className="h-[180px] w-full rounded-2xl" />
           ))}
         </div>
@@ -328,7 +328,7 @@ export default function Index() {
       </div>
 
       <div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in-up"
+        className="grid gap-4 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(350px,1fr))] animate-fade-in-up"
         style={{ animationDelay: '100ms' }}
       >
         {PROGRAMS.map((progName) => {
@@ -367,7 +367,7 @@ export default function Index() {
                 </div>
                 {nextExp ? (
                   <div className="mt-1.5 text-xs font-semibold text-destructive flex items-center gap-1.5">
-                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
                     <span className="truncate">
                       {new Intl.NumberFormat('pt-BR').format(nextExp.amount)} em{' '}
                       {new Date(nextExp.expiration_date).toLocaleDateString(
@@ -378,7 +378,7 @@ export default function Index() {
                   </div>
                 ) : (
                   <div className="mt-1.5 text-xs font-medium text-muted-foreground flex items-center gap-1.5 opacity-70">
-                    <Calendar className="w-3.5 h-3.5" />
+                    <Calendar className="w-3.5 h-3.5 shrink-0" />
                     Sem expirações próximas
                   </div>
                 )}
@@ -414,6 +414,16 @@ export default function Index() {
             </Card>
           )
         })}
+
+        <Card
+          className="flex flex-col shadow-sm border-muted border-dashed border-2 hover:shadow-md hover:border-primary/40 hover:bg-primary/5 transition-all rounded-2xl cursor-pointer min-h-[160px]"
+          onClick={() => handleOpenTransaction('', 'acumulo')}
+        >
+          <CardContent className="flex flex-col items-center justify-center h-full p-6 text-muted-foreground hover:text-primary transition-colors gap-3">
+            <PlusCircle className="w-10 h-10 opacity-80" />
+            <span className="font-bold text-lg">Adicionar Programa</span>
+          </CardContent>
+        </Card>
       </div>
 
       <Card
