@@ -191,9 +191,9 @@ export default function Index() {
           <Skeleton className="h-[200px] w-full rounded-xl" />
           <Skeleton className="h-[200px] w-full rounded-xl" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-[180px] w-full rounded-xl" />
+            <Skeleton key={i} className="h-[180px] w-full rounded-2xl" />
           ))}
         </div>
         <Skeleton className="h-[400px] w-full rounded-xl" />
@@ -328,7 +328,7 @@ export default function Index() {
       </div>
 
       <div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 animate-fade-in-up"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in-up"
         style={{ animationDelay: '100ms' }}
       >
         {PROGRAMS.map((progName) => {
@@ -348,7 +348,7 @@ export default function Index() {
           return (
             <Card
               key={progName}
-              className="flex flex-col shadow-sm border-muted hover:shadow-md hover:border-primary/20 transition-all"
+              className="flex flex-col shadow-sm border-muted hover:shadow-md hover:border-primary/20 transition-all rounded-2xl"
             >
               <CardHeader className="p-4 pb-2 flex flex-row items-center gap-3 space-y-0">
                 <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-muted bg-muted/20 flex items-center justify-center shadow-inner">
@@ -383,7 +383,7 @@ export default function Index() {
                   </div>
                 )}
               </CardContent>
-              <div className="p-3 border-t border-muted/50 bg-muted/10 grid grid-cols-3 gap-1.5 rounded-b-xl">
+              <div className="p-3 border-t border-muted/50 bg-muted/10 grid grid-cols-3 gap-1.5 rounded-b-2xl">
                 <Button
                   variant="ghost"
                   size="sm"
