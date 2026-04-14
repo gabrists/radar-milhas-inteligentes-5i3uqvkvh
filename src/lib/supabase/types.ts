@@ -11,7 +11,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: '14.1'
+    PostgrestVersion: "14.1"
   }
   public: {
     Tables: {
@@ -50,6 +50,35 @@ export type Database = {
           valid_until?: string | null
         }
         Relationships: []
+      }
+      expiring_points: {
+        Row: {
+          amount: number
+          expiration_date: string
+          id: string
+          wallet_id: string
+        }
+        Insert: {
+          amount: number
+          expiration_date: string
+          id?: string
+          wallet_id: string
+        }
+        Update: {
+          amount?: number
+          expiration_date?: string
+          id?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expiring_points_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_balances"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       loyalty_balances: {
         Row: {
@@ -96,6 +125,33 @@ export type Database = {
         }
         Relationships: []
       }
+      program_prices: {
+        Row: {
+          best_price_milheiro: number
+          discount_percentage: number | null
+          id: string
+          program_name: string
+          promotion_link: string | null
+          updated_at: string
+        }
+        Insert: {
+          best_price_milheiro: number
+          discount_percentage?: number | null
+          id?: string
+          program_name: string
+          promotion_link?: string | null
+          updated_at?: string
+        }
+        Update: {
+          best_price_milheiro?: number
+          discount_percentage?: number | null
+          id?: string
+          program_name?: string
+          promotion_link?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           bonus_percentage: number | null
@@ -110,6 +166,7 @@ export type Database = {
           transaction_date: string
           type: string
           user_id: string
+          wallet_id: string | null
         }
         Insert: {
           bonus_percentage?: number | null
@@ -124,6 +181,7 @@ export type Database = {
           transaction_date?: string
           type: string
           user_id: string
+          wallet_id?: string | null
         }
         Update: {
           bonus_percentage?: number | null
@@ -138,8 +196,17 @@ export type Database = {
           transaction_date?: string
           type?: string
           user_id?: string
+          wallet_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "transactions_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_balances"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       travel_goals: {
         Row: {
@@ -190,33 +257,33 @@ export type Database = {
   }
 }
 
-type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] &
-        DefaultSchema['Views'])
-    ? (DefaultSchema['Tables'] &
-        DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -225,23 +292,23 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -250,23 +317,23 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -275,36 +342,36 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema['Enums']
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
-    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema['CompositeTypes']
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
-    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
 export const Constants = {
@@ -313,13 +380,80 @@ export const Constants = {
   },
 } as const
 
+
 // ====== DATABASE EXTENDED CONTEXT (auto-generated) ======
-// This section contains constraints, RLS policies, functions, triggers,
-// indexes and materialized views not present in the type definitions above.
+// This section contains actual PostgreSQL column types, constraints, RLS policies,
+// functions, triggers, indexes and materialized views not present in the type definitions above.
+// IMPORTANT: The TypeScript types above map UUID, TEXT, VARCHAR all to "string".
+// Use the COLUMN TYPES section below to know the real PostgreSQL type for each column.
+// Always use the correct PostgreSQL type when writing SQL migrations.
+
+// --- COLUMN TYPES (actual PostgreSQL types) ---
+// Use this to know the real database type when writing migrations.
+// "string" in TypeScript types above may be uuid, text, varchar, timestamptz, etc.
+// Table: active_promotions
+//   id: uuid (not null, default: gen_random_uuid())
+//   title: text (not null)
+//   origin: text (not null)
+//   destination: text (not null)
+//   bonus_percentage: numeric (not null)
+//   link: text (not null)
+//   created_at: timestamp with time zone (not null, default: CURRENT_TIMESTAMP)
+//   rules_summary: text (nullable, default: ''::text)
+//   valid_until: timestamp with time zone (nullable)
+// Table: expiring_points
+//   id: uuid (not null, default: gen_random_uuid())
+//   wallet_id: uuid (not null)
+//   amount: integer (not null)
+//   expiration_date: timestamp with time zone (not null)
+// Table: loyalty_balances
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (not null)
+//   program_name: text (not null)
+//   balance: integer (not null, default: 0)
+//   updated_at: timestamp with time zone (nullable, default: now())
+// Table: profiles
+//   id: uuid (not null)
+//   full_name: text (not null)
+//   plan_type: text (nullable, default: 'gratuito'::text)
+//   updated_at: timestamp with time zone (nullable, default: timezone('utc'::text, now()))
+// Table: program_prices
+//   id: uuid (not null, default: gen_random_uuid())
+//   program_name: text (not null)
+//   best_price_milheiro: numeric (not null)
+//   promotion_link: text (nullable)
+//   updated_at: timestamp with time zone (not null, default: timezone('utc'::text, now()))
+//   discount_percentage: numeric (nullable, default: 0)
+// Table: transactions
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (not null)
+//   type: text (not null)
+//   origin_program: text (nullable)
+//   destination_program: text (nullable)
+//   points_amount: numeric (not null)
+//   bonus_percentage: numeric (nullable)
+//   total_received: numeric (nullable)
+//   cost: numeric (nullable)
+//   description: text (nullable)
+//   transaction_date: date (not null, default: CURRENT_DATE)
+//   created_at: timestamp with time zone (not null, default: CURRENT_TIMESTAMP)
+//   wallet_id: uuid (nullable)
+// Table: travel_goals
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (not null)
+//   destination_name: text (not null)
+//   target_miles: integer (not null)
+//   current_miles: integer (not null, default: 0)
+//   target_date: date (nullable)
+//   image_url: text (nullable)
+//   is_active: boolean (nullable, default: false)
 
 // --- CONSTRAINTS ---
 // Table: active_promotions
 //   PRIMARY KEY active_promotions_pkey: PRIMARY KEY (id)
+// Table: expiring_points
+//   PRIMARY KEY expiring_points_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY expiring_points_wallet_id_fkey: FOREIGN KEY (wallet_id) REFERENCES loyalty_balances(id) ON DELETE CASCADE
 // Table: loyalty_balances
 //   PRIMARY KEY loyalty_balances_pkey: PRIMARY KEY (id)
 //   FOREIGN KEY loyalty_balances_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
@@ -327,10 +461,14 @@ export const Constants = {
 // Table: profiles
 //   FOREIGN KEY profiles_id_fkey: FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE
 //   PRIMARY KEY profiles_pkey: PRIMARY KEY (id)
+// Table: program_prices
+//   PRIMARY KEY program_prices_pkey: PRIMARY KEY (id)
+//   UNIQUE program_prices_program_name_key: UNIQUE (program_name)
 // Table: transactions
 //   PRIMARY KEY transactions_pkey: PRIMARY KEY (id)
-//   CHECK transactions_type_check: CHECK ((type = ANY (ARRAY['Acúmulo'::text, 'Transferência'::text, 'Compra'::text, 'Resgate'::text])))
+//   CHECK transactions_type_check: CHECK ((type = ANY (ARRAY['Acúmulo'::text, 'Transferência'::text, 'Compra'::text, 'Resgate'::text, 'Expiração'::text])))
 //   FOREIGN KEY transactions_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+//   FOREIGN KEY transactions_wallet_id_fkey: FOREIGN KEY (wallet_id) REFERENCES loyalty_balances(id) ON DELETE CASCADE
 // Table: travel_goals
 //   PRIMARY KEY travel_goals_pkey: PRIMARY KEY (id)
 //   FOREIGN KEY travel_goals_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
@@ -345,6 +483,10 @@ export const Constants = {
 //     WITH CHECK: true
 //   Policy "Authenticated users can update active promotions" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: true
+// Table: expiring_points
+//   Policy "Users can manage own expiring points" (ALL, PERMISSIVE) roles={public}
+//     USING: (wallet_id IN ( SELECT loyalty_balances.id    FROM loyalty_balances   WHERE (loyalty_balances.user_id = auth.uid())))
+//     WITH CHECK: (wallet_id IN ( SELECT loyalty_balances.id    FROM loyalty_balances   WHERE (loyalty_balances.user_id = auth.uid())))
 // Table: loyalty_balances
 //   Policy "Users can manage own loyalty balances" (ALL, PERMISSIVE) roles={public}
 //     USING: (auth.uid() = user_id)
@@ -354,6 +496,9 @@ export const Constants = {
 //     USING: (auth.uid() = id)
 //   Policy "Users can view own profile." (SELECT, PERMISSIVE) roles={public}
 //     USING: (auth.uid() = id)
+// Table: program_prices
+//   Policy "Anyone can view program_prices" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
 // Table: transactions
 //   Policy "Users can manage own transactions" (ALL, PERMISSIVE) roles={public}
 //     USING: (auth.uid() = user_id)
@@ -388,8 +533,11 @@ export const Constants = {
 //     RETURN NEW;
 //   END;
 //   $function$
-//
+//   
 
 // --- INDEXES ---
 // Table: loyalty_balances
 //   CREATE UNIQUE INDEX loyalty_balances_user_id_program_name_key ON public.loyalty_balances USING btree (user_id, program_name)
+// Table: program_prices
+//   CREATE UNIQUE INDEX program_prices_program_name_key ON public.program_prices USING btree (program_name)
+
